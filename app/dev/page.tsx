@@ -518,10 +518,10 @@ function RoundIcon({ children, bg = '#F2F2F7', color }: { children: React.ReactN
 
 function AppTop({ title, subtitle, icon, tint, color = appText, muted = appMuted, flipped = false }: { title: string; subtitle: string; icon: React.ReactNode; tint: string; color?: string; muted?: string; flipped?: boolean }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 34, flexShrink: 0 }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 34, flexShrink: 0, padding: '0 13px' }}>
       <div>
-        <p style={{ fontSize: flipped ? 18 : 9, lineHeight: flipped ? 1.05 : undefined, fontWeight: flipped ? 800 : undefined, color: flipped ? color : muted, marginBottom: flipped ? 2 : 2 }}>{flipped ? title : subtitle}</p>
-        <h3 style={{ fontSize: flipped ? 9 : 18, lineHeight: 1.05, fontWeight: flipped ? 500 : 800, color: flipped ? muted : color }}>{flipped ? subtitle : title}</h3>
+        <p style={{ margin: 0, textAlign: 'left', fontSize: flipped ? 18 : 9, lineHeight: flipped ? 1.05 : undefined, fontWeight: flipped ? 800 : undefined, color: flipped ? color : muted, marginBottom: 2 }}>{flipped ? title : subtitle}</p>
+        <h3 style={{ margin: 0, textAlign: 'left', fontSize: flipped ? 9 : 18, lineHeight: 1.05, fontWeight: flipped ? 500 : 800, color: flipped ? muted : color }}>{flipped ? subtitle : title}</h3>
       </div>
       <RoundIcon bg="#fff">{icon}</RoundIcon>
     </div>
@@ -604,7 +604,7 @@ function FitnessApp() {
   return (
     <AppShell tint="#FF9F0A" bg="#0B0B0C" color="#fff">
       <AppTop title="Push Day" subtitle="Lundi - semaine 3" tint="#FF9F0A" color="#fff" muted="rgba(255,255,255,0.46)" icon={<Flame size={15} color="#FF9F0A" />} />
-      <div style={{ background: '#161617', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: 11 }}>
+      <div style={{ background: '#161617', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: 13 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
           <div>
             <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.44)' }}>Bloc actif</p>
@@ -619,7 +619,7 @@ function FitnessApp() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 5 }}>
         {['L','M','M','J','V','S','D'].map((d,i) => <div key={i} style={{ height: 27, borderRadius: 7, background: i === 1 || i === 3 ? '#FF9F0A' : '#19191B', color: i === 1 || i === 3 ? '#111' : 'rgba(255,255,255,0.48)', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingLeft: 8, fontSize: 8, fontWeight: 900 }}>{d}</div>)}
       </div>
-      <div style={{ background: '#161617', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: 11, minHeight: 0, textAlign: 'left' }}>
+      <div style={{ background: '#161617', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: 13, minHeight: 0, textAlign: 'left' }}>
         <p style={{ fontSize: 11, fontWeight: 900, marginBottom: 4, color: '#fff', textAlign: 'left' }}>Exercices</p>
         {[
           { n: 'Développé couché', s: '4 x 10 - 80 kg', done: true },
@@ -704,13 +704,7 @@ function FoodApp() {
 function SchoolApp() {
   return (
     <AppShell tint="#5856D6" bg="#F7F4EE">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 34, flexShrink: 0 }}>
-        <div style={{ textAlign: 'left' }}>
-          <p style={{ fontSize: 9, color: appMuted, marginBottom: 2, textAlign: 'left' }}>Etablissement</p>
-          <h3 style={{ fontSize: 18, lineHeight: 1.05, fontWeight: 800, color: appText, textAlign: 'left' }}>Saint-Paul</h3>
-        </div>
-        <RoundIcon bg="#fff"><GraduationCap size={15} color="#5856D6" /></RoundIcon>
-      </div>
+      <AppTop title="Saint-Paul" subtitle="Etablissement" tint="#5856D6" icon={<GraduationCap size={15} color="#5856D6" />} />
       <AppCard style={{ padding: 13, background: '#171511', color: '#fff', borderColor: '#171511', flexShrink: 0, position: 'relative', overflow: 'hidden', textAlign: 'left' }}>
         <div style={{ position: 'absolute', right: -28, top: -28, width: 88, height: 88, borderRadius: '50%', border: '18px solid rgba(88,86,214,0.22)' }} />
         <div style={{ position: 'absolute', right: 15, bottom: 13, width: 42, height: 42, borderRadius: 14, background: 'rgba(255,255,255,0.08)', transform: 'rotate(-8deg)' }} />
@@ -729,11 +723,11 @@ function SchoolApp() {
         </svg>
       </AppCard>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
-        {[['342','Eleves'], ['18','Classes'], ['14','Absences']].map(([v,l], i) => <AppCard key={l} style={{ padding: '9px 8px', textAlign: 'left', boxShadow: 'none', borderColor: i === 2 ? '#F7D7D7' : '#E9E2D6', background: i === 0 ? '#FFFDF7' : '#fff' }}><p style={{ fontSize: 15, fontWeight: 800, color: i === 2 ? '#D93D36' : appText, textAlign: 'left' }}>{v}</p><p style={{ fontSize: 7, color: appMuted, marginTop: 1, textAlign: 'left' }}>{l}</p></AppCard>)}
+        {[['342','Eleves'], ['18','Classes'], ['14','Absences']].map(([v,l], i) => <AppCard key={l} style={{ padding: '9px 8px', textAlign: 'left', boxShadow: 'none', borderColor: i === 2 ? '#F7D7D7' : '#E9E2D6', background: i === 0 ? '#FFFDF7' : '#fff' }}><p style={{ fontSize: 15, fontWeight: 800, color: i === 2 ? '#D93D36' : appText, textAlign: 'left', margin: 0 }}>{v}</p><p style={{ fontSize: 7, color: appMuted, marginTop: 1, textAlign: 'left', margin: 0 }}>{l}</p></AppCard>)}
       </div>
       <AppCard style={{ padding: 10, textAlign: 'left', overflow: 'hidden', minHeight: 0, borderColor: '#E9E2D6' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
-          <p style={{ fontSize: 11, fontWeight: 800 }}>Rythme classe</p>
+          <p style={{ fontSize: 11, fontWeight: 800, textAlign: 'left', margin: 0 }}>Rythme classe</p>
           <span style={{ fontSize: 9, color: '#5856D6', fontWeight: 700 }}>3 alertes</span>
         </div>
         {[
@@ -767,13 +761,7 @@ function SchoolApp() {
 function ClinicApp() {
   return (
     <AppShell tint="#007AFF" bg="#F5F5F7">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 34, flexShrink: 0 }}>
-        <div style={{ textAlign: 'left' }}>
-          <p style={{ fontSize: 9, color: appMuted, marginBottom: 2, textAlign: 'left' }}>Health AI</p>
-          <h3 style={{ fontSize: 18, lineHeight: 1.05, fontWeight: 800, color: appText, textAlign: 'left' }}>Clinique Horizon</h3>
-        </div>
-        <RoundIcon bg="#fff"><Stethoscope size={15} color="#007AFF" /></RoundIcon>
-      </div>
+      <AppTop title="Clinique Horizon" subtitle="Health AI" tint="#007AFF" icon={<Stethoscope size={15} color="#007AFF" />} />
       <AppCard style={{ padding: 14, background: '#fff', color: appText, borderColor: '#E7E7EC', position: 'relative', overflow: 'hidden', flexShrink: 0, textAlign: 'left' }}>
         <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: '1fr 54px', gap: 10, alignItems: 'center' }}>
           <div>
