@@ -816,15 +816,15 @@ function ClinicApp() {
 
 /* ══ SaaS mockups — vues produit minimalistes ═════════ */
 
-function SaasFrame({ children, slug }: { children: React.ReactNode; slug: string }) {
+function SaasFrame({ children, slug, isMobile }: { children: React.ReactNode; slug: string; isMobile?: boolean }) {
   const LW = 650, LH = 418;
   return (
     <div style={{ 
       filter: 'drop-shadow(0 22px 38px rgba(0,0,0,0.18)) drop-shadow(0 3px 8px rgba(0,0,0,0.10))',
       maxWidth: '100%',
-      overflowX: 'auto',
+      overflowX: isMobile ? 'auto' : 'hidden',
       WebkitOverflowScrolling: 'touch',
-      paddingBottom: 10,
+      paddingBottom: isMobile ? 10 : 0,
     }}>
       <div style={{ width: LW, background: 'linear-gradient(165deg,#E8E8E8 0%,#CCCCCC 50%,#B8B8B8 100%)', borderRadius: '16px 16px 0 0', padding: '10px 10px 0', boxSizing: 'border-box', border: '1px solid #B6B6B6', borderBottom: 'none', position: 'relative', margin: '0 auto' }}>
         <div style={{ position: 'absolute', top: 6, left: '50%', transform: 'translateX(-50%)', width: 6, height: 6, borderRadius: '50%', background: '#2a2a2a' }} />
@@ -856,7 +856,7 @@ function UiPill({ children, tone = '#111', bg = '#F4F3EF' }: { children: React.R
   return <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, borderRadius: 999, background: bg, color: tone, padding: '2px 6px', fontSize: 6.8, fontWeight: 800, whiteSpace: 'nowrap', lineHeight: 1.15 }}>{children}</span>;
 }
 
-function BackOfficeShell({ children, title, meta, slug, nav, theme, action, sideNote }: {
+function BackOfficeShell({ children, title, meta, slug, nav, theme, action, sideNote, isMobile }: {
   children: React.ReactNode;
   title: string;
   meta: string;
@@ -865,9 +865,10 @@ function BackOfficeShell({ children, title, meta, slug, nav, theme, action, side
   theme: BackOfficeTheme;
   action: string;
   sideNote?: { label: string; value: string; hint: string };
+  isMobile?: boolean;
 }) {
   return (
-    <SaasFrame slug={slug}>
+    <SaasFrame slug={slug} isMobile={isMobile}>
       <div style={{ height: '100%', display: 'grid', gridTemplateColumns: '108px 1fr', background: theme.bg, textAlign: 'left' }}>
         <aside style={{ background: '#111314', color: '#fff', padding: 12, display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
@@ -946,7 +947,7 @@ function Cell({ children, style }: { children: React.ReactNode; style?: React.CS
   return <span style={{ ...cropText, display: 'block', lineHeight: 1.15, ...style }}>{children}</span>;
 }
 
-function CustomerSaasShell({ children, slug, brand, title, subtitle, theme, nav, action }: {
+function CustomerSaasShell({ children, slug, brand, title, subtitle, theme, nav, action, isMobile }: {
   children: React.ReactNode;
   slug: string;
   brand: string;
@@ -955,9 +956,10 @@ function CustomerSaasShell({ children, slug, brand, title, subtitle, theme, nav,
   theme: BackOfficeTheme;
   nav: string[];
   action: string;
+  isMobile?: boolean;
 }) {
   return (
-    <SaasFrame slug={slug}>
+    <SaasFrame slug={slug} isMobile={isMobile}>
       <div style={{ height: '100%', background: theme.bg, display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
         <div style={{ height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', background: 'rgba(255,255,255,0.88)', borderBottom: '1px solid #E8E4DC' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
@@ -989,7 +991,7 @@ function CustomerSaasShell({ children, slug, brand, title, subtitle, theme, nav,
   );
 }
 
-function SaasResto() {
+function SaasResto({ isMobile }: { isMobile?: boolean }) {
   const theme = { accent: '#10B981', soft: '#F0FDF4', bg: '#F9FAFB' };
   return (
     <CustomerSaasShell
@@ -1000,6 +1002,7 @@ function SaasResto() {
       action="Ajouter"
       theme={theme}
       nav={['Dashboard', 'Planning', 'Analyses', 'IA Coach']}
+      isMobile={isMobile}
     >
       <div style={{ height: 'calc(100% - 34px)', display: 'grid', gridTemplateColumns: '1fr 190px', gap: 10 }}>
         {/* MAIN COLUMN */}
@@ -1140,7 +1143,7 @@ function BlurredImage({ src, alt, style }: { src: string; alt: string; style?: R
   );
 }
 
-function SaasEcom() {
+function SaasEcom({ isMobile }: { isMobile?: boolean }) {
   const theme = { accent: '#315BFF', soft: '#E9EEFF', bg: '#F6F7FB' };
   return (
     <BackOfficeShell
@@ -1157,6 +1160,7 @@ function SaasEcom() {
         { label: 'Livraison', icon: <Truck size={8} /> },
         { label: 'Promos', icon: <Percent size={8} /> },
       ]}
+      isMobile={isMobile}
     >
       <div style={{ height: '100%', display: 'grid', gridTemplateColumns: '166px 1fr', gap: 8 }}>
         <PlainCard style={{ overflow: 'hidden' }}>
@@ -1210,7 +1214,7 @@ function SaasEcom() {
   );
 }
 
-function SaasHealth() {
+function SaasHealth({ isMobile }: { isMobile?: boolean }) {
   const theme = { accent: '#0F8A83', soft: '#DDF5F2', bg: '#F4FAF8' };
   return (
     <CustomerSaasShell
@@ -1221,6 +1225,7 @@ function SaasHealth() {
       action="Analyser"
       theme={theme}
       nav={['Check-in', 'Plan', 'Rappels', 'Journal']}
+      isMobile={isMobile}
     >
       <div style={{ height: 'calc(100% - 34px)', display: 'grid', gridTemplateColumns: '154px 1fr 172px', gap: 8 }}>
         <PlainCard style={{ padding: 8 }}>
@@ -1315,7 +1320,7 @@ function SaasHealth() {
   );
 }
 
-function SaasImmo() {
+function SaasImmo({ isMobile }: { isMobile?: boolean }) {
   const theme = { accent: '#2F7D55', soft: '#E8F5EC', bg: '#F7FAF6' };
   return (
     <BackOfficeShell
@@ -1332,6 +1337,7 @@ function SaasImmo() {
         { label: 'Baux', icon: <ClipboardList size={8} /> },
         { label: 'Loyers', icon: <DollarSign size={8} /> },
       ]}
+      isMobile={isMobile}
     >
       <div style={{ height: '100%', display: 'grid', gridTemplateColumns: '208px 1fr', gap: 8 }}>
         <PlainCard style={{ overflow: 'hidden' }}>
@@ -1385,7 +1391,7 @@ function SaasImmo() {
   );
 }
 
-function SaasRH() {
+function SaasRH({ isMobile }: { isMobile?: boolean }) {
   const theme = { accent: '#6B4DE6', soft: '#EEEAFE', bg: '#F8F7FB' };
   return (
     <BackOfficeShell
@@ -1402,6 +1408,7 @@ function SaasRH() {
         { label: 'Presence', icon: <Activity size={8} /> },
         { label: 'Contrats', icon: <ClipboardList size={8} /> },
       ]}
+      isMobile={isMobile}
     >
       <div style={{ height: '100%', display: 'grid', gridTemplateColumns: '1fr 154px', gap: 8 }}>
         <PlainCard style={{ padding: 8, overflow: 'hidden' }}>
@@ -1453,11 +1460,11 @@ function SaasRH() {
 }
 
 const SAAS_LIST = [
-  { id: 'mealai', label: 'MealAI', sub: 'Assistant nutrition IA', el: <SaasResto /> },
-  { id: 'ecom', label: 'E-commerce', sub: 'Boutique en ligne', el: <SaasEcom /> },
-  { id: 'careai', label: 'CareAI', sub: 'Suivi santé personnel IA', el: <SaasHealth /> },
-  { id: 'immo', label: 'Immobilier', sub: 'Gestion locative', el: <SaasImmo /> },
-  { id: 'rh', label: 'RH & Paie', sub: 'Ressources humaines', el: <SaasRH /> },
+  { id: 'mealai', label: 'MealAI', sub: 'Assistant nutrition IA', el: (isMobile: boolean) => <SaasResto isMobile={isMobile} /> },
+  { id: 'ecom', label: 'E-commerce', sub: 'Boutique en ligne', el: (isMobile: boolean) => <SaasEcom isMobile={isMobile} /> },
+  { id: 'careai', label: 'CareAI', sub: 'Suivi santé personnel IA', el: (isMobile: boolean) => <SaasHealth isMobile={isMobile} /> },
+  { id: 'immo', label: 'Immobilier', sub: 'Gestion locative', el: (isMobile: boolean) => <SaasImmo isMobile={isMobile} /> },
+  { id: 'rh', label: 'RH & Paie', sub: 'Ressources humaines', el: (isMobile: boolean) => <SaasRH isMobile={isMobile} /> },
 ];
 
 const APPS = [
@@ -1525,7 +1532,7 @@ function MockupsShowcase() {
             <p style={{ fontSize: 12, fontWeight: 600, color: '#111', fontFamily: 'Clash Display, sans-serif' }}>{SAAS_LIST[saasIdx].sub}</p>
           </div>
           <div style={{ width: '100%', minWidth: 0 }}>
-            {SAAS_LIST[saasIdx].el}
+            {SAAS_LIST[saasIdx].el(isMobile)}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 24 }}>
             <NavBtn dir="‹" onClick={() => setSaasIdx(i => (i - 1 + SAAS_LIST.length) % SAAS_LIST.length)} />
