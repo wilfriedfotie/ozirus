@@ -211,13 +211,46 @@ export default function FormationPage() {
 
           {/* ── VIDEO ── */}
           <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }}
-            style={{ position: 'relative', borderRadius: 20, overflow: 'hidden', aspectRatio: '16/9', background: '#111', border: '1.5px solid rgba(121,103,255,0.3)', boxShadow: '0 32px 80px rgba(121,103,255,0.2)', marginBottom: 48 }}>
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(2px)' }}>
-              <div style={{ width: 80, height: 80, borderRadius: '50%', background: '#7967FF', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 0 40px rgba(121,103,255,0.4)' }}>
-                <Play size={32} fill="#fff" color="#fff" style={{ marginLeft: 5 }} />
-              </div>
+            style={{ 
+              position: 'relative', 
+              borderRadius: 24, 
+              overflow: 'hidden', 
+              aspectRatio: '16/9', 
+              background: '#0A0A0F', 
+              border: '1.5px solid rgba(121,103,255,0.2)', 
+              boxShadow: '0 32px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(121,103,255,0.1)', 
+              marginBottom: 48 
+            }}>
+            
+            <div style={{ position: 'absolute', inset: 0, opacity: 0.4 }}>
+              <DotGrid />
             </div>
-            <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+
+            {/* Gradient overlay */}
+            <div style={{ 
+              position: 'absolute', 
+              inset: 0, 
+              background: 'linear-gradient(160deg, rgba(121,103,255,0.15) 0%, rgba(10,10,15,0.7) 100%)' 
+            }} />
+
+            {/* Play button */}
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20, zIndex: 2 }}>
+              <motion.div 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                style={{ 
+                  width: 80, height: 80, borderRadius: '50%', 
+                  background: 'rgba(255,255,255,0.1)', 
+                  backdropFilter: 'blur(12px)',
+                  border: '1.5px solid rgba(255,255,255,0.25)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                  cursor: 'pointer', 
+                  boxShadow: '0 0 50px rgba(121,103,255,0.3)',
+                }}>
+                <Play size={32} fill="#fff" color="#fff" style={{ marginLeft: 5 }} />
+              </motion.div>
+              <p style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>Découvrir le programme en vidéo</p>
+            </div>
           </motion.div>
 
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
