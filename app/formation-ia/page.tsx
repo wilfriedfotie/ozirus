@@ -140,8 +140,8 @@ export default function FormationPage() {
                 agence IA rentable.
               </span>
             </h1>
-            <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.65)', lineHeight: 1.75, maxWidth: 560, margin: '0 auto 40px' }}>
-              Passez de "je rêve de me lancer" à "je facture déjà mes premiers clients". Le programme complet pour entrepreneurs africains ambitieux.
+            <p style={{ fontSize: 18, color: 'rgba(255,255,255,0.65)', lineHeight: 1.75, maxWidth: 640, margin: '0 auto 40px' }}>
+              Passez de "je rêve de me lancer" à "je facture déjà mes premiers clients" au <strong style={{ color: '#fff' }}>Cameroun</strong>, en <strong style={{ color: '#fff' }}>Côte d'Ivoire</strong> ou au <strong style={{ color: '#fff' }}>Sénégal</strong>. Le programme complet pour entrepreneurs africains.
             </p>
           </motion.div>
 

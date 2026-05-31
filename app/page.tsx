@@ -694,9 +694,9 @@ export default function HomePage() {
 
           <motion.p
             {...up(0.1)}
-            style={{ maxWidth: 560, marginTop: 28, fontSize: 18, lineHeight: 1.75, color: '#555', margin: '28px auto 0' }}
+            style={{ maxWidth: 640, marginTop: 28, fontSize: 18, lineHeight: 1.75, color: '#555', margin: '28px auto 0' }}
           >
-            Nous transformons vos problèmes quotidiens en solutions simples, rentables et intelligentes.
+            Nous transformons vos problèmes quotidiens en solutions simples, rentables et intelligentes pour les PME au <strong style={{ color: '#111' }}>Cameroun</strong> et en <strong style={{ color: '#111' }}>Afrique Francophone</strong>.
           </motion.p>
 
           <motion.div

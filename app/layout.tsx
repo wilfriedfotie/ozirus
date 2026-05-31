@@ -11,26 +11,26 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'Ozirus Agency — Agence Digitale Cameroun | SaaS, IA, Applications',
-  description: 'Ozirus Agency conçoit des solutions digitales sur mesure pour les PME camerounaises : SaaS, applications mobiles, intelligence artificielle et branding. Livraison en 90 jours.',
-  keywords: 'agence digitale Cameroun, développement SaaS, application mobile Cameroun, solution IA PME, agence tech Yaoundé, startup tech Cameroun',
+  title: 'Ozirus Agency — Agence IA & Digitale | Cameroun & Afrique Francophone',
+  description: 'Ozirus Agency déploie des agents IA et solutions digitales sur mesure (SaaS, Mobile) pour les PME au Cameroun et en Afrique Francophone. Automatisation WhatsApp, Chatbots IA et transformation digitale en 90 jours.',
+  keywords: 'agent IA Cameroun, agence digitale Afrique francophone, intelligence artificielle Afrique, développement SaaS Cameroun, application mobile Yaoundé, solution IA PME, automatisation WhatsApp Afrique, chatbot IA Cameroun, transformation digitale Afrique',
   authors: [{ name: 'Ozirus Agency' }],
   creator: 'Ozirus Agency',
   publisher: 'Ozirus Agency',
   robots: 'index, follow',
   openGraph: {
-    title: 'Ozirus Agency — Votre partenaire digital au Cameroun',
-    description: 'SaaS, Applications Mobiles et Intelligence Artificielle pour les PME et startups camerounaises.',
+    title: 'Ozirus Agency — Leader des Solutions IA en Afrique Francophone',
+    description: 'Déployez des agents IA et des solutions SaaS sur mesure. Nous accompagnons la transformation digitale des PME au Cameroun et dans toute l\'Afrique Francophone.',
     url: 'https://ozirus.agency',
     siteName: 'Ozirus Agency',
-    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Ozirus Agency' }],
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Ozirus Agency - Solutions IA et Digitales' }],
     locale: 'fr_FR',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Ozirus Agency — Agence Digitale Cameroun',
-    description: 'SaaS, Applications Mobiles, IA — des solutions digitales concrètes pour les PME camerounaises.',
+    title: 'Ozirus Agency — Agents IA & Digital au Cameroun',
+    description: 'Agents IA, SaaS et Applications Mobiles — des solutions concrètes pour la croissance des PME en Afrique Francophone.',
     images: ['/og-image.jpg'],
   },
 };

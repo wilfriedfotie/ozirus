@@ -436,7 +436,7 @@ export default function ProduitsPage() {
               </span>
             </h1>
             <p style={{ fontSize: 16, color: '#555', lineHeight: 1.75, marginBottom: 32 }}>
-              13 outils IA prêts à l'emploi pour PME africaines — commerce, restauration, immobilier, agriculture, éducation et plus.
+              13 agents et outils IA prêts à l'emploi pour les PME au <strong style={{ color: '#111' }}>Cameroun</strong> et en <strong style={{ color: '#111' }}>Afrique Francophone</strong> — commerce, restauration, immobilier, agriculture et plus.
               <br />Paiement Mobile Money, Wave, Orange ou MTN. Activation en moins de 24h. Garantie 14 jours.
             </p>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', marginBottom: 40 }}>
