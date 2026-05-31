@@ -481,6 +481,8 @@ export default function FormationPage() {
           <div style={{ display: 'flex', gap: 20, fontSize: 13 }}>
             <Link href="/" style={{ color: 'rgba(255,255,255,0.3)', textDecoration: 'none' }}>Accueil</Link>
             <Link href="/produits-ia" style={{ color: 'rgba(255,255,255,0.3)', textDecoration: 'none' }}>Produits IA</Link>
+            <Link href="/terms" style={{ color: 'rgba(255,255,255,0.3)', textDecoration: 'none' }}>Conditions</Link>
+            <Link href="/privacy" style={{ color: 'rgba(255,255,255,0.3)', textDecoration: 'none' }}>Confidentialité</Link>
           </div>
         </div>
       </footer>

@@ -23,6 +23,7 @@ const PAGES = [
 export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel, ctaHref: propCtaHref, dark: propDark = false }: Props) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [anchorsOpen, setAnchorsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -106,6 +107,7 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
   /* lock body scroll when mobile menu is open */
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
+    if (menuOpen) setAnchorsOpen(false);
     return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
 
@@ -312,13 +314,27 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
           }}>
             <div style={{ flex: 1, padding: '24px 24px 32px', display: 'flex', flexDirection: 'column', gap: 0 }}>
 
-              {/* section "Sur cette page" — direct links, no dropdown */}
+              {/* section "Sur cette page" — collapsible on mobile */}
               {anchors && anchors.length > 0 && (
                 <div style={{ marginBottom: 24 }}>
-                  <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: drawerSectionLabel, marginBottom: 8 }}>
-                    Sur cette page
-                  </p>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <button
+                    onClick={() => setAnchorsOpen(!anchorsOpen)}
+                    style={{
+                      width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      background: 'none', border: 'none', padding: 0, marginBottom: 8, cursor: 'pointer',
+                    }}
+                  >
+                    <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: drawerSectionLabel, margin: 0 }}>
+                      Sur cette page
+                    </p>
+                    <ChevronDown size={14} color={drawerSectionLabel} style={{ transition: 'transform 0.2s', transform: anchorsOpen ? 'rotate(180deg)' : 'rotate(0)' }} />
+                  </button>
+                  <div style={{
+                    display: 'flex', flexDirection: 'column', gap: 2,
+                    overflow: 'hidden', transition: 'max-height 0.3s ease-in-out, opacity 0.2s',
+                    maxHeight: anchorsOpen ? 500 : 0,
+                    opacity: anchorsOpen ? 1 : 0,
+                  }}>
                     {anchors.map(a => (
                       <a
                         key={a.href}

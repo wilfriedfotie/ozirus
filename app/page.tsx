@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Transition } from 'framer-motion';
@@ -1128,11 +1129,15 @@ export default function HomePage() {
             <img src="/logo.png" alt="Ozirus" style={{ height: 24, opacity: 0.5 }} />
             <span style={{ fontSize: 13, color: '#aaa' }}>© {new Date().getFullYear()} Ozirus Agency — Cameroun</span>
           </div>
-          <a href="mailto:contact.fotie@gmail.com" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: '#aaa', textDecoration: 'none', transition: 'color 0.15s' }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#7967FF')}
-            onMouseLeave={e => (e.currentTarget.style.color = '#aaa')}>
-            <Phone size={13} /> contact.fotie@gmail.com
-          </a>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+            <Link href="/terms" style={{ fontSize: 13, color: '#aaa', textDecoration: 'none' }}>Conditions</Link>
+            <Link href="/privacy" style={{ fontSize: 13, color: '#aaa', textDecoration: 'none' }}>Confidentialité</Link>
+            <a href="mailto:contact.fotie@gmail.com" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: '#aaa', textDecoration: 'none', transition: 'color 0.15s' }}
+              onMouseEnter={e => (e.currentTarget.style.color = '#7967FF')}
+              onMouseLeave={e => (e.currentTarget.style.color = '#aaa')}>
+              <Phone size={13} /> contact.fotie@gmail.com
+            </a>
+          </div>
         </div>
       </footer>
 

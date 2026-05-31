@@ -657,6 +657,8 @@ export default function ProduitsPage() {
           <div style={{ display: 'flex', gap: 20, fontSize: 13 }}>
             <Link href="/" style={{ color: '#aaa', textDecoration: 'none' }}>Accueil</Link>
             <Link href="/formation-ia" style={{ color: '#aaa', textDecoration: 'none' }}>Formation</Link>
+            <Link href="/terms" style={{ color: '#aaa', textDecoration: 'none' }}>Conditions</Link>
+            <Link href="/privacy" style={{ color: '#aaa', textDecoration: 'none' }}>Confidentialité</Link>
           </div>
         </div>
       </footer>
