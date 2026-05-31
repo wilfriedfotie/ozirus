@@ -162,7 +162,7 @@ export default function FormationPage() {
 
   // Configuration de la session
   const config = {
-    prixPromo: '195 000',
+    prixPromo: '100 000',
     prixOriginal: '450 000',
     placesTotales: 25,
     placesPrises: 14,
