@@ -448,10 +448,19 @@ const REALIZATIONS = [
 ];
 
 /* ─── SectorsPanel ───────────────────────────────────── */
+/* ─── SectorsPanel ───────────────────────────────────── */
 function SectorsPanel() {
   const [active, setActive] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const sector = SECTORS[active];
   const Icon = sector.icon;
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   return (
     <section id="secteurs" style={{ padding: 'clamp(48px, 8vw, 96px) 24px', background: '#FAFAFA', overflowX: 'hidden' }}>
@@ -473,7 +482,7 @@ function SectorsPanel() {
           </p>
         </div>
 
-        {/* chips - visible on small screens, hidden on large if desired, but here we keep for both or stack */}
+        {/* chips - visible on all, useful for quick selection */}
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 24 }}>
           {SECTORS.map((s, i) => {
             const SIcon = s.icon;
@@ -504,50 +513,53 @@ function SectorsPanel() {
         {/* panel */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gridTemplateColumns: isMobile ? '1fr' : '240px 1fr',
           background: '#fff', borderRadius: 20,
           border: '1.5px solid #EDEAFF', overflow: 'hidden',
           boxShadow: '0 4px 32px rgba(121,103,255,0.07)',
           alignItems: 'stretch',
+          minHeight: 600,
         }}>
 
           {/* LEFT — Hidden on very small screens, or we can make it a dropdown/tabs */}
-          <div className="hidden md:block" style={{ borderRight: '1.5px solid #EDEAFF', padding: '8px 0', overflowY: 'auto', maxHeight: 600 }}>
-            {SECTORS.map((s, i) => {
-              const SIcon = s.icon;
-              const isActive = i === active;
-              return (
-                <button
-                  key={s.label}
-                  onClick={() => setActive(i)}
-                  style={{
-                    width: '100%', textAlign: 'left', padding: '13px 18px',
-                    background: isActive ? '#F0EEFF' : 'transparent',
-                    border: 'none', borderBottom: '1px solid #F4F2FF',
-                    cursor: 'pointer', transition: 'background 0.15s',
-                    display: 'flex', alignItems: 'center', gap: 10,
-                  }}
-                  onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = '#FAFAFA'; }}
-                  onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
-                >
-                  <span style={{ width: 3, height: 18, borderRadius: 99, background: isActive ? '#7967FF' : 'transparent', flexShrink: 0, transition: 'background 0.15s' }} />
-                  <SIcon size={14} color={isActive ? '#7967FF' : '#aaa'} />
-                  <div>
-                    <p style={{ fontSize: 13, fontWeight: isActive ? 600 : 400, color: isActive ? '#7967FF' : '#444', lineHeight: 1.3 }}>{s.label}</p>
-                    <p style={{ fontSize: 10, color: isActive ? '#A78BFA' : '#bbb', marginTop: 2, fontWeight: 600 }}>{s.roi}</p>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+          {!isMobile && (
+            <div style={{ borderRight: '1.5px solid #EDEAFF', padding: '8px 0', overflowY: 'auto' }}>
+              {SECTORS.map((s, i) => {
+                const SIcon = s.icon;
+                const isActive = i === active;
+                return (
+                  <button
+                    key={s.label}
+                    onClick={() => setActive(i)}
+                    style={{
+                      width: '100%', textAlign: 'left', padding: '13px 18px',
+                      background: isActive ? '#F0EEFF' : 'transparent',
+                      border: 'none', borderBottom: '1px solid #F4F2FF',
+                      cursor: 'pointer', transition: 'background 0.15s',
+                      display: 'flex', alignItems: 'center', gap: 10,
+                    }}
+                    onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = '#FAFAFA'; }}
+                    onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
+                  >
+                    <span style={{ width: 3, height: 18, borderRadius: 99, background: isActive ? '#7967FF' : 'transparent', flexShrink: 0, transition: 'background 0.15s' }} />
+                    <SIcon size={14} color={isActive ? '#7967FF' : '#aaa'} />
+                    <div>
+                      <p style={{ fontSize: 13, fontWeight: isActive ? 600 : 400, color: isActive ? '#7967FF' : '#444', lineHeight: 1.3 }}>{s.label}</p>
+                      <p style={{ fontSize: 10, color: isActive ? '#A78BFA' : '#bbb', marginTop: 2, fontWeight: 600 }}>{s.roi}</p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
           {/* RIGHT — détail secteur */}
           <AnimatePresence mode="wait">
             <motion.div
               key={active}
-              initial={{ opacity: 0, x: 16 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -8 }}
+              initial={{ opacity: 0, x: isMobile ? 0 : 16, y: isMobile ? 12 : 0 }}
+              animate={{ opacity: 1, x: 0, y: 0 }}
+              exit={{ opacity: 0, x: isMobile ? 0 : -8, y: isMobile ? -8 : 0 }}
               transition={{ duration: 0.22 }}
               style={{ padding: 'clamp(24px, 5vw, 44px)' }}
             >
