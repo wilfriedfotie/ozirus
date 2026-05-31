@@ -522,7 +522,7 @@ export default function ProduitsPage() {
       </section>
 
       {/* PRODUCTS PANEL */}
-      <section style={{ padding: '0 24px 96px', background: '#fff' }}>
+      <section id="produits" style={{ padding: '0 24px 96px', background: '#fff' }}>
         <div style={{ maxWidth: 960, margin: '0 auto' }}>
           <ProductsPanel />
 
@@ -634,7 +634,7 @@ export default function ProduitsPage() {
         <div style={{ position: 'relative', zIndex: 1, maxWidth: 640, margin: '0 auto', textAlign: 'center' }}>
           <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 14 }}>Aller plus loin</p>
           <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(1.8rem, 4vw, 3rem)', lineHeight: 1.1, color: '#fff', letterSpacing: '-0.02em', marginBottom: 16 }}>
-            Vous voulez vendre ces produits à d'autres ?
+            Vous voulez vendre ces produits à d'others ?
           </h2>
           <p style={{ fontSize: 15, color: '#888', lineHeight: 1.75, marginBottom: 28 }}>
             Notre formation vous donne accès à tous ces produits en marque blanche + tout ce qu'il faut pour lancer votre agence IA et facturer 300 000 à 800 000 FCFA/mois.
@@ -656,14 +656,6 @@ export default function ProduitsPage() {
           </div>
           <div style={{ display: 'flex', gap: 20, fontSize: 13 }}>
             <Link href="/" style={{ color: '#aaa', textDecoration: 'none' }}>Accueil</Link>
-            <Link href="/formation-ia" style={{ color: '#aaa', textDecoration: 'none' }}>Formation</Link>
-          </div>
-        </div>
-      </footer>
-    </main>
-  );
-}
-"/" style={{ color: '#aaa', textDecoration: 'none' }}>Accueil</Link>
             <Link href="/formation-ia" style={{ color: '#aaa', textDecoration: 'none' }}>Formation</Link>
           </div>
         </div>
