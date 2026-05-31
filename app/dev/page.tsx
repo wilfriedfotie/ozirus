@@ -625,7 +625,6 @@ function FitnessApp() {
           { n: 'Développé couché', s: '4 x 10 - 80 kg', done: true },
           { n: 'Pompes déclinées', s: '3 x 15 - poids du corps', done: true },
           { n: 'Élévations latérales', s: '3 x 12 - 12 kg', done: false },
-          { n: 'Triceps poulie', s: '4 x 12 - 25 kg', done: false },
         ].map(ex => (
           <div key={ex.n} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
             <RoundIcon bg={ex.done ? 'rgba(255,159,10,0.16)' : '#222225'}>{ex.done ? <CheckCircle2 size={12} color="#FF9F0A"/> : <Dumbbell size={12} color="rgba(255,255,255,0.44)"/>}</RoundIcon>
