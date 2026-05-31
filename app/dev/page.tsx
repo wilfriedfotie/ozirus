@@ -819,8 +819,14 @@ function ClinicApp() {
 function SaasFrame({ children, slug }: { children: React.ReactNode; slug: string }) {
   const LW = 650, LH = 418;
   return (
-    <div style={{ filter: 'drop-shadow(0 22px 38px rgba(0,0,0,0.18)) drop-shadow(0 3px 8px rgba(0,0,0,0.10))' }}>
-      <div style={{ width: LW, background: 'linear-gradient(165deg,#E8E8E8 0%,#CCCCCC 50%,#B8B8B8 100%)', borderRadius: '16px 16px 0 0', padding: '10px 10px 0', boxSizing: 'border-box', border: '1px solid #B6B6B6', borderBottom: 'none', position: 'relative' }}>
+    <div style={{ 
+      filter: 'drop-shadow(0 22px 38px rgba(0,0,0,0.18)) drop-shadow(0 3px 8px rgba(0,0,0,0.10))',
+      maxWidth: '100%',
+      overflowX: 'auto',
+      WebkitOverflowScrolling: 'touch',
+      paddingBottom: 10,
+    }}>
+      <div style={{ width: LW, background: 'linear-gradient(165deg,#E8E8E8 0%,#CCCCCC 50%,#B8B8B8 100%)', borderRadius: '16px 16px 0 0', padding: '10px 10px 0', boxSizing: 'border-box', border: '1px solid #B6B6B6', borderBottom: 'none', position: 'relative', margin: '0 auto' }}>
         <div style={{ position: 'absolute', top: 6, left: '50%', transform: 'translateX(-50%)', width: 6, height: 6, borderRadius: '50%', background: '#2a2a2a' }} />
         <div style={{ background: '#F8F8F6', borderRadius: '9px 9px 0 0', height: LH - 10, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
           <div style={{ background: '#F1F0ED', borderBottom: '1px solid #E1DFDA', padding: '7px 12px', display: 'flex', alignItems: 'center', gap: 9, flexShrink: 0 }}>
@@ -837,7 +843,7 @@ function SaasFrame({ children, slug }: { children: React.ReactNode; slug: string
           <div style={{ flex: 1, overflow: 'hidden' }}>{children}</div>
         </div>
       </div>
-      <div style={{ width: LW, height: 7, background: 'linear-gradient(180deg,#B8B8B8,#C8C8C8)', borderRadius: '0 0 3px 3px', border: '1px solid #ACACAC', borderTop: 'none' }} />
+      <div style={{ width: LW, height: 7, background: 'linear-gradient(180deg,#B8B8B8,#C8C8C8)', borderRadius: '0 0 3px 3px', border: '1px solid #ACACAC', borderTop: 'none', margin: '0 auto' }} />
       <div style={{ width: LW - 46, height: 12, background: 'linear-gradient(180deg,#C8C8C8,#D6D6D6)', borderRadius: '0 0 10px 10px', margin: '0 auto', border: '1px solid #B2B2B2', borderTop: 'none' }} />
     </div>
   );
@@ -1103,6 +1109,37 @@ function SaasResto() {
   );
 }
 
+function BlurredImage({ src, alt, style }: { src: string; alt: string; style?: React.CSSProperties }) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <div style={{ ...style, position: 'relative', overflow: 'hidden' }}>
+      <img
+        src={src}
+        alt={alt}
+        onLoad={() => setLoaded(true)}
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          objectPosition: style?.objectPosition,
+          filter: loaded ? 'none' : 'blur(20px)',
+          transition: 'filter 0.6s ease-in-out',
+          display: 'block',
+        }}
+      />
+      {!loaded && (
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'rgba(0,0,0,0.05)',
+          backdropFilter: 'blur(20px)',
+          zIndex: 1
+        }} />
+      )}
+    </div>
+  );
+}
+
 function SaasEcom() {
   const theme = { accent: '#315BFF', soft: '#E9EEFF', bg: '#F6F7FB' };
   return (
@@ -1123,7 +1160,7 @@ function SaasEcom() {
     >
       <div style={{ height: '100%', display: 'grid', gridTemplateColumns: '166px 1fr', gap: 8 }}>
         <PlainCard style={{ overflow: 'hidden' }}>
-          <img src="/dev-assets/ankara-dress.png" alt="" style={{ width: '100%', height: 146, objectFit: 'cover', objectPosition: 'center 43%', display: 'block' }} />
+          <BlurredImage src="/dev-assets/ankara-dress.png" alt="" style={{ width: '100%', height: 146, objectPosition: 'center 43%' }} />
           <div style={{ padding: 8 }}>
             <Cell style={{ fontSize: 9.8, fontWeight: 900, color: '#151515' }}>Robe Ankara Premium</Cell>
             <Cell style={{ fontSize: 7, color: '#8A867D', marginTop: 3 }}>Robe portefeuille midi, coton wax double, manches evasees.</Cell>
@@ -1298,7 +1335,7 @@ function SaasImmo() {
     >
       <div style={{ height: '100%', display: 'grid', gridTemplateColumns: '208px 1fr', gap: 8 }}>
         <PlainCard style={{ overflow: 'hidden' }}>
-          <img src="/dev-assets/apartment-living.png" alt="" style={{ width: '100%', height: 122, objectFit: 'cover', display: 'block' }} />
+          <BlurredImage src="/dev-assets/apartment-living.png" alt="" style={{ width: '100%', height: 122 }} />
           <div style={{ padding: 8 }}>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 4 }}>
               <div>
@@ -1457,10 +1494,10 @@ function MockupsShowcase() {
       transition={{ duration: 0.7, delay: 0.28 }}
       style={{ marginTop: 64, width: '100%' }}
     >
-      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1.55fr', gap: 48, alignItems: 'center' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1.55fr', gap: isMobile ? 64 : 48, alignItems: 'center', width: '100%' }}>
 
         {/* ── MOBILE ── */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
           <div style={{ marginBottom: 12, textAlign: 'center' }}>
             <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 4 }}>App Mobile</p>
             <p style={{ fontSize: 12, fontWeight: 600, color: '#111', fontFamily: 'Clash Display, sans-serif' }}>{APPS[phoneIdx].label}</p>
@@ -1480,29 +1517,27 @@ function MockupsShowcase() {
         </div>
 
         {/* ── SAAS 5 secteurs ── */}
-        {!isMobile && (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <div style={{ marginBottom: 12, textAlign: 'center' }}>
-              <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 4 }}>
-                SaaS — {SAAS_LIST[saasIdx].label}
-              </p>
-              <p style={{ fontSize: 12, fontWeight: 600, color: '#111', fontFamily: 'Clash Display, sans-serif' }}>{SAAS_LIST[saasIdx].sub}</p>
-            </div>
-            <div style={{ overflowX: 'auto', maxWidth: '100%' }}>
-              {SAAS_LIST[saasIdx].el}
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 24 }}>
-              <NavBtn dir="‹" onClick={() => setSaasIdx(i => (i - 1 + SAAS_LIST.length) % SAAS_LIST.length)} />
-              <div style={{ display: 'flex', gap: 6 }}>
-                {SAAS_LIST.map((s, i) => (
-                  <button key={i} onClick={() => setSaasIdx(i)}
-                    style={{ width: i === saasIdx ? 20 : 8, height: 8, borderRadius: 99, background: i === saasIdx ? '#7967FF' : '#EDEAFF', border: 'none', cursor: 'pointer', transition: 'all 0.25s', padding: 0 }} />
-                ))}
-              </div>
-              <NavBtn dir="›" onClick={() => setSaasIdx(i => (i + 1) % SAAS_LIST.length)} />
-            </div>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', minWidth: 0 }}>
+          <div style={{ marginBottom: 12, textAlign: 'center' }}>
+            <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 4 }}>
+              SaaS — {SAAS_LIST[saasIdx].label}
+            </p>
+            <p style={{ fontSize: 12, fontWeight: 600, color: '#111', fontFamily: 'Clash Display, sans-serif' }}>{SAAS_LIST[saasIdx].sub}</p>
           </div>
-        )}
+          <div style={{ width: '100%', minWidth: 0 }}>
+            {SAAS_LIST[saasIdx].el}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 24 }}>
+            <NavBtn dir="‹" onClick={() => setSaasIdx(i => (i - 1 + SAAS_LIST.length) % SAAS_LIST.length)} />
+            <div style={{ display: 'flex', gap: 6 }}>
+              {SAAS_LIST.map((s, i) => (
+                <button key={i} onClick={() => setSaasIdx(i)}
+                  style={{ width: i === saasIdx ? 20 : 8, height: 8, borderRadius: 99, background: i === saasIdx ? '#7967FF' : '#EDEAFF', border: 'none', cursor: 'pointer', transition: 'all 0.25s', padding: 0 }} />
+              ))}
+            </div>
+            <NavBtn dir="›" onClick={() => setSaasIdx(i => (i + 1) % SAAS_LIST.length)} />
+          </div>
+        </div>
 
       </div>
     </motion.div>
@@ -1546,7 +1581,7 @@ function StatsGrid() {
 /* ═══════════════════════════════════════════════════ */
 export default function DevPage() {
   return (
-    <main style={{ background: '#fff', color: '#111', fontFamily: 'DM Sans, sans-serif' }}>
+    <main style={{ background: '#fff', color: '#111', fontFamily: 'DM Sans, sans-serif', overflowX: 'hidden' }}>
 
       {/* ── HERO ─────────────────────────────────── */}
       <section style={{ position: 'relative', overflow: 'hidden', background: '#fff' }}>

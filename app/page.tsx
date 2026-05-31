@@ -454,7 +454,7 @@ function SectorsPanel() {
   const Icon = sector.icon;
 
   return (
-    <section id="secteurs" style={{ padding: '96px 24px', background: '#FAFAFA' }}>
+    <section id="secteurs" style={{ padding: 'clamp(48px, 8vw, 96px) 24px', background: '#FAFAFA', overflowX: 'hidden' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
 
         {/* header */}
@@ -473,7 +473,7 @@ function SectorsPanel() {
           </p>
         </div>
 
-        {/* chips */}
+        {/* chips - visible on small screens, hidden on large if desired, but here we keep for both or stack */}
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 24 }}>
           {SECTORS.map((s, i) => {
             const SIcon = s.icon;
@@ -503,15 +503,16 @@ function SectorsPanel() {
 
         {/* panel */}
         <div style={{
-          display: 'grid', gridTemplateColumns: '220px 1fr',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
           background: '#fff', borderRadius: 20,
           border: '1.5px solid #EDEAFF', overflow: 'hidden',
           boxShadow: '0 4px 32px rgba(121,103,255,0.07)',
           alignItems: 'stretch',
         }}>
 
-          {/* LEFT — même hauteur que la colonne droite, scroll interne */}
-          <div style={{ borderRight: '1.5px solid #EDEAFF', padding: '8px 0', overflowY: 'auto' }}>
+          {/* LEFT — Hidden on very small screens, or we can make it a dropdown/tabs */}
+          <div className="hidden md:block" style={{ borderRight: '1.5px solid #EDEAFF', padding: '8px 0', overflowY: 'auto', maxHeight: 600 }}>
             {SECTORS.map((s, i) => {
               const SIcon = s.icon;
               const isActive = i === active;
@@ -548,19 +549,19 @@ function SectorsPanel() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -8 }}
               transition={{ duration: 0.22 }}
-              style={{ padding: '40px 44px' }}
+              style={{ padding: 'clamp(24px, 5vw, 44px)' }}
             >
               {/* title row */}
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 24 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
                 <div style={{ width: 48, height: 48, background: '#F0EEFF', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                   <Icon size={22} color="#7967FF" />
                 </div>
-                <div>
+                <div style={{ flex: 1, minWidth: 200 }}>
                   <h3 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 22, color: '#111', lineHeight: 1.2 }}>{sector.label}</h3>
                   <p style={{ fontSize: 13, color: '#999', marginTop: 3 }}>{sector.sub}</p>
                 </div>
                 <div style={{
-                  marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 6,
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
                   background: '#F0EEFF', borderRadius: 99, padding: '6px 14px',
                   fontSize: 12, fontWeight: 700, color: '#7967FF', whiteSpace: 'nowrap',
                 }}>
@@ -570,7 +571,7 @@ function SectorsPanel() {
 
               <div style={{ height: 1, background: '#EDEAFF', marginBottom: 24 }} />
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24, marginBottom: 24 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 32, marginBottom: 24 }}>
                 {/* défis */}
                 <div>
                   <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#bbb', marginBottom: 12 }}>Vos problèmes au quotidien</p>
@@ -639,13 +640,13 @@ function SectorsPanel() {
 /* ─── page ───────────────────────────────────────────── */
 export default function HomePage() {
   return (
-    <main className="bg-white text-[#111]" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+    <main className="bg-white text-[#111]" style={{ fontFamily: 'DM Sans, sans-serif', overflowX: 'hidden' }}>
 
       {/* ══ HERO ═════════════════════════════════════════ */}
       <section style={{ position: 'relative', overflow: 'hidden', background: '#fff' }}>
         <div aria-hidden style={{
           position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
-          width: 800, height: 500, borderRadius: '50%',
+          width: 'min(800px, 100vw)', height: 500, borderRadius: '50%',
           background: 'radial-gradient(ellipse, rgba(121,103,255,0.09) 0%, transparent 70%)',
           pointerEvents: 'none', zIndex: 0,
         }} />
@@ -655,19 +656,21 @@ export default function HomePage() {
           maxWidth: 860, margin: '0 auto',
           minHeight: 'calc(100vh - 64px)',
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-          padding: '80px 24px',
+          padding: 'clamp(40px, 10vh, 80px) 24px',
           textAlign: 'center',
         }}>
           <motion.h1
             {...up(0)}
             style={{
               fontFamily: 'Clash Display, sans-serif',
-              fontSize: 'clamp(2.6rem, 7vw, 5.5rem)',
+              fontSize: 'clamp(2.4rem, 8vw, 5.5rem)',
               fontWeight: 600,
-              lineHeight: 1.0,
+              lineHeight: 1.05,
               letterSpacing: '-0.025em',
               color: '#111',
               margin: '0 auto',
+              width: '100%',
+              maxWidth: '100%'
             }}
           >
             L'Intelligence Artificielle{' '}
@@ -682,7 +685,7 @@ export default function HomePage() {
 
           <motion.p
             {...up(0.1)}
-            style={{ maxWidth: 640, marginTop: 28, fontSize: 18, lineHeight: 1.75, color: '#555', margin: '28px auto 0' }}
+            style={{ maxWidth: 640, marginTop: 28, fontSize: 'clamp(16px, 4vw, 18px)', lineHeight: 1.75, color: '#555', margin: '28px auto 0' }}
           >
             Nous transformons vos problèmes quotidiens en solutions simples, rentables et intelligentes pour les PME au <strong style={{ color: '#111' }}>Cameroun</strong> et en <strong style={{ color: '#111' }}>Afrique Francophone</strong>.
           </motion.p>
@@ -730,6 +733,8 @@ export default function HomePage() {
               background: '#FAFAFA', border: '1.5px solid #EDEAFF',
               borderRadius: 99, padding: '10px 20px',
               fontSize: 13, color: '#666',
+              flexWrap: 'wrap',
+              justifyContent: 'center'
             }}
           >
             <div style={{ display: 'flex' }}>
@@ -755,10 +760,10 @@ export default function HomePage() {
 
       {/* ══ STATS ════════════════════════════════════════ */}
       <div style={{ borderTop: '1.5px solid #F0EEFF', borderBottom: '1.5px solid #F0EEFF', background: '#FAFAFA' }}>
-        <div style={{ maxWidth: 1080, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', padding: '0 24px' }}>
+        <div style={{ maxWidth: 1080, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', padding: '0 24px' }}>
           {STATS.map(({ v, l }, i) => (
-            <div key={v} style={{ padding: '44px 24px', textAlign: 'center', borderRight: i < 2 ? '1px solid #E8E6FF' : 'none' }}>
-              <p style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 44, color: '#7967FF' }}>{v}</p>
+            <div key={v} style={{ padding: '44px 24px', textAlign: 'center', borderRight: i < STATS.length - 1 ? '1px solid #E8E6FF' : 'none' }}>
+              <p style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(32px, 5vw, 44px)', color: '#7967FF' }}>{v}</p>
               <p style={{ fontSize: 14, color: '#777', marginTop: 6, lineHeight: 1.5 }}>{l}</p>
             </div>
           ))}
