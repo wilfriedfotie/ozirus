@@ -1,6 +1,9 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, Suspense } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import { 
   Plus, Trash2, Printer, 
   Settings, User, FileText, Briefcase, 
@@ -10,6 +13,9 @@ import {
   Globe, Shield, Smartphone, Server,
   BarChart3, Target, Rocket
 } from 'lucide-react';
+
+/* ─── AUTH CONFIG ─────────────────────────────────── */
+const ADMIN_SECRET_KEY = 'ozirus_admin_2026';
 
 /* ─── CATALOG DATA ────────────────────────────────── */
 const CATALOG = [
@@ -46,6 +52,18 @@ interface LineItem {
 }
 
 export default function AdminPage() {
+  return (
+    <Suspense fallback={null}>
+      <AdminContent />
+    </Suspense>
+  );
+}
+
+function AdminContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
+
   const [docType, setDocType] = useState<DocType>('PROPOSITION COMMERCIALE');
   const [docNumber, setDocNumber] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -55,7 +73,6 @@ export default function AdminPage() {
   const [clientCompany, setClientCompany] = useState('');
   const [clientEmail, setClientEmail] = useState('');
   const [clientAddress, setClientAddress] = useState('');
-  const [clientNUI, setClientNUI] = useState('');
 
   const [projectContext, setProjectContext] = useState('À la suite de nos échanges, nous avons identifié une opportunité majeure de transformation digitale pour votre structure, visant à automatiser vos opérations et maximiser votre impact sur le marché.');
   const [projectGoals, setProjectGoals] = useState('<ul><li>Optimisation des processus opérationnels</li><li>Amélioration de l\'expérience utilisateur client</li><li>Scalabilité de l\'infrastructure technique</li><li>Sécurisation des données critiques</li></ul>');
@@ -68,6 +85,24 @@ export default function AdminPage() {
   const [timeline, setTimeline] = useState('6 à 12 semaines');
   const [activeTab, setActiveTab] = useState<'CLIENT' | 'PROJET' | 'FINANCE' | 'LEGAL'>('CLIENT');
   const [currency, setCurrency] = useState<'FCFA' | '€' | '$'>('FCFA');
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  // Authorization check
+  useEffect(() => {
+    const key = searchParams.get('key');
+    const storedAuth = localStorage.getItem('ozirus_admin_auth');
+
+    if (key === ADMIN_SECRET_KEY) {
+      localStorage.setItem('ozirus_admin_auth', 'true');
+      setIsAuthorized(true);
+      router.replace('/admin');
+    } else if (storedAuth === 'true') {
+      setIsAuthorized(true);
+    } else {
+      setIsAuthorized(false);
+      router.push('/');
+    }
+  }, [searchParams, router]);
 
   // Defaults
   useEffect(() => {
@@ -106,6 +141,44 @@ export default function AdminPage() {
     const formatted = new Intl.NumberFormat('fr-FR').format(p);
     return currency === 'FCFA' ? `${formatted} FCFA` : `${currency} ${formatted}`;
   };
+
+  const exportToPDF = async () => {
+    setIsGenerating(true);
+    try {
+      const pages = document.querySelectorAll('.a4-page');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+
+      for (let i = 0; i < pages.length; i++) {
+        const page = pages[i] as HTMLElement;
+        
+        const canvas = await html2canvas(page, {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          backgroundColor: '#FFFFFF',
+          windowWidth: 794, 
+        });
+
+        const imgData = canvas.toDataURL('image/jpeg', 1.0);
+        
+        if (i > 0) pdf.addPage();
+        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+      }
+
+      const fileName = `${docType.split(' ')[0]}_${clientCompany || 'OZIRUS'}_${docNumber}.pdf`.replace(/\s+/g, '_');
+      pdf.save(fileName);
+    } catch (err) {
+      console.error("PDF Generation error:", err);
+      alert("Erreur lors de la génération du PDF.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  if (isAuthorized === null) return null;
+  if (isAuthorized === false) return null;
 
   return (
     <div style={{ display: 'flex', height: '100vh', background: '#F1F5F9', overflow: 'hidden' }}>
@@ -283,8 +356,13 @@ export default function AdminPage() {
             <span style={{ color: '#64748B', fontWeight: 600 }}>Total à régler</span>
             <span style={{ fontWeight: 900, color: '#0F172A', fontSize: 18 }}>{formatPrice(netAPayer)}</span>
           </div>
-          <button onClick={() => window.print()} style={{ width: '100%', background: '#7967FF', color: '#FFF', border: 'none', borderRadius: 12, padding: '14px', fontSize: 14, fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, boxShadow: '0 4px 12px rgba(121,103,255,0.3)' }}>
-            <Printer size={18} /> EXPORTER EN PDF (A4)
+          <button 
+            onClick={exportToPDF} 
+            disabled={isGenerating}
+            style={{ width: '100%', background: '#7967FF', color: '#FFF', border: 'none', borderRadius: 12, padding: '14px', fontSize: 14, fontWeight: 800, cursor: isGenerating ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, boxShadow: '0 4px 12px rgba(121,103,255,0.3)', opacity: isGenerating ? 0.7 : 1 }}
+          >
+            {isGenerating ? <Clock size={18} className="animate-spin" /> : <Rocket size={18} />}
+            {isGenerating ? 'GÉNÉRATION...' : 'GÉNÉRER LE PDF PRO'}
           </button>
         </div>
       </div>
