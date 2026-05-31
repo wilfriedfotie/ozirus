@@ -1,0 +1,10 @@
+[build]
+  command = "pnpm run build"
+  publish = "out"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+  # On désactive le plugin car output: 'export' génère déjà un site statique
+  # et le plugin v5 a un conflit connu avec ce mode.
+  [plugins.inputs]
+    disable_plugin = true
