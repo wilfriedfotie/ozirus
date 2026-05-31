@@ -5,15 +5,28 @@ import { motion } from 'framer-motion';
 const footerLinks = [
   {
     title: 'Solutions',
-    links: ['SaaS sur mesure', 'Applications Mobiles', 'IA & Automatisation', 'Design & UI/UX'],
-  },
-  {
-    title: 'Secteurs',
-    links: ['Commerce & Retail', 'Agroalimentaire', 'Pharmacies', 'Hôtellerie'],
+    links: [
+      { label: 'SaaS sur mesure', href: '#' },
+      { label: 'Applications Mobiles', href: '#' },
+      { label: 'IA & Automatisation', href: '#' },
+      { label: 'Design & UI/UX', href: '#' }
+    ],
   },
   {
     title: 'Entreprise',
-    links: ['À propos', 'Cas clients', 'Contact', 'Blog'],
+    links: [
+      { label: 'À propos', href: '#' },
+      { label: 'Cas clients', href: '#' },
+      { label: 'Contact', href: '#' },
+      { label: 'Blog', href: '#' }
+    ],
+  },
+  {
+    title: 'Légal',
+    links: [
+      { label: 'Conditions', href: '/terms' },
+      { label: 'Confidentialité', href: '/privacy' }
+    ],
   },
 ];
 
@@ -96,13 +109,13 @@ export default function Footer() {
                 }}>{group.title}</p>
                 {group.links.map((link) => (
                   <a
-                    key={link}
-                    href="#"
+                    key={link.label}
+                    href={link.href}
                     style={{ fontSize: '0.875rem', color: '#475569', textDecoration: 'none', fontWeight: 500, transition: 'color 0.2s' }}
                     onMouseEnter={e => (e.currentTarget.style.color = '#1A56DB')}
                     onMouseLeave={e => (e.currentTarget.style.color = '#475569')}
                   >
-                    {link}
+                    {link.label}
                   </a>
                 ))}
               </div>
