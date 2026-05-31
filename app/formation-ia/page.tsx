@@ -73,18 +73,27 @@ const TESTIMONIALS = [
   { quote: 'En 3 mois j\'avais 4 clients récurrents. Aujourd\'hui je gère une petite équipe de 2 personnes. La formation m\'a donné le système.', name: 'Christelle M.', city: 'Douala', result: '4 clients récurrents' },
 ];
 
-function Countdown() {
-  const [timeLeft, setTimeLeft] = useState({ d: 4, h: 12, m: 45, s: 22 });
+function Countdown({ targetDate }: { targetDate: Date }) {
+  const [timeLeft, setTimeLeft] = useState({ d: 0, h: 0, m: 0, s: 0 });
+
   useEffect(() => {
-    const t = setInterval(() => {
-      setTimeLeft(prev => {
-        let { d, h, m, s } = prev;
-        if (s > 0) s--; else if (m > 0) { m--; s = 59; } else if (h > 0) { h--; m = 59; s = 59; } else if (d > 0) { d--; h = 23; m = 59; s = 59; }
-        return { d, h, m, s };
-      });
-    }, 1000);
+    const calculateTimeLeft = () => {
+      const difference = targetDate.getTime() - new Date().getTime();
+      if (difference > 0) {
+        setTimeLeft({
+          d: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          h: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          m: Math.floor((difference / 1000 / 60) % 60),
+          s: Math.floor((difference / 1000) % 60),
+        });
+      }
+    };
+
+    calculateTimeLeft();
+    const t = setInterval(calculateTimeLeft, 1000);
     return () => clearInterval(t);
-  }, []);
+  }, [targetDate]);
+
   const pad = (n: number) => n.toString().padStart(2, '0');
   return (
     <span style={{ fontFamily: 'monospace', fontWeight: 700 }}>
@@ -93,15 +102,88 @@ function Countdown() {
   );
 }
 
+function NeonButton({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <motion.a
+      href={href}
+      whileHover={{ scale: 1.02, boxShadow: '0 12px 40px rgba(121,103,255,0.5)' }}
+      whileTap={{ scale: 0.98 }}
+      style={{
+        position: 'relative',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '18px 40px',
+        borderRadius: 14,
+        background: 'linear-gradient(135deg, #7967FF 0%, #6654F0 100%)',
+        color: '#fff',
+        fontSize: 18,
+        fontWeight: 700,
+        textDecoration: 'none',
+        overflow: 'hidden',
+        boxShadow: '0 8px 32px rgba(121,103,255,0.3)',
+      }}
+    >
+      {/* Subtle shine effect */}
+      <motion.div
+        animate={{
+          left: ['-100%', '200%'],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: "linear",
+          repeatDelay: 1
+        }}
+        style={{
+          position: 'absolute',
+          top: 0,
+          width: '50%',
+          height: '100%',
+          background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)',
+          zIndex: 1,
+        }}
+      />
+
+      {/* Content */}
+      <span style={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', gap: 12 }}>
+        {children}
+      </span>
+    </motion.a>
+  );
+}
+
 export default function FormationPage() {
+  const [now, setNow] = useState<Date | null>(null);
+  
+  useEffect(() => {
+    setNow(new Date());
+  }, []);
+
+  // Configuration de la session
+  const config = {
+    prixPromo: '195 000',
+    prixOriginal: '450 000',
+    placesTotales: 25,
+    placesPrises: 14,
+    prochaineSession: new Date(2026, 5, 15), // 15 Juin 2026
+  };
+
+  const placesRestantes = config.placesTotales - config.placesPrises;
+  const dateSessionStr = config.prochaineSession.toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+
   return (
     <main style={{ background: '#0A0A0F', color: '#fff', fontFamily: 'DM Sans, sans-serif' }}>
 
       {/* ── URGENCE BAR ── */}
       <div style={{ background: 'linear-gradient(90deg, #7967FF, #6654F0)', padding: '10px 24px', textAlign: 'center' }}>
         <p style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>
-          ⚡ Session du 15 Juin 2026 — <span style={{ opacity: 0.85 }}>Il ne reste que</span> <strong>11 places</strong> <span style={{ opacity: 0.85 }}>sur 25 — Fermeture dans</span>{' '}
-          <Countdown />
+          ⚡ Session du {dateSessionStr} — <span style={{ opacity: 0.85 }}>Il ne reste que</span> <strong>{placesRestantes} places</strong> <span style={{ opacity: 0.85 }}>sur {config.placesTotales} — Fermeture dans</span>{' '}
+          {now && <Countdown targetDate={config.prochaineSession} />}
         </p>
       </div>
 
@@ -138,10 +220,45 @@ export default function FormationPage() {
             <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop" alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
           </motion.div>
 
-          <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a href="#inscription" style={{ background: '#7967FF', color: '#fff', padding: '16px 32px', borderRadius: 10, fontSize: 16, fontWeight: 700, textDecoration: 'none', boxShadow: '0 4px 20px rgba(121,103,255,0.3)' }}>Réserver ma place maintenant</a>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, color: 'rgba(255,255,255,0.4)' }}>
-              <Users size={16} /> 14 entrepreneurs déjà inscrits
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
+            <NeonButton href="#inscription">
+              Réserver ma place maintenant
+              <ArrowRight size={20} />
+            </NeonButton>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, background: 'rgba(255,255,255,0.03)', padding: '8px 16px', borderRadius: 99, border: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                {[1, 2, 3, 4].map((i) => (
+                  <div
+                    key={i}
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: '50%',
+                      background: `hsl(${250 + i * 20}, 70%, 60%)`,
+                      border: '2px solid #0A0A0F',
+                      marginLeft: i === 1 ? 0 : -10,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: 10,
+                      fontWeight: 700,
+                    }}
+                  >
+                    {['A', 'M', 'K', 'S'][i - 1]}
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <motion.span
+                  animate={{ scale: [1, 1.3, 1], opacity: [1, 0.5, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  style={{ width: 6, height: 6, background: '#22c55e', borderRadius: '50%', boxShadow: '0 0 10px #22c55e' }}
+                />
+                <span style={{ fontSize: 14, fontWeight: 500, color: 'rgba(255,255,255,0.7)' }}>
+                  <strong style={{ color: '#fff' }}>{config.placesPrises} entrepreneurs</strong> déjà inscrits
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -174,7 +291,7 @@ export default function FormationPage() {
         <div style={{ maxWidth: 860, margin: '0 auto' }}>
           <div style={{ background: '#111', borderRadius: 24, padding: '48px', border: '1px solid rgba(121,103,255,0.15)', position: 'relative', overflow: 'hidden' }}>
             <div style={{ position: 'absolute', top: 0, right: 0, padding: '12px 24px', background: '#7967FF', fontSize: 12, fontWeight: 800, borderRadius: '0 0 0 16px' }}>OPPORTUNITÉ 2026</div>
-            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontSize: 28, fontWeight: 600, marginBottom: 32, maxWidth: 500 }}>Pourquoi lancer votre agence IA au Cameroun maintenant ?</h2>
+            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontSize: 28, fontWeight: 600, marginBottom: 32, maxWidth: 500 }}>Pourquoi lancer votre agence IA en Afrique maintenant ?</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 32 }}>
               {[
                 { t: 'Adoption massive', b: 'Les PME locales cherchent désespérément à réduire leurs coûts face à l\'inflation.' },
@@ -303,16 +420,16 @@ export default function FormationPage() {
       <section id="inscription" style={{ padding: '80px 24px 120px' }}>
         <div style={{ maxWidth: 600, margin: '0 auto', background: '#7967FF', borderRadius: 24, padding: '56px 40px', textAlign: 'center', boxShadow: '0 40px 100px rgba(121,103,255,0.3)' }}>
           <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontSize: 32, fontWeight: 600, marginBottom: 16 }}>Rejoindre la session</h2>
-          <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: 40, fontSize: 16 }}>Prêt à changer de dimension ? Réservez votre place pour la session du 15 Juin.</p>
+          <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: 40, fontSize: 16 }}>Prêt à changer de dimension ? Réservez votre place pour la session du {config.prochaineSession.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}.</p>
 
           <div style={{ background: 'rgba(255,255,255,0.1)', borderRadius: 16, padding: 24, marginBottom: 40, textAlign: 'left' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
               <span style={{ fontSize: 14 }}>Prix de la formation</span>
-              <span style={{ fontSize: 14, textDecoration: 'line-through', opacity: 0.6 }}>450 000 FCFA</span>
+              <span style={{ fontSize: 14, textDecoration: 'line-through', opacity: 0.6 }}>{config.prixOriginal} FCFA</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: 18, fontWeight: 700 }}>Tarif exceptionnel</span>
-              <span style={{ fontSize: 28, fontWeight: 900 }}>195 000 FCFA</span>
+              <span style={{ fontSize: 28, fontWeight: 900 }}>{config.prixPromo} FCFA</span>
             </div>
           </div>
 
