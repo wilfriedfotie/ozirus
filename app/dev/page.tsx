@@ -438,529 +438,417 @@ function OffersPanel() {
 function IPhone({ children, light = false }: { children: React.ReactNode; light?: boolean }) {
   const W = 270, H = 560, R = 48, bz = 11, sR = 37;
   const tc = light ? '#111' : '#fff';
-  const sx = bz, sy = bz, sw = W - bz * 2, sh = H - bz * 2;
+  const bleed = light ? 0 : 2;
+  const sx = bz - bleed, sy = bz - bleed, sw = W - (bz - bleed) * 2, sh = H - (bz - bleed) * 2;
+  const holeX = bz, holeY = bz, holeW = W - bz * 2, holeH = H - bz * 2;
+  const statusH = 44;
+  const islandW = Math.round(holeW * 0.27);
+  const islandH = Math.round(holeW * 0.086);
+  const islandTop = 11;
+  const statusPadX = 21;
   return (
-    <div style={{ position: 'relative', width: W, height: H, flexShrink: 0 }}>
-      {/* shadow */}
-      <div style={{ position: 'absolute', inset: 6, borderRadius: R - 2, boxShadow: '0 40px 70px rgba(0,0,0,0.38), 0 10px 28px rgba(0,0,0,0.22)', zIndex: 0 }} />
+    <div style={{ position: 'relative', width: W, height: H, flexShrink: 0, maxWidth: '76vw' }}>
+      <div style={{ position: 'absolute', inset: 8, borderRadius: R - 2, boxShadow: '0 26px 60px rgba(17,24,39,0.18), 0 8px 20px rgba(17,24,39,0.10)', zIndex: 0 }} />
 
-      {/* screen content — zIndex 1, below chassis overlay */}
-      <div style={{ position: 'absolute', top: sy, left: sx, width: sw, height: sh, borderRadius: sR, overflow: 'hidden', zIndex: 1 }}>
+      <div style={{ position: 'absolute', top: sy, left: sx, width: sw, height: sh, borderRadius: sR, overflow: 'hidden', zIndex: 1, background: light ? '#F5F5F7' : '#0B0B0C' }}>
         {children}
-        <div style={{ position: 'absolute', top: 12, left: '50%', transform: 'translateX(-50%)', width: 96, height: 30, background: '#000', borderRadius: 99, zIndex: 20 }} />
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 52, zIndex: 19, display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', padding: '0 20px 7px', pointerEvents: 'none' }}>
-          <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '-0.3px', color: tc }}>9:41</span>
-          <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
-            <svg width="14" height="10" viewBox="0 0 14 10" fill={tc}><rect x="0" y="3" width="2.5" height="7" rx="1"/><rect x="3.5" y="2" width="2.5" height="8" rx="1"/><rect x="7" y="0" width="2.5" height="10" rx="1"/><rect x="10.5" y="1" width="2.5" height="8" rx="1" opacity="0.35"/></svg>
-            <svg width="14" height="10" viewBox="0 0 14 10" fill={tc}><path d="M7 1.5C4.8 1.5 2.8 2.4 1.4 3.9L0 2.4C1.8.9 4.3 0 7 0s5.2.9 7 2.4L12.6 3.9C11.2 2.4 9.2 1.5 7 1.5zm0 3.5C5.6 5 4.3 5.6 3.4 6.6L2 5.1C3.3 3.8 5.1 3 7 3s3.7.8 5 2.1L10.6 6.6C9.7 5.6 8.4 5 7 5z"/><circle cx="7" cy="8.5" r="1.5"/></svg>
-            <div style={{ width: 22, height: 11, border: `1.5px solid ${tc}`, borderRadius: 3, padding: 1.5, display: 'flex', alignItems: 'center' }}>
+        <div style={{ position: 'absolute', top: islandTop, left: '50%', transform: 'translateX(-50%)', width: islandW, height: islandH, background: '#050505', borderRadius: islandH / 2, zIndex: 20, boxShadow: '0 1px 1px rgba(255,255,255,0.12) inset' }} />
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: statusH, zIndex: 19, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: `9px ${statusPadX}px 0`, pointerEvents: 'none' }}>
+          <span style={{ fontSize: 11.5, lineHeight: '12px', fontWeight: 700, color: tc }}>9:41</span>
+          <div style={{ display: 'flex', gap: 4.5, alignItems: 'center', height: 12 }}>
+            <svg width="13" height="9" viewBox="0 0 14 10" fill={tc}><rect x="0" y="3" width="2.5" height="7" rx="1"/><rect x="3.5" y="2" width="2.5" height="8" rx="1"/><rect x="7" y="0" width="2.5" height="10" rx="1"/><rect x="10.5" y="1" width="2.5" height="8" rx="1" opacity="0.35"/></svg>
+            <svg width="13" height="9" viewBox="0 0 14 10" fill={tc}><path d="M7 1.5C4.8 1.5 2.8 2.4 1.4 3.9L0 2.4C1.8.9 4.3 0 7 0s5.2.9 7 2.4L12.6 3.9C11.2 2.4 9.2 1.5 7 1.5zm0 3.5C5.6 5 4.3 5.6 3.4 6.6L2 5.1C3.3 3.8 5.1 3 7 3s3.7.8 5 2.1L10.6 6.6C9.7 5.6 8.4 5 7 5z"/><circle cx="7" cy="8.5" r="1.5"/></svg>
+            <div style={{ width: 20, height: 10, border: `1.35px solid ${tc}`, borderRadius: 3, padding: 1.3, display: 'flex', alignItems: 'center' }}>
               <div style={{ width: '72%', height: '100%', background: tc, borderRadius: 1 }}/>
             </div>
           </div>
         </div>
-        <div style={{ position: 'absolute', bottom: 7, left: '50%', transform: 'translateX(-50%)', width: 90, height: 4, background: tc, borderRadius: 99, opacity: 0.22, zIndex: 20, pointerEvents: 'none' }}/>
+        <div style={{ position: 'absolute', bottom: 8, left: '50%', transform: 'translateX(-50%)', width: 90, height: 4, background: tc, borderRadius: 99, opacity: 0.18, zIndex: 20, pointerEvents: 'none' }}/>
       </div>
 
-      {/* chassis SVG — evenodd punch-through: only the bezel ring is drawn, screen area is transparent */}
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ position: 'absolute', inset: 0, zIndex: 2, pointerEvents: 'none' }} fill="none">
         <defs>
-          <linearGradient id="chA" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#DADADA"/><stop offset="40%" stopColor="#B8B8B8"/><stop offset="100%" stopColor="#888"/>
-          </linearGradient>
           <clipPath id="outerClip"><rect x="0" y="0" width={W} height={H} rx={R}/></clipPath>
         </defs>
-        {/* bezel ring via evenodd — outer shape minus screen hole */}
         <path
           fillRule="evenodd"
-          fill="url(#chA)"
+          fill={light ? '#101012' : '#050506'}
           d={[
             `M${R} 1 L${W-R} 1 Q${W-1} 1 ${W-1} ${R} L${W-1} ${H-R} Q${W-1} ${H-1} ${W-R} ${H-1} L${R} ${H-1} Q1 ${H-1} 1 ${H-R} L1 ${R} Q1 1 ${R} 1 Z`,
-            `M${sx+sR} ${sy} L${sx+sw-sR} ${sy} Q${sx+sw} ${sy} ${sx+sw} ${sy+sR} L${sx+sw} ${sy+sh-sR} Q${sx+sw} ${sy+sh} ${sx+sw-sR} ${sy+sh} L${sx+sR} ${sy+sh} Q${sx} ${sy+sh} ${sx} ${sy+sh-sR} L${sx} ${sy+sR} Q${sx} ${sy} ${sx+sR} ${sy} Z`,
+            `M${holeX+sR} ${holeY} L${holeX+holeW-sR} ${holeY} Q${holeX+holeW} ${holeY} ${holeX+holeW} ${holeY+sR} L${holeX+holeW} ${holeY+holeH-sR} Q${holeX+holeW} ${holeY+holeH} ${holeX+holeW-sR} ${holeY+holeH} L${holeX+sR} ${holeY+holeH} Q${holeX} ${holeY+holeH} ${holeX} ${holeY+holeH-sR} L${holeX} ${holeY+sR} Q${holeX} ${holeY} ${holeX+sR} ${holeY} Z`,
           ].join(' ')}
         />
-        {/* left highlight */}
-        <rect x="1" y="1" width={bz+4} height={H-2} fill="rgba(255,255,255,0.28)" clipPath="url(#outerClip)"/>
-        {/* right shadow */}
-        <rect x={W-bz-5} y="1" width={bz+4} height={H-2} fill="rgba(0,0,0,0.15)" clipPath="url(#outerClip)"/>
-        {/* outer stroke */}
-        <rect x="1" y="1" width={W-2} height={H-2} rx={R} fill="none" stroke="#888" strokeWidth="0.8"/>
-        {/* inner screen border */}
-        <rect x={sx} y={sy} width={sw} height={sh} rx={sR} fill="none" stroke="rgba(0,0,0,0.18)" strokeWidth="1"/>
-        {/* side buttons */}
-        <rect x="-2" y="120" width="4" height="34" rx="2" fill="#B0B0B0" stroke="#909090" strokeWidth="0.5"/>
-        <rect x="-2" y="168" width="4" height="56" rx="2" fill="#B0B0B0" stroke="#909090" strokeWidth="0.5"/>
-        <rect x="-2" y="236" width="4" height="56" rx="2" fill="#B0B0B0" stroke="#909090" strokeWidth="0.5"/>
-        <rect x={W-2} y="170" width="4" height="72" rx="2" fill="#B0B0B0" stroke="#909090" strokeWidth="0.5"/>
+        <rect x="2" y="2" width={W-4} height={H-4} rx={R - 1} fill="none" stroke={light ? 'rgba(255,255,255,0.22)' : 'rgba(255,255,255,0.035)'} strokeWidth="1"/>
+        {light && <rect x={holeX} y={holeY} width={holeW} height={holeH} rx={sR} fill="none" stroke="rgba(0,0,0,0.08)" strokeWidth="1"/>}
+        <rect x="-2" y="124" width="4" height="34" rx="2" fill="#1C1C1E"/>
+        <rect x="-2" y="174" width="4" height="54" rx="2" fill="#1C1C1E"/>
+        <rect x="-2" y="240" width="4" height="54" rx="2" fill="#1C1C1E"/>
+        <rect x={W-2} y="174" width="4" height="72" rx="2" fill="#1C1C1E"/>
       </svg>
     </div>
   );
 }
 
-/* ══ APP 1 — NeoBank  dark navy + emerald ══ */
+const appText = '#101014';
+const appMuted = '#8E8E93';
+const appLine = '#ECECF0';
+const appBg = '#F5F5F7';
+const appCardShadow = '0 8px 22px rgba(17,24,39,0.055)';
+const appSafeBottom = 26;
+
+function AppShell({ children, tint = '#007AFF', bg = appBg, color = appText }: { children: React.ReactNode; tint?: string; bg?: string; color?: string }) {
+  return (
+    <div style={{ position: 'relative', background: bg, height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'DM Sans,sans-serif', padding: `48px 13px ${appSafeBottom}px`, overflow: 'hidden', color }}>
+      <div style={{ position: 'absolute', inset: 0, background: bg, pointerEvents: 'none' }} />
+      <div style={{ position: 'relative', zIndex: 1, height: '100%', display: 'flex', flexDirection: 'column', gap: 7, minHeight: 0 }}>
+        {children}
+      </div>
+      <div style={{ position: 'absolute', right: 18, bottom: 18, width: 6, height: 6, borderRadius: '50%', background: tint, opacity: 0.14 }} />
+    </div>
+  );
+}
+
+function AppCard({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
+  return <div style={{ background: '#fff', border: `1px solid ${appLine}`, borderRadius: 14, boxShadow: appCardShadow, ...style }}>{children}</div>;
+}
+
+function RoundIcon({ children, bg = '#F2F2F7', color }: { children: React.ReactNode; bg?: string; color?: string }) {
+  return <div style={{ width: 24, height: 24, borderRadius: 9, background: bg, color, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{children}</div>;
+}
+
+function AppTop({ title, subtitle, icon, tint, color = appText, muted = appMuted, flipped = false }: { title: string; subtitle: string; icon: React.ReactNode; tint: string; color?: string; muted?: string; flipped?: boolean }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 34, flexShrink: 0 }}>
+      <div>
+        <p style={{ fontSize: flipped ? 18 : 9, lineHeight: flipped ? 1.05 : undefined, fontWeight: flipped ? 800 : undefined, color: flipped ? color : muted, marginBottom: flipped ? 2 : 2 }}>{flipped ? title : subtitle}</p>
+        <h3 style={{ fontSize: flipped ? 9 : 18, lineHeight: 1.05, fontWeight: flipped ? 500 : 800, color: flipped ? muted : color }}>{flipped ? subtitle : title}</h3>
+      </div>
+      <RoundIcon bg="#fff">{icon}</RoundIcon>
+    </div>
+  );
+}
+
+function BottomTabs({ tint, items }: { tint: string; items: React.ReactNode[] }) {
+  return (
+    <div style={{ marginTop: 'auto', background: 'rgba(255,255,255,0.92)', border: `1px solid ${appLine}`, borderRadius: 17, padding: '6px 12px', display: 'grid', gridTemplateColumns: `repeat(${items.length}, 1fr)`, alignItems: 'center', boxShadow: '0 8px 20px rgba(17,24,39,0.075)', backdropFilter: 'blur(14px)', flexShrink: 0 }}>
+      {items.map((item, i) => (
+        <div key={i} style={{ height: 26, borderRadius: 12, color: i === 0 ? tint : '#BFC0C7', background: i === 0 ? `${tint}14` : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', transform: 'scale(0.9)' }}>{item}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function NeoBankApp() {
   return (
-    <div style={{ background: 'linear-gradient(160deg,#080C1A 0%,#0D1224 100%)', height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'DM Sans,sans-serif', paddingTop: 52, overflow: 'hidden' }}>
-      <div style={{ padding: '12px 20px 10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <AppShell tint="#0A84FF" bg="#F7F7F8">
+      <AppTop title="Wallet" subtitle="Bonjour Kofi" tint="#0A84FF" icon={<Bell size={15} color="#0A84FF" />} />
+      <AppCard style={{ aspectRatio: '1.586 / 1', padding: 13, background: '#111114', color: '#fff', borderColor: '#111114', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderRadius: 15, flexShrink: 0 }}>
         <div>
-          <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', marginBottom: 2 }}>Solde total</p>
-          <p style={{ fontSize: 28, fontWeight: 800, color: '#fff', letterSpacing: '-1.5px', lineHeight: 1 }}>847 500<span style={{ fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.4)', marginLeft: 4 }}>FCFA</span></p>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: 'rgba(52,211,153,0.15)', borderRadius: 99, padding: '3px 8px', marginTop: 5 }}>
-            <TrendingUp size={9} color="#34d399" />
-            <span style={{ fontSize: 9, color: '#34d399', fontWeight: 700 }}>+4.2% ce mois</span>
+          <p style={{ fontSize: 9.5, color: 'rgba(255,255,255,0.52)', marginBottom: 5 }}>Solde disponible</p>
+          <p style={{ fontSize: 21, fontWeight: 800, lineHeight: 1 }}>847 500 <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.45)' }}>FCFA</span></p>
+          <div style={{ height: 28, display: 'flex', alignItems: 'end', gap: 4, marginTop: 10 }}>
+            {[13, 19, 16, 23, 18, 26, 22, 28].map((h, i) => (
+              <div key={i} style={{ flex: 1, height: h, borderRadius: 3, background: i === 7 ? '#0A84FF' : 'rgba(255,255,255,0.16)' }} />
+            ))}
           </div>
         </div>
-        <div style={{ width: 42, height: 42, borderRadius: '50%', background: 'linear-gradient(135deg,#34d399,#059669)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 800, color: '#fff', boxShadow: '0 0 0 3px rgba(52,211,153,0.2)' }}>KF</div>
-      </div>
-      <div style={{ margin: '4px 16px 14px', borderRadius: 22, padding: '18px 20px', position: 'relative', overflow: 'hidden', background: 'linear-gradient(130deg,#1C3B5A 0%,#0F2540 55%,#071525 100%)', border: '1px solid rgba(255,255,255,0.07)' }}>
-        <div style={{ position: 'absolute', top: -40, right: -40, width: 150, height: 150, borderRadius: '50%', background: 'radial-gradient(circle,rgba(52,211,153,0.15) 0%,transparent 65%)' }}/>
-        <div style={{ position: 'absolute', bottom: -25, left: -25, width: 110, height: 110, borderRadius: '50%', background: 'radial-gradient(circle,rgba(121,103,255,0.12) 0%,transparent 65%)' }}/>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 24, position: 'relative' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
           <div>
-            <p style={{ fontSize: 8, color: 'rgba(255,255,255,0.35)', marginBottom: 5, letterSpacing: '0.12em', textTransform: 'uppercase' }}>NeoBank Visa Infinite</p>
-            <div style={{ display: 'flex', gap: 7 }}>
-              {['••••','••••','••••','4829'].map(g=><span key={g} style={{ fontSize: 11, color: 'rgba(255,255,255,0.82)', letterSpacing: '0.18em', fontWeight: 600 }}>{g}</span>)}
-            </div>
+            <p style={{ fontSize: 8.5, color: 'rgba(255,255,255,0.42)', marginBottom: 5 }}>Carte principale</p>
+            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em' }}>•••• 4829</p>
           </div>
-          <div style={{ position: 'relative', width: 40, height: 26 }}>
-            <div style={{ position: 'absolute', left: 0, width: 26, height: 26, borderRadius: '50%', background: '#FBBF24', opacity: 0.92 }}/>
-            <div style={{ position: 'absolute', left: 14, width: 26, height: 26, borderRadius: '50%', background: '#F97316', opacity: 0.88 }}/>
-          </div>
+          <div style={{ width: 31, height: 20, borderRadius: 6, border: '1px solid rgba(255,255,255,0.22)' }} />
         </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', position: 'relative' }}>
-          <p style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.88)', letterSpacing: '0.07em' }}>KOFI MENSAH</p>
-          <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', fontWeight: 600 }}>07/28</p>
-        </div>
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'space-around', padding: '0 16px 14px' }}>
+      </AppCard>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8, margin: '1px 0' }}>
         {[
-          {ic:<Send size={15} color="#34d399"/>, bg:'rgba(52,211,153,0.12)', l:'Envoyer'},
-          {ic:<ArrowDownLeft size={15} color="#60a5fa"/>, bg:'rgba(96,165,250,0.12)', l:'Recevoir'},
-          {ic:<RefreshCcw size={15} color="#f472b6"/>, bg:'rgba(244,114,182,0.12)', l:'Recharger'},
-          {ic:<MoreHorizontal size={15} color="#a78bfa"/>, bg:'rgba(167,139,250,0.12)', l:'Plus'},
-        ].map(a=>(
-          <div key={a.l} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-            <div style={{ width: 46, height: 46, borderRadius: 15, background: a.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.06)' }}>{a.ic}</div>
-            <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>{a.l}</span>
-          </div>
+          { ic: <Send size={13} color="#0A84FF" />, l: 'Envoyer' },
+          { ic: <ArrowDownLeft size={13} color="#0A84FF" />, l: 'Recevoir' },
+          { ic: <RefreshCcw size={13} color="#0A84FF" />, l: 'Changer' },
+          { ic: <MoreHorizontal size={13} color="#0A84FF" />, l: 'Plus' },
+        ].map(a => (
+          <AppCard key={a.l} style={{ padding: '8px 6px', textAlign: 'center', boxShadow: 'none' }}>
+            <div style={{ width: 24, height: 24, margin: '0 auto 4px', borderRadius: 9, background: '#EEF5FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{a.ic}</div>
+            <span style={{ display: 'block', fontSize: 8, color: appMuted, fontWeight: 600 }}>{a.l}</span>
+          </AppCard>
         ))}
       </div>
-      <div style={{ flex: 1, background: 'rgba(255,255,255,0.03)', borderRadius: '20px 20px 0 0', padding: '14px 18px', border: '1px solid rgba(255,255,255,0.06)', borderBottom: 'none', overflow: 'hidden' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.75)' }}>Transactions récentes</p>
-          <span style={{ fontSize: 9, color: '#34d399', fontWeight: 700 }}>Voir tout</span>
+      <AppCard style={{ padding: 10, overflow: 'hidden', minHeight: 0, textAlign: 'left' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+          <p style={{ fontSize: 11, fontWeight: 800 }}>Transactions</p>
+          <span style={{ fontSize: 9, color: '#0A84FF', fontWeight: 700 }}>Tout</span>
         </div>
         {[
-          {ic:<ShoppingCart size={13} color="#60a5fa"/>, bg:'rgba(96,165,250,0.13)', n:'Mahima Supermarket', d:'Auj. 14:32', a:'-12 400', c:'#f87171'},
-          {ic:<Banknote size={13} color="#34d399"/>, bg:'rgba(52,211,153,0.13)', n:'Virement — Agence', d:'Hier 09:15', a:'+250 000', c:'#34d399'},
-          {ic:<Smartphone size={13} color="#fbbf24"/>, bg:'rgba(251,191,36,0.13)', n:'MTN Mobile Money', d:'22 Jan', a:'-5 000', c:'#f87171'},
-          {ic:<Coffee size={13} color="#f472b6"/>, bg:'rgba(244,114,182,0.13)', n:'Café La Terrasse', d:'21 Jan', a:'-2 800', c:'#f87171'},
-        ].map(t=>(
-          <div key={t.n} style={{ display: 'flex', alignItems: 'center', gap: 11, marginBottom: 11 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 12, background: t.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{t.ic}</div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: 10, fontWeight: 600, color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{t.n}</p>
-              <p style={{ fontSize: 8, color: 'rgba(255,255,255,0.32)', marginTop: 1 }}>{t.d}</p>
+          { ic: <ShoppingCart size={12} color="#0A84FF" />, n: 'Mahima Market', d: 'Aujourd hui', a: '-12 400 F', c: '#FF3B30' },
+          { ic: <Banknote size={12} color="#34C759" />, n: 'Virement Agence', d: 'Hier', a: '+250 000 F', c: '#34C759' },
+          { ic: <Smartphone size={12} color="#5856D6" />, n: 'Mobile Money', d: '22 Jan', a: '-5 000 F', c: appText },
+        ].map(t => (
+          <div key={t.n} style={{ display: 'grid', gridTemplateColumns: '24px 1fr auto', alignItems: 'center', columnGap: 8, padding: '6px 0', borderTop: `1px solid ${appLine}` }}>
+            <RoundIcon>{t.ic}</RoundIcon>
+            <div style={{ minWidth: 0, textAlign: 'left', justifySelf: 'stretch' }}>
+              <p style={{ fontSize: 10, fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'left' }}>{t.n}</p>
+              <p style={{ fontSize: 8, color: appMuted, marginTop: 1, textAlign: 'left' }}>{t.d}</p>
             </div>
-            <p style={{ fontSize: 11, fontWeight: 800, color: t.c, flexShrink: 0 }}>{t.a}</p>
+            <p style={{ fontSize: 10, fontWeight: 800, color: t.c }}>{t.a}</p>
           </div>
         ))}
-      </div>
-    </div>
+      </AppCard>
+      <BottomTabs tint="#0A84FF" items={[<Landmark size={17}/>, <BarChart2 size={17}/>, <Bell size={17}/>, <Settings size={17}/>]} />
+    </AppShell>
   );
 }
 
-/* ══ APP 2 — WorkoutAI  charbon + orange ══ */
 function FitnessApp() {
   return (
-    <div style={{ background: '#0A0A0A', height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'DM Sans,sans-serif', paddingTop: 52, overflow: 'hidden' }}>
-      <div style={{ background: 'linear-gradient(155deg,#1C0800 0%,#2E1000 100%)', padding: '12px 18px 16px', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: -50, right: -50, width: 180, height: 180, borderRadius: '50%', background: 'radial-gradient(circle,rgba(251,146,60,0.22) 0%,transparent 65%)' }}/>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
+    <AppShell tint="#FF9F0A" bg="#0B0B0C" color="#fff">
+      <AppTop title="Push Day" subtitle="Lundi - semaine 3" tint="#FF9F0A" color="#fff" muted="rgba(255,255,255,0.46)" icon={<Flame size={15} color="#FF9F0A" />} />
+      <div style={{ background: '#161617', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: 11 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 9 }}>
           <div>
-            <p style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', marginBottom: 3, letterSpacing: '0.08em', textTransform: 'uppercase' }}>Lun · Semaine 3</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-              <Flame size={18} color="#fb923c" />
-              <p style={{ fontSize: 18, fontWeight: 800, color: '#fff', letterSpacing: '-0.5px' }}>Push Day</p>
-            </div>
+            <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.44)' }}>Bloc actif</p>
+            <p style={{ fontSize: 22, fontWeight: 900, color: '#fff' }}>Chest</p>
           </div>
-          <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg,#fb923c,#c2410c)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, color: '#fff' }}>A</div>
+          <div style={{ width: 50, height: 50, borderRadius: '50%', border: '5px solid rgba(255,159,10,0.22)', borderTopColor: '#FF9F0A', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FF9F0A', fontSize: 12, fontWeight: 900 }}>60%</div>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {[
-            {v:'1 240', l:'kcal', ic:<Flame size={10} color="#fb923c"/>, bd:'rgba(251,146,60,0.3)'},
-            {v:'42', l:'min', ic:<Timer size={10} color="#60a5fa"/>, bd:'rgba(96,165,250,0.3)'},
-            {v:'89', l:'bpm', ic:<Activity size={10} color="#f472b6"/>, bd:'rgba(244,114,182,0.3)'},
-          ].map(s=>(
-            <div key={s.l} style={{ flex: 1, background: 'rgba(255,255,255,0.05)', borderRadius: 13, padding: '8px 10px', border: `1px solid ${s.bd}` }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 4 }}>{s.ic}<span style={{ fontSize: 7, color: 'rgba(255,255,255,0.38)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>{s.l}</span></div>
-              <p style={{ fontSize: 16, fontWeight: 800, color: '#fff', letterSpacing: '-0.5px' }}>{s.v}</p>
-            </div>
-          ))}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
+          {[['1 240','kcal'], ['42','min'], ['89','bpm']].map(([v,l]) => <div key={l} style={{ background: '#202022', borderRadius: 7, padding: 6, textAlign: 'left' }}><p style={{ fontSize: 12, fontWeight: 900, color: '#fff' }}>{v}</p><p style={{ fontSize: 7, color: 'rgba(255,255,255,0.4)' }}>{l}</p></div>)}
         </div>
       </div>
-      <div style={{ padding: '12px 18px 4px', display: 'flex', alignItems: 'center', gap: 10 }}>
-        <div style={{ flex: 1, height: 5, background: 'rgba(255,255,255,0.07)', borderRadius: 99, overflow: 'hidden' }}>
-          <div style={{ width: '60%', height: '100%', background: 'linear-gradient(90deg,#fb923c,#f97316)', borderRadius: 99 }}/>
-        </div>
-        <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.42)', fontWeight: 600, whiteSpace: 'nowrap' }}>3 / 5</span>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 5 }}>
+        {['L','M','M','J','V','S','D'].map((d,i) => <div key={i} style={{ height: 27, borderRadius: 7, background: i === 1 || i === 3 ? '#FF9F0A' : '#19191B', color: i === 1 || i === 3 ? '#111' : 'rgba(255,255,255,0.48)', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingLeft: 8, fontSize: 8, fontWeight: 900 }}>{d}</div>)}
       </div>
-      <div style={{ flex: 1, padding: '8px 14px', overflow: 'hidden' }}>
+      <div style={{ background: '#161617', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: 11, minHeight: 0, textAlign: 'left' }}>
+        <p style={{ fontSize: 11, fontWeight: 900, marginBottom: 4, color: '#fff', textAlign: 'left' }}>Exercices</p>
         {[
-          {n:'Développé couché', s:'4×10', kg:'80 kg', done:true, ic:<Dumbbell size={13} color="#fff"/>},
-          {n:'Pompes décline', s:'3×15', kg:'Corps', done:true, ic:<Activity size={13} color="#fff"/>},
-          {n:'Élévations latérales', s:'3×12', kg:'12 kg', done:false, ic:<RotateCcw size={13} color="#fb923c"/>},
-          {n:'Triceps poulie', s:'4×12', kg:'25 kg', done:false, ic:<ZapIcon size={13} color="#fb923c"/>},
-        ].map(ex=>(
-          <div key={ex.n} style={{ background: ex.done ? 'rgba(251,146,60,0.07)' : 'rgba(255,255,255,0.03)', borderRadius: 14, padding: '10px 12px', marginBottom: 7, display: 'flex', alignItems: 'center', gap: 10, border: `1px solid ${ex.done ? 'rgba(251,146,60,0.18)' : 'rgba(255,255,255,0.05)'}` }}>
-            <div style={{ width: 36, height: 36, borderRadius: 11, background: ex.done ? 'linear-gradient(135deg,#fb923c,#c2410c)' : 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{ex.ic}</div>
+          { n: 'Développé couché', s: '4 x 10 - 80 kg', done: true },
+          { n: 'Pompes déclinées', s: '3 x 15 - poids du corps', done: true },
+          { n: 'Élévations latérales', s: '3 x 12 - 12 kg', done: false },
+          { n: 'Triceps poulie', s: '4 x 12 - 25 kg', done: false },
+        ].map(ex => (
+          <div key={ex.n} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+            <RoundIcon bg={ex.done ? 'rgba(255,159,10,0.16)' : '#222225'}>{ex.done ? <CheckCircle2 size={12} color="#FF9F0A"/> : <Dumbbell size={12} color="rgba(255,255,255,0.44)"/>}</RoundIcon>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: 10, fontWeight: 600, color: ex.done ? 'rgba(255,255,255,0.4)' : '#fff', textDecoration: ex.done ? 'line-through' : 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ex.n}</p>
-              <p style={{ fontSize: 8, color: 'rgba(255,255,255,0.28)', marginTop: 2 }}>{ex.s} · {ex.kg}</p>
-            </div>
-            <div style={{ width: 22, height: 22, borderRadius: '50%', background: ex.done ? 'linear-gradient(135deg,#fb923c,#c2410c)' : 'rgba(255,255,255,0.06)', border: ex.done ? 'none' : '1.5px solid rgba(255,255,255,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              {ex.done && <CheckCircle2 size={13} color="#fff" strokeWidth={2.5}/>}
+              <p style={{ fontSize: 10, fontWeight: 800, color: ex.done ? 'rgba(255,255,255,0.36)' : '#fff', textDecoration: ex.done ? 'line-through' : 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'left' }}>{ex.n}</p>
+              <p style={{ fontSize: 8, color: 'rgba(255,255,255,0.36)', marginTop: 1, textAlign: 'left' }}>{ex.s}</p>
             </div>
           </div>
         ))}
-        <div style={{ background: 'linear-gradient(135deg,#fb923c,#c2410c)', borderRadius: 14, padding: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7, boxShadow: '0 8px 28px rgba(251,146,60,0.38)' }}>
-          <Dumbbell size={14} color="#fff"/>
-          <span style={{ fontSize: 12, fontWeight: 800, color: '#fff' }}>Démarrer l'exercice 3</span>
-          <ChevronRight size={14} color="#fff"/>
-        </div>
       </div>
-    </div>
+      <button style={{ border: 'none', background: '#FF9F0A', color: '#111', borderRadius: 9, padding: '9px 12px', fontSize: 10, fontWeight: 900, flexShrink: 0 }}>Démarrer l'exercice 3</button>
+      <BottomTabs tint="#FF9F0A" items={[<Activity size={17}/>, <Timer size={17}/>, <Dumbbell size={17}/>, <Settings size={17}/>]} />
+    </AppShell>
   );
 }
 
-/* ══ APP 3 — QuickEat  blanc + coral ══ */
 function FoodApp() {
   return (
-    <div style={{ background: '#F7F7F8', height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'DM Sans,sans-serif', paddingTop: 52, overflow: 'hidden' }}>
-      <div style={{ background: '#fff', padding: '10px 16px 11px', borderBottom: '1px solid #EFEFEF' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 9 }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-              <MapPin size={10} color="#FF5A5F"/>
-              <p style={{ fontSize: 9, color: '#aaa' }}>Livraison à</p>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 3, marginTop: 1 }}>
-              <p style={{ fontSize: 13, fontWeight: 800, color: '#111' }}>Bastos, Yaoundé</p>
-              <ChevronDown size={12} color="#555"/>
-            </div>
-          </div>
-          <div style={{ position: 'relative' }}>
-            <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#FFF0F1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Bell size={16} color="#FF5A5F"/>
-            </div>
-            <div style={{ position: 'absolute', top: 1, right: 1, width: 9, height: 9, borderRadius: '50%', background: '#FF5A5F', border: '2px solid #fff' }}/>
-          </div>
-        </div>
-        <div style={{ background: '#F5F5F7', borderRadius: 13, padding: '9px 13px', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Search size={13} color="#bbb"/>
-          <span style={{ fontSize: 11, color: '#ccc' }}>Restaurants, plats, cuisines…</span>
-        </div>
+    <AppShell tint="#FF6B4A" bg="#FFF8F4">
+      <AppTop title="QuickEat" subtitle="Bastos, Yaounde" tint="#FF6B4A" icon={<ShoppingBag size={15} color="#FF6B4A" />} />
+      <div style={{ background: '#fff', border: `1px solid ${appLine}`, borderRadius: 14, padding: '8px 10px', display: 'flex', alignItems: 'center', gap: 7 }}>
+        <Search size={13} color="#B8B8BE" />
+        <span style={{ fontSize: 10, color: appMuted }}>Restaurants, plats, cuisines</span>
       </div>
-      <div style={{ margin: '11px 14px 0', background: 'linear-gradient(125deg,#FF5A5F 0%,#FF8C61 100%)', borderRadius: 20, padding: '14px 16px', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: -35, right: -25, width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,0.1)' }}/>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>
-          <Flame size={10} color="rgba(255,255,255,0.9)"/>
-          <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.85)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em' }}>Offre du soir</span>
+      <AppCard style={{ padding: 13, display: 'grid', gridTemplateColumns: '1fr 64px', alignItems: 'center', gap: 10, borderColor: '#FFE1D6', background: '#111114', color: '#fff', flexShrink: 0 }}>
+        <div>
+          <p style={{ fontSize: 9, color: 'rgba(255,255,255,0.52)', fontWeight: 800, marginBottom: 5 }}>Offre du soir</p>
+          <p style={{ fontSize: 17, fontWeight: 900, lineHeight: 1.1 }}>Livraison offerte</p>
+          <p style={{ fontSize: 9, color: 'rgba(255,255,255,0.48)', marginTop: 4 }}>Des 5 000 FCFA</p>
         </div>
-        <p style={{ fontSize: 15, fontWeight: 800, color: '#fff', lineHeight: 1.2, marginBottom: 10 }}>Livraison offerte<br/>dès 5 000 FCFA</p>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'rgba(255,255,255,0.22)', borderRadius: 99, padding: '5px 12px' }}>
-          <ShoppingCart size={10} color="#fff"/>
-          <span style={{ fontSize: 9, fontWeight: 700, color: '#fff' }}>Commander maintenant</span>
+        <div style={{ height: 64, borderRadius: 13, background: '#FF6B4A', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, padding: 7 }}>
+          {[Pizza, Beef, Coffee, UtensilsCrossed].map((Icon, i) => <div key={i} style={{ borderRadius: 7, background: 'rgba(255,255,255,0.22)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon size={11} color="#fff" /></div>)}
         </div>
-      </div>
-      <div style={{ padding: '11px 14px 8px', display: 'flex', gap: 10 }}>
+      </AppCard>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 8, margin: '1px 0' }}>
         {[
-          {ic:<UtensilsCrossed size={15} color="#fff"/>, bg:'#FF5A5F', l:'Grillades', on:true},
-          {ic:<UtensilsCrossed size={15} color="#FF5A5F"/>, bg:'#FFF0F1', l:'Ndolé', on:false},
-          {ic:<Pizza size={15} color="#7C6AF7"/>, bg:'#EEEAFF', l:'Pizza', on:false},
-          {ic:<Beef size={15} color="#059669"/>, bg:'#ECFDF5', l:'Burgers', on:false},
-        ].map(c=>(
-          <div key={c.l} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
-            <div style={{ width: 48, height: 48, borderRadius: 16, background: c.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: c.on ? '0 6px 18px rgba(255,90,95,0.35)' : 'none' }}>{c.ic}</div>
-            <span style={{ fontSize: 9, fontWeight: c.on ? 700 : 400, color: c.on ? '#FF5A5F' : '#aaa' }}>{c.l}</span>
-          </div>
+          ['Grillades', <UtensilsCrossed size={14}/>],
+          ['Ndole', <Package size={14}/>],
+          ['Pizza', <Pizza size={14}/>],
+          ['Burgers', <Beef size={14}/>],
+        ].map(([label, ic], i) => (
+          <AppCard key={String(label)} style={{ padding: '8px 6px', textAlign: 'center', boxShadow: 'none', borderColor: i === 0 ? '#111114' : '#FFE1D6', background: i === 0 ? '#111114' : '#fff', color: i === 0 ? '#fff' : appText }}>
+            <div style={{ width: 24, height: 24, margin: '0 auto 4px', borderRadius: 9, background: i === 0 ? '#FF6B4A' : '#FFF0EB', color: i === 0 ? '#fff' : '#FF6B4A', display: 'flex', alignItems: 'center', justifyContent: 'center', transform: 'scale(0.9)' }}>{ic}</div>
+            <p style={{ fontSize: 8, fontWeight: 700 }}>{label}</p>
+          </AppCard>
         ))}
       </div>
-      <div style={{ flex: 1, padding: '0 14px', overflow: 'hidden' }}>
-        <p style={{ fontSize: 11, fontWeight: 800, color: '#111', marginBottom: 10 }}>Populaires près de toi</p>
-        {[
-          {n:'Le Maquis du Coin', cat:'Cuisine locale', t:'20-30', r:'4.8', p:'2 500 F', bg:'linear-gradient(135deg,#FF5A5F,#FF8C61)', ic:<UtensilsCrossed size={18} color="#fff"/>},
-          {n:'Pizza House Yaoundé', cat:'Pizza · Fast-food', t:'15-25', r:'4.6', p:'4 000 F', bg:'linear-gradient(135deg,#7C6AF7,#A78BFA)', ic:<Pizza size={18} color="#fff"/>},
-          {n:'Chez Mama', cat:'Plats camerounais', t:'25-40', r:'4.9', p:'1 800 F', bg:'linear-gradient(135deg,#10b981,#059669)', ic:<UtensilsCrossed size={18} color="#fff"/>},
-        ].map(r=>(
-          <div key={r.n} style={{ display: 'flex', gap: 10, marginBottom: 9, alignItems: 'center', background: '#fff', borderRadius: 15, padding: '9px 11px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
-            <div style={{ width: 50, height: 50, borderRadius: 13, background: r.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 4px 12px rgba(0,0,0,0.14)' }}>{r.ic}</div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: 10, fontWeight: 700, color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.n}</p>
-              <p style={{ fontSize: 8, color: '#bbb', marginTop: 1 }}>{r.cat}</p>
-              <div style={{ display: 'flex', gap: 8, marginTop: 4, alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-                  <ClockIcon size={8} color="#ccc"/>
-                  <span style={{ fontSize: 8, color: '#999' }}>{r.t} min</span>
-                </div>
-                <span style={{ fontSize: 8, color: '#FF5A5F', fontWeight: 700 }}>Dès {r.p}</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 2, marginLeft: 'auto' }}>
-                  <StarIcon size={9} color="#FBBF24" fill="#FBBF24"/>
-                  <span style={{ fontSize: 9, fontWeight: 700, color: '#111' }}>{r.r}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* ══ APP 4 — Gestion scolaire  violet clair ══ */
-function SchoolApp() {
-  return (
-    <div style={{ background: '#F3F0FF', height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'DM Sans,sans-serif', paddingTop: 52, overflow: 'hidden' }}>
-      <div style={{ background: 'linear-gradient(130deg,#7C6AF7 0%,#5B4FE8 100%)', padding: '12px 18px 18px', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: -35, right: -35, width: 130, height: 130, borderRadius: '50%', background: 'rgba(255,255,255,0.08)' }}/>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
-          <div>
-            <p style={{ fontSize: 9, color: 'rgba(255,255,255,0.55)', marginBottom: 2 }}>Établissement</p>
-            <p style={{ fontSize: 15, fontWeight: 800, color: '#fff', letterSpacing: '-0.3px' }}>Collège Saint-Paul</p>
-          </div>
-          <div style={{ position: 'relative' }}>
-            <div style={{ width: 38, height: 38, borderRadius: '50%', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Bell size={17} color="#fff"/>
-            </div>
-            <div style={{ position: 'absolute', top: 2, right: 2, width: 9, height: 9, borderRadius: '50%', background: '#fb923c', border: '2px solid #5B4FE8' }}/>
-          </div>
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {[
-            {v:'342', l:'Élèves', ic:<Users size={11} color="#fff"/>},
-            {v:'18', l:'Classes', ic:<GraduationCap size={11} color="#fff"/>},
-            {v:'94%', l:'Présence', ic:<CheckCircle2 size={11} color="#fff"/>},
-          ].map(s=>(
-            <div key={s.l} style={{ flex: 1, background: 'rgba(255,255,255,0.13)', borderRadius: 13, padding: '8px 6px', textAlign: 'center', border: '1px solid rgba(255,255,255,0.1)' }}>
-              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 3 }}>{s.ic}</div>
-              <p style={{ fontSize: 15, fontWeight: 800, color: '#fff', letterSpacing: '-0.5px' }}>{s.v}</p>
-              <p style={{ fontSize: 7.5, color: 'rgba(255,255,255,0.55)', marginTop: 1 }}>{s.l}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div style={{ flex: 1, padding: '12px 14px', overflow: 'hidden' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: '#111' }}>Paiements récents</p>
-          <span style={{ fontSize: 9, color: '#7C6AF7', fontWeight: 700 }}>Voir tout</span>
+      <AppCard style={{ padding: 10, borderColor: '#FFE1D6', overflow: 'hidden', minHeight: 0, textAlign: 'left' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
+          <p style={{ fontSize: 11, fontWeight: 800 }}>Populaires</p>
+          <span style={{ fontSize: 9, color: '#FF6B4A', fontWeight: 800 }}>Tout</span>
         </div>
         {[
-          {n:'Kouassi Emmanuel', cl:'3ème A', a:'45 000 F', s:'Payé', sc:'#10b981', sb:'#ECFDF5', av:'KE', ac:'linear-gradient(135deg,#10b981,#059669)'},
-          {n:'Fatima Moussa', cl:'6ème B', a:'45 000 F', s:'Partiel', sc:'#f59e0b', sb:'#FFFBEB', av:'FM', ac:'linear-gradient(135deg,#f59e0b,#d97706)'},
-          {n:'David Ngono', cl:'4ème C', a:'45 000 F', s:'En attente', sc:'#ef4444', sb:'#FEF2F2', av:'DN', ac:'linear-gradient(135deg,#f87171,#ef4444)'},
-          {n:'Aïssatou Baldé', cl:'5ème A', a:'45 000 F', s:'Payé', sc:'#10b981', sb:'#ECFDF5', av:'AB', ac:'linear-gradient(135deg,#7C6AF7,#5B4FE8)'},
-        ].map(p=>(
-          <div key={p.n} style={{ background: '#fff', borderRadius: 15, padding: '10px 12px', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 10, boxShadow: '0 2px 10px rgba(124,106,247,0.08)' }}>
-            <div style={{ width: 38, height: 38, borderRadius: '50%', background: p.ac, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 800, color: '#fff', flexShrink: 0 }}>{p.av}</div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: 10, fontWeight: 700, color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.n}</p>
-              <p style={{ fontSize: 8, color: '#bbb', marginTop: 1 }}>{p.cl}</p>
+          { n: 'Le Maquis du Coin', cat: 'Cuisine locale', t: '20-30 min', r: '4.8', p: '2 500 F', ic: <UtensilsCrossed size={12} color="#FF6B4A"/> },
+          { n: 'Pizza House', cat: 'Pizza - fast food', t: '15-25 min', r: '4.6', p: '4 000 F', ic: <Pizza size={12} color="#FF6B4A"/> },
+          { n: 'Chez Mama', cat: 'Plats camerounais', t: '25-40 min', r: '4.9', p: '1 800 F', ic: <Package size={12} color="#FF6B4A"/> },
+        ].map(r => (
+          <div key={r.n} style={{ display: 'grid', gridTemplateColumns: '24px 1fr auto', alignItems: 'center', columnGap: 8, padding: '6px 0', borderTop: `1px solid ${appLine}` }}>
+            <RoundIcon bg="#FFF0EB">{r.ic}</RoundIcon>
+            <div style={{ minWidth: 0, textAlign: 'left', justifySelf: 'stretch' }}>
+              <p style={{ fontSize: 10, fontWeight: 800, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.n}</p>
+              <p style={{ fontSize: 8, color: appMuted, marginTop: 1 }}>{r.cat} - {r.t}</p>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <p style={{ fontSize: 10, fontWeight: 800, color: '#111' }}>{p.a}</p>
-              <span style={{ fontSize: 8, fontWeight: 700, color: p.sc, background: p.sb, padding: '2px 7px', borderRadius: 99 }}>{p.s}</span>
+              <span style={{ fontSize: 9, fontWeight: 800 }}>{r.p}</span>
+              <p style={{ fontSize: 8, color: '#FF9F0A', fontWeight: 900, marginTop: 2 }}>★ {r.r}</p>
             </div>
           </div>
         ))}
-      </div>
-    </div>
+      </AppCard>
+      <BottomTabs tint="#FF6B4A" items={[<Search size={17}/>, <StarIcon size={17}/>, <ShoppingCart size={17}/>, <UserCheck size={17}/>]} />
+    </AppShell>
   );
 }
 
-/* ══ APP 5 — Clinique  blanc + teal ══ */
+function SchoolApp() {
+  return (
+    <AppShell tint="#5856D6" bg="#F7F4EE">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 34, flexShrink: 0 }}>
+        <div style={{ textAlign: 'left' }}>
+          <p style={{ fontSize: 9, color: appMuted, marginBottom: 2, textAlign: 'left' }}>Etablissement</p>
+          <h3 style={{ fontSize: 18, lineHeight: 1.05, fontWeight: 800, color: appText, textAlign: 'left' }}>Saint-Paul</h3>
+        </div>
+        <RoundIcon bg="#fff"><GraduationCap size={15} color="#5856D6" /></RoundIcon>
+      </div>
+      <AppCard style={{ padding: 13, background: '#171511', color: '#fff', borderColor: '#171511', flexShrink: 0, position: 'relative', overflow: 'hidden', textAlign: 'left' }}>
+        <div style={{ position: 'absolute', right: -28, top: -28, width: 88, height: 88, borderRadius: '50%', border: '18px solid rgba(88,86,214,0.22)' }} />
+        <div style={{ position: 'absolute', right: 15, bottom: 13, width: 42, height: 42, borderRadius: 14, background: 'rgba(255,255,255,0.08)', transform: 'rotate(-8deg)' }} />
+        <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
+          <div style={{ textAlign: 'left' }}>
+            <p style={{ fontSize: 9, color: 'rgba(255,255,255,0.5)', textAlign: 'left' }}>Carnet de bord</p>
+            <p style={{ fontSize: 20, fontWeight: 900, marginTop: 2, textAlign: 'left' }}>94%</p>
+            <p style={{ fontSize: 8, color: 'rgba(255,255,255,0.42)', marginTop: 2, textAlign: 'left' }}>Presence hebdo</p>
+          </div>
+          <span style={{ fontSize: 8, color: '#fff', background: '#5856D6', padding: '4px 7px', borderRadius: 9, fontWeight: 800 }}>+3.4%</span>
+        </div>
+        <svg width="100%" height="58" viewBox="0 0 224 58" style={{ position: 'relative', display: 'block', overflow: 'visible', marginLeft: 0 }}>
+          <path d="M0 45 C28 32 36 38 56 24 C79 8 98 30 119 20 C145 7 158 16 176 10 C197 3 210 12 224 7" fill="none" stroke="rgba(255,255,255,0.16)" strokeWidth="10" strokeLinecap="round" />
+          <path d="M0 45 C28 32 36 38 56 24 C79 8 98 30 119 20 C145 7 158 16 176 10 C197 3 210 12 224 7" fill="none" stroke="#9B8CFF" strokeWidth="3" strokeLinecap="round" />
+          {[0, 56, 119, 176, 224].map((x, i) => <circle key={x} cx={x} cy={[45,24,20,10,7][i]} r="3.5" fill={i === 4 ? '#fff' : '#9B8CFF'} />)}
+        </svg>
+      </AppCard>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
+        {[['342','Eleves'], ['18','Classes'], ['14','Absences']].map(([v,l], i) => <AppCard key={l} style={{ padding: '9px 8px', textAlign: 'left', boxShadow: 'none', borderColor: i === 2 ? '#F7D7D7' : '#E9E2D6', background: i === 0 ? '#FFFDF7' : '#fff' }}><p style={{ fontSize: 15, fontWeight: 800, color: i === 2 ? '#D93D36' : appText, textAlign: 'left' }}>{v}</p><p style={{ fontSize: 7, color: appMuted, marginTop: 1, textAlign: 'left' }}>{l}</p></AppCard>)}
+      </div>
+      <AppCard style={{ padding: 10, textAlign: 'left', overflow: 'hidden', minHeight: 0, borderColor: '#E9E2D6' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
+          <p style={{ fontSize: 11, fontWeight: 800 }}>Rythme classe</p>
+          <span style={{ fontSize: 9, color: '#5856D6', fontWeight: 700 }}>3 alertes</span>
+        </div>
+        {[
+          { n: 'Maths 3eme A', cl: 'Controle vendredi', a: '82%', s: 'Pret', c: '#34C759' },
+          { n: 'Sciences 6eme B', cl: 'Chapitre en retard', a: '64%', s: 'Suivi', c: '#FF9F0A' },
+          { n: 'Histoire 4eme C', cl: 'Absences groupe', a: '71%', s: 'A voir', c: '#D93D36' },
+        ].map(p => (
+          <div key={p.n} style={{ display: 'grid', gridTemplateColumns: '28px minmax(0,1fr) 42px 34px', alignItems: 'center', columnGap: 8, padding: '6px 0', borderTop: `1px solid ${appLine}` }}>
+            <div style={{ width: 28, height: 28, borderRadius: 10, background: '#F2EFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontWeight: 800, color: '#5856D6' }}>{p.n.split(' ').map(x => x[0]).slice(0,2).join('')}</div>
+            <div style={{ minWidth: 0, textAlign: 'left', justifySelf: 'stretch' }}>
+              <p style={{ fontSize: 10, fontWeight: 800, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'left' }}>{p.n}</p>
+              <p style={{ fontSize: 8, color: appMuted, textAlign: 'left' }}>{p.cl}</p>
+            </div>
+            <p style={{ fontSize: 9, fontWeight: 800, textAlign: 'left', justifySelf: 'start', minWidth: 0 }}>{p.a}</p>
+            <span style={{ fontSize: 8, fontWeight: 800, color: p.c, textAlign: 'left', justifySelf: 'start' }}>{p.s}</span>
+          </div>
+        ))}
+      </AppCard>
+      <AppCard style={{ padding: 10, borderColor: '#E9E2D6', textAlign: 'left' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 7 }}>
+          <p style={{ fontSize: 11, fontWeight: 800, textAlign: 'left' }}>Planning</p>
+          <span style={{ fontSize: 8, color: appMuted }}>Maths 3A</span>
+        </div>
+        <div style={{ display: 'flex', gap: 6 }}>{['Lun','Mar','Mer','Jeu','Ven'].map((d,i) => <div key={d} style={{ flex: 1, height: 28, borderRadius: 9, background: i === 2 ? '#5856D6' : '#F3EFE7', color: i === 2 ? '#fff' : appMuted, display: 'flex', alignItems: 'center', justifyContent: 'flex-start', paddingLeft: 7, fontSize: 8, fontWeight: 800 }}>{d}</div>)}</div>
+      </AppCard>
+      <BottomTabs tint="#5856D6" items={[<LayoutDashboard size={17}/>, <Users size={17}/>, <Calendar size={17}/>, <Settings size={17}/>]} />
+    </AppShell>
+  );
+}
+
 function ClinicApp() {
   return (
-    <div style={{ background: '#F0FBFC', height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'DM Sans,sans-serif', paddingTop: 52, overflow: 'hidden' }}>
-      <div style={{ background: 'linear-gradient(130deg,#0891b2 0%,#0e7490 100%)', padding: '12px 18px 18px', position: 'relative', overflow: 'hidden' }}>
-        <div style={{ position: 'absolute', top: -25, right: -25, width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,0.07)' }}/>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 }}>
+    <AppShell tint="#007AFF" bg="#F5F5F7">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', minHeight: 34, flexShrink: 0 }}>
+        <div style={{ textAlign: 'left' }}>
+          <p style={{ fontSize: 9, color: appMuted, marginBottom: 2, textAlign: 'left' }}>Health AI</p>
+          <h3 style={{ fontSize: 18, lineHeight: 1.05, fontWeight: 800, color: appText, textAlign: 'left' }}>Clinique Horizon</h3>
+        </div>
+        <RoundIcon bg="#fff"><Stethoscope size={15} color="#007AFF" /></RoundIcon>
+      </div>
+      <AppCard style={{ padding: 14, background: '#fff', color: appText, borderColor: '#E7E7EC', position: 'relative', overflow: 'hidden', flexShrink: 0, textAlign: 'left' }}>
+        <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: '1fr 54px', gap: 10, alignItems: 'center' }}>
           <div>
-            <p style={{ fontSize: 9, color: 'rgba(255,255,255,0.55)', marginBottom: 2 }}>Médecin</p>
-            <p style={{ fontSize: 15, fontWeight: 800, color: '#fff', letterSpacing: '-0.3px' }}>Dr. Amara Kouyaté</p>
+            <p style={{ fontSize: 9, color: appMuted }}>Assistant IA</p>
+            <p style={{ fontSize: 18, fontWeight: 900, marginTop: 2 }}>Résumé du jour</p>
+            <p style={{ fontSize: 8, color: appMuted, marginTop: 4 }}>Un patient nécessite une vérification.</p>
           </div>
-          <div style={{ width: 42, height: 42, borderRadius: '50%', background: 'rgba(255,255,255,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Heart size={19} color="#fff" fill="rgba(255,255,255,0.4)"/>
+          <div style={{ width: 54, height: 54, borderRadius: 18, background: '#EAF2FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: 36, height: 36, borderRadius: '50%', border: '5px solid #D8E7FF', borderTopColor: '#007AFF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 900, color: '#007AFF' }}>86</div>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {[
-            {v:'12', l:'RDV auj.', ic:<ClockIcon size={10} color="#67e8f9"/>, bd:'rgba(103,232,249,0.3)'},
-            {v:'8', l:'Consultés', ic:<CheckCircle2 size={10} color="#4ade80"/>, bd:'rgba(74,222,128,0.3)'},
-            {v:'3', l:'En attente', ic:<Bell size={10} color="#fbbf24"/>, bd:'rgba(251,191,36,0.3)'},
-          ].map(s=>(
-            <div key={s.l} style={{ flex: 1, background: 'rgba(255,255,255,0.12)', borderRadius: 12, padding: '7px 6px', border: `1px solid ${s.bd}` }}>
-              <div style={{ marginBottom: 3 }}>{s.ic}</div>
-              <p style={{ fontSize: 17, fontWeight: 800, color: '#fff', letterSpacing: '-0.5px' }}>{s.v}</p>
-              <p style={{ fontSize: 7, color: 'rgba(255,255,255,0.48)', lineHeight: 1.3, marginTop: 1 }}>{s.l}</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 6, marginTop: 12 }}>
+          {[['12','RDV'], ['1','Priorité'], ['18m','Moy.']].map(([v,l]) => (
+            <div key={l} style={{ background: '#F6F7FA', borderRadius: 9, padding: 7, textAlign: 'left' }}>
+              <p style={{ fontSize: 12, fontWeight: 900 }}>{v}</p>
+              <p style={{ fontSize: 7, color: appMuted, marginTop: 1 }}>{l}</p>
             </div>
           ))}
         </div>
-      </div>
-      <div style={{ flex: 1, padding: '12px 14px', overflow: 'hidden' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-          <p style={{ fontSize: 11, fontWeight: 700, color: '#111' }}>Rendez-vous du jour</p>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4, background: '#e0f9fe', borderRadius: 99, padding: '3px 8px' }}>
-            <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#0891b2' }}/>
-            <span style={{ fontSize: 8, color: '#0891b2', fontWeight: 700 }}>4 restants</span>
-          </div>
+      </AppCard>
+      <AppCard style={{ padding: 10, textAlign: 'left', overflow: 'hidden', minHeight: 0, borderColor: '#E7E7EC' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
+          <p style={{ fontSize: 11, fontWeight: 800 }}>Suggestions</p>
+          <span style={{ fontSize: 9, color: '#007AFF', fontWeight: 800 }}>IA</span>
         </div>
         {[
-          {n:'Marie Koumba', age:'34 ans', h:'09:00', mo:'Consultation générale', s:'Terminé', sc:'#10b981', sb:'#ECFDF5', av:'MK', ac:'linear-gradient(135deg,#10b981,#059669)'},
-          {n:'Jean-Luc Biya', age:'52 ans', h:'10:30', mo:'Suivi tension artérielle', s:'En cours', sc:'#0891b2', sb:'#E0F9FE', av:'JB', ac:'linear-gradient(135deg,#0891b2,#0e7490)'},
-          {n:'Awa Traoré', age:'28 ans', h:'11:15', mo:'Grossesse — Sem. 24', s:'Attente', sc:'#f59e0b', sb:'#FFFBEB', av:'AT', ac:'linear-gradient(135deg,#f59e0b,#d97706)'},
-          {n:'Paul Keza', age:'67 ans', h:'14:00', mo:'Diabète type 2', s:'Attente', sc:'#f59e0b', sb:'#FFFBEB', av:'PK', ac:'linear-gradient(135deg,#a78bfa,#7c3aed)'},
-        ].map(p=>(
-          <div key={p.n} style={{ background: '#fff', borderRadius: 15, padding: '10px 12px', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 10, boxShadow: '0 2px 10px rgba(8,145,178,0.07)' }}>
-            <div style={{ width: 38, height: 38, borderRadius: '50%', background: p.ac, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 800, color: '#fff', flexShrink: 0 }}>{p.av}</div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontSize: 10, fontWeight: 700, color: '#111', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.n}</p>
-              <p style={{ fontSize: 8, color: '#aaa', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.age} · {p.mo}</p>
+          { n: 'Jean-Luc Biya', age: '52 ans', mo: 'Contrôler la tension avant 10:45', s: 'Priorité', c: '#FF3B30' },
+          { n: 'Awa Traore', age: '28 ans', mo: 'Suivi grossesse stable', s: 'OK', c: '#34C759' },
+          { n: 'Marie Koumba', age: '34 ans', mo: 'Synthèse prête pour consultation', s: 'Prêt', c: '#007AFF' },
+        ].map(p => (
+          <div key={p.n} style={{ display: 'grid', gridTemplateColumns: '24px minmax(0,1fr) 42px', alignItems: 'center', columnGap: 8, padding: '7px 0', borderTop: `1px solid ${appLine}` }}>
+            <RoundIcon bg={p.c === '#FF3B30' ? '#FFF1F0' : '#F2F2F7'}><Heart size={11} color={p.c} /></RoundIcon>
+            <div style={{ minWidth: 0, textAlign: 'left' }}>
+              <p style={{ fontSize: 10, fontWeight: 800, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.n}</p>
+              <p style={{ fontSize: 8, color: appMuted, marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.age} - {p.mo}</p>
             </div>
-            <div style={{ textAlign: 'right', flexShrink: 0 }}>
-              <p style={{ fontSize: 10, fontWeight: 700, color: '#111' }}>{p.h}</p>
-              <span style={{ fontSize: 8, fontWeight: 700, color: p.sc, background: p.sb, padding: '2px 6px', borderRadius: 99 }}>{p.s}</span>
-            </div>
+            <span style={{ fontSize: 8, fontWeight: 800, color: p.c, textAlign: 'left' }}>{p.s}</span>
           </div>
         ))}
-      </div>
-    </div>
+      </AppCard>
+      <AppCard style={{ padding: 11, borderColor: '#E7E7EC', textAlign: 'left' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 7 }}>
+          <p style={{ fontSize: 11, fontWeight: 800 }}>Note intelligente</p>
+          <span style={{ fontSize: 8, color: appMuted }}>Auto</span>
+        </div>
+        <p style={{ fontSize: 9, color: appText, lineHeight: 1.4, fontWeight: 700 }}>Les dossiers du matin sont prêts. Un contrôle rapide est recommandé.</p>
+        <div style={{ height: 5, background: '#EAF2FF', borderRadius: 99, overflow: 'hidden', marginTop: 8 }}><div style={{ width: '72%', height: '100%', background: '#007AFF', borderRadius: 99 }} /></div>
+      </AppCard>
+      <BottomTabs tint="#007AFF" items={[<Calendar size={17}/>, <Users size={17}/>, <Pill size={17}/>, <Settings size={17}/>]} />
+    </AppShell>
   );
 }
 
 
-/* ══ shared atoms — thème injecté ══════════════════════ */
+/* ══ SaaS mockups — vues produit minimalistes ═════════ */
 
-function KpiCard({ icon, label, value, delta, ok, bg }: {
-  icon: React.ReactNode; label: string; value: string;
-  delta: string; ok: boolean; bg: string;
-}) {
-  return (
-    <div style={{ background: '#fff', borderRadius: 10, padding: '10px 12px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', display: 'flex', flexDirection: 'column', gap: 5 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ width: 24, height: 24, borderRadius: 7, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{icon}</div>
-        <span style={{ fontSize: 8, fontWeight: 700, color: ok ? '#16a34a' : '#dc2626', background: ok ? '#f0fdf4' : '#fef2f2', padding: '1px 5px', borderRadius: 99 }}>{delta}</span>
-      </div>
-      <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 14, color: '#111', lineHeight: 1 }}>{value}</p>
-      <p style={{ fontSize: 8, color: '#999', fontWeight: 400 }}>{label}</p>
-    </div>
-  );
-}
-
-function SvgBar({ data, color, trackBg, labels }: { data: number[]; color: string; trackBg: string; labels: string[] }) {
-  const max = Math.max(...data);
-  const W = 400, H = 76, gap = 6;
-  const bW = (W - gap * (data.length - 1)) / data.length;
-  return (
-    <svg width="100%" viewBox={`0 0 ${W} ${H + 14}`} style={{ display: 'block' }}>
-      {data.map((v, i) => {
-        const bH = Math.max(4, (v / max) * H);
-        const x = i * (bW + gap);
-        return (
-          <g key={i}>
-            <rect x={x} y={H - bH} width={bW} height={bH} rx={4}
-              fill={v === max ? color : i === data.length - 1 ? color + 'AA' : trackBg} />
-            <text x={x + bW / 2} y={H + 12} textAnchor="middle" fontSize={7} fill="#C8C8C8">{labels[i]}</text>
-          </g>
-        );
-      })}
-    </svg>
-  );
-}
-
-function SvgLine({ data, color }: { data: number[]; color: string }) {
-  const max = Math.max(...data), min = Math.min(...data);
-  const W = 400, H = 64;
-  const pts: [number, number][] = data.map((v, i) => [
-    (i / (data.length - 1)) * W,
-    H - ((v - min) / (max - min || 1)) * (H - 6) - 3,
-  ]);
-  const line = pts.map(([x, y], i) => (i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1)).join(' ');
-  const area = line + ' L' + W + ',' + H + ' L0,' + H + ' Z';
-  const pi = data.indexOf(max);
-  const gid = 'lg' + color.replace('#', '');
-  return (
-    <svg width="100%" viewBox={'0 0 ' + W + ' ' + H} style={{ display: 'block' }}>
-      <defs>
-        <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity="0.18" />
-          <stop offset="100%" stopColor={color} stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <path d={area} fill={'url(#' + gid + ')'} />
-      <path d={line} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx={pts[pi][0]} cy={pts[pi][1]} r={3.5} fill={color} stroke="#fff" strokeWidth={1.5} />
-    </svg>
-  );
-}
-
-function PBar({ label, value, pct, color, trackColor }: {
-  label: string; value: string; pct: number; color: string; trackColor: string;
-}) {
-  return (
-    <div style={{ marginBottom: 8 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 3 }}>
-        <span style={{ fontSize: 8.5, color: '#555', fontWeight: 400 }}>{label}</span>
-        <span style={{ fontSize: 8.5, fontWeight: 700, color }}>{value}</span>
-      </div>
-      <div style={{ height: 5, background: trackColor, borderRadius: 99 }}>
-        <div style={{ width: pct + '%', height: '100%', background: color, borderRadius: 99 }} />
-      </div>
-    </div>
-  );
-}
-
-type SNavItem = { ic: React.ReactNode; l: string; a?: boolean };
-type STheme = {
-  accent: string; navBg: string; navBorder: string;
-  activeBg: string; activeBorder: string; activeText: string;
-  contentBg: string; cardBorder: string;
-};
-
-function SaasShell({ children, slug, nav, theme }: {
-  children: React.ReactNode; slug: string; nav: SNavItem[]; theme: STheme;
-}) {
-  const LW = 540, LH = 362;
+function SaasFrame({ children, slug }: { children: React.ReactNode; slug: string }) {
+  const LW = 650, LH = 418;
   return (
     <div style={{ filter: 'drop-shadow(0 22px 38px rgba(0,0,0,0.18)) drop-shadow(0 3px 8px rgba(0,0,0,0.10))' }}>
       <div style={{ width: LW, background: 'linear-gradient(165deg,#E8E8E8 0%,#CCCCCC 50%,#B8B8B8 100%)', borderRadius: '16px 16px 0 0', padding: '10px 10px 0', boxSizing: 'border-box', border: '1px solid #B6B6B6', borderBottom: 'none', position: 'relative' }}>
         <div style={{ position: 'absolute', top: 6, left: '50%', transform: 'translateX(-50%)', width: 6, height: 6, borderRadius: '50%', background: '#2a2a2a' }} />
-        <div style={{ background: '#111', borderRadius: '9px 9px 0 0', height: LH - 10, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-          {/* browser bar */}
-          <div style={{ background: '#1a1a1c', padding: '7px 12px', display: 'flex', alignItems: 'center', gap: 9, flexShrink: 0 }}>
+        <div style={{ background: '#F8F8F6', borderRadius: '9px 9px 0 0', height: LH - 10, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ background: '#F1F0ED', borderBottom: '1px solid #E1DFDA', padding: '7px 12px', display: 'flex', alignItems: 'center', gap: 9, flexShrink: 0 }}>
             <div style={{ display: 'flex', gap: 5 }}>
               {['#FF5F57', '#FFBD2E', '#28C840'].map(c => (
                 <div key={c} style={{ width: 8, height: 8, borderRadius: '50%', background: c }} />
               ))}
             </div>
-            <div style={{ flex: 1, background: '#252528', borderRadius: 5, padding: '4px 10px', display: 'flex', alignItems: 'center', gap: 5 }}>
-              <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#22c55e' }} />
-              <span style={{ fontSize: 8, color: '#666', fontFamily: 'DM Sans, sans-serif' }}>{slug}</span>
+            <div style={{ flex: 1, background: '#fff', border: '1px solid #E4E1DC', borderRadius: 6, padding: '4px 10px', display: 'flex', alignItems: 'center', gap: 5 }}>
+              <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#16a34a' }} />
+              <span style={{ fontSize: 8, color: '#8A867D', fontFamily: 'DM Sans, sans-serif' }}>{slug}</span>
             </div>
           </div>
-          {/* sidebar + content */}
-          <div style={{ display: 'grid', gridTemplateColumns: '78px 1fr', flex: 1, overflow: 'hidden' }}>
-            <div style={{ background: theme.navBg, borderRight: '1px solid ' + theme.navBorder, padding: '11px 0' }}>
-              <div style={{ padding: '0 11px 11px' }}>
-                <div style={{ width: 22, height: 22, background: theme.accent, borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 7.5, color: '#fff', fontWeight: 700 }}>OZ</div>
-              </div>
-              {nav.map((item, j) => (
-                <div key={j} style={{ padding: '6px 11px', background: item.a ? theme.activeBg : 'transparent', borderLeft: '2px solid ' + (item.a ? theme.activeBorder : 'transparent'), display: 'flex', alignItems: 'center', gap: 6 }}>
-                  {item.ic}
-                  <span style={{ fontSize: 7.5, fontWeight: item.a ? 600 : 400, color: item.a ? theme.activeText : '#bbb' }}>{item.l}</span>
-                </div>
-              ))}
-            </div>
-            <div style={{ overflow: 'hidden', height: '100%', background: theme.contentBg }}>{children}</div>
-          </div>
+          <div style={{ flex: 1, overflow: 'hidden' }}>{children}</div>
         </div>
       </div>
       <div style={{ width: LW, height: 7, background: 'linear-gradient(180deg,#B8B8B8,#C8C8C8)', borderRadius: '0 0 3px 3px', border: '1px solid #ACACAC', borderTop: 'none' }} />
@@ -969,445 +857,537 @@ function SaasShell({ children, slug, nav, theme }: {
   );
 }
 
-function SBadge({ text, color }: { text: string; color: string }) {
-  return <span style={{ fontSize: 7.5, fontWeight: 700, color, background: color + '18', padding: '2px 6px', borderRadius: 99, whiteSpace: 'nowrap', display: 'inline-block' }}>{text}</span>;
+type BackNavItem = { label: string; icon: React.ReactNode; active?: boolean };
+type BackOfficeTheme = { accent: string; soft: string; bg: string };
+
+function UiPill({ children, tone = '#111', bg = '#F4F3EF' }: { children: React.ReactNode; tone?: string; bg?: string }) {
+  return <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, borderRadius: 999, background: bg, color: tone, padding: '2px 6px', fontSize: 6.8, fontWeight: 800, whiteSpace: 'nowrap', lineHeight: 1.15 }}>{children}</span>;
 }
 
-function SHeader({ cols, headers }: { cols: string; headers: string[] }) {
+function BackOfficeShell({ children, title, meta, slug, nav, theme, action, sideNote }: {
+  children: React.ReactNode;
+  title: string;
+  meta: string;
+  slug: string;
+  nav: BackNavItem[];
+  theme: BackOfficeTheme;
+  action: string;
+  sideNote?: { label: string; value: string; hint: string };
+}) {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: cols }}>
-      {headers.map(h => <span key={h} style={{ fontSize: 7, fontWeight: 700, color: '#ccc', textTransform: 'uppercase', letterSpacing: '0.05em', paddingBottom: 5 }}>{h}</span>)}
-    </div>
-  );
-}
-
-function SRow({ cols, cells, border }: { cols: string; cells: React.ReactNode[]; border: string }) {
-  return (
-    <div style={{ display: 'grid', gridTemplateColumns: cols, alignItems: 'center', padding: '5px 0', borderTop: '1px solid ' + border }}>
-      {cells.map((c, i) => <React.Fragment key={i}>{c}</React.Fragment>)}
-    </div>
-  );
-}
-
-/* ═══ THÈMES ═══════════════════════════════════════════ */
-
-const TH_RESTO: STheme = {
-  accent: '#EA580C', navBg: '#FFFBF7', navBorder: '#FFEDD5',
-  activeBg: '#FFF7ED', activeBorder: '#F97316', activeText: '#C2410C',
-  contentBg: '#FFFAF6', cardBorder: '#FFEDD5',
-};
-const TH_ECOM: STheme = {
-  accent: '#4F46E5', navBg: '#FAFAFE', navBorder: '#E0E7FF',
-  activeBg: '#EEF2FF', activeBorder: '#6366F1', activeText: '#3730A3',
-  contentBg: '#F5F5FE', cardBorder: '#E0E7FF',
-};
-const TH_HEALTH: STheme = {
-  accent: '#0D9488', navBg: '#FAFEFE', navBorder: '#CCFBF1',
-  activeBg: '#F0FDFA', activeBorder: '#0D9488', activeText: '#0F766E',
-  contentBg: '#F4FFFE', cardBorder: '#CCFBF1',
-};
-const TH_IMMO: STheme = {
-  accent: '#16A34A', navBg: '#FAFEFB', navBorder: '#BBF7D0',
-  activeBg: '#F0FDF4', activeBorder: '#22C55E', activeText: '#15803D',
-  contentBg: '#F4FEF7', cardBorder: '#BBF7D0',
-};
-const TH_RH: STheme = {
-  accent: '#7C3AED', navBg: '#FDFAFF', navBorder: '#E9D5FF',
-  activeBg: '#F5F3FF', activeBorder: '#7C3AED', activeText: '#6D28D9',
-  contentBg: '#F8F5FF', cardBorder: '#E9D5FF',
-};
-
-/* ═══ SECTEUR 1 — RESTAURATION  (orange) ══════════════ */
-function SaasResto() {
-  const nav: SNavItem[] = [
-    { ic: <LayoutDashboard size={10} color="#EA580C" />, l: 'Dashboard', a: true },
-    { ic: <ClipboardList size={10} color="#ccc" />, l: 'Commandes' },
-    { ic: <ChefHat size={10} color="#ccc" />, l: 'Menu' },
-    { ic: <Users size={10} color="#ccc" />, l: 'Clients' },
-    { ic: <BarChart2 size={10} color="#ccc" />, l: 'Rapports' },
-    { ic: <Settings size={10} color="#ccc" />, l: 'Réglages' },
-  ];
-  return (
-    <SaasShell slug="app.ozirus.resto/dashboard" nav={nav} theme={TH_RESTO}>
-      <div style={{ padding: '12px 13px', height: '100%', display: 'flex', flexDirection: 'column', gap: 9, boxSizing: 'border-box', overflowY: 'auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, color: '#111' }}>Dashboard</p>
-            <p style={{ fontSize: 7.5, color: '#bbb', marginTop: 1 }}>Samedi 31 Mai — Service du soir</p>
-          </div>
-          <div style={{ display: 'flex', gap: 6 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4, background: '#FFF7ED', border: '1px solid #FED7AA', borderRadius: 6, padding: '3px 8px' }}>
-              <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#F97316' }} />
-              <span style={{ fontSize: 7.5, color: '#EA580C', fontWeight: 600 }}>Service actif</span>
-            </div>
-            <div style={{ background: '#EA580C', borderRadius: 6, padding: '4px 9px', fontSize: 7.5, color: '#fff', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 3 }}>
-              <PlusCircle size={8} color="#fff" /> Commande
+    <SaasFrame slug={slug}>
+      <div style={{ height: '100%', display: 'grid', gridTemplateColumns: '108px 1fr', background: theme.bg, textAlign: 'left' }}>
+        <aside style={{ background: '#111314', color: '#fff', padding: 12, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+            <div style={{ width: 21, height: 21, borderRadius: 6, background: theme.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 7, fontWeight: 900 }}>OZ</div>
+            <div>
+              <p style={{ fontSize: 8.2, fontWeight: 900, lineHeight: 1 }}>Ozirus</p>
+              <p style={{ fontSize: 6, color: 'rgba(255,255,255,0.42)', marginTop: 2 }}>Backoffice</p>
             </div>
           </div>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 7 }}>
-          <KpiCard icon={<ClipboardList size={10} color="#EA580C" />} label="Commandes" value="47" delta="+8%" ok bg="#FFF7ED" />
-          <KpiCard icon={<DollarSign size={10} color="#16a34a" />} label="CA du soir" value="284K F" delta="+15%" ok bg="#F0FDF4" />
-          <KpiCard icon={<Users size={10} color="#EA580C" />} label="Couverts" value="112" delta="+6%" ok bg="#FFF7ED" />
-          <KpiCard icon={<Clock size={10} color="#EA580C" />} label="Tps moyen" value="18 min" delta="-2 min" ok bg="#FFF7ED" />
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 9 }}>
-          <div style={{ background: '#fff', borderRadius: 10, padding: '10px 12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid ' + TH_RESTO.cardBorder }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-              <p style={{ fontSize: 9, fontWeight: 700, color: '#111' }}>CA · 7 derniers jours</p>
-              <span style={{ fontSize: 7.5, color: '#EA580C', fontWeight: 600 }}>+18% vs semaine passée</span>
-            </div>
-            <SvgBar data={[180, 240, 195, 310, 265, 420, 284]} color="#F97316" trackBg="#FFEDD5" labels={['L', 'M', 'M', 'J', 'V', 'S', 'D']} />
-          </div>
-          <div style={{ background: '#fff', borderRadius: 10, padding: '10px 12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid ' + TH_RESTO.cardBorder }}>
-            <p style={{ fontSize: 9, fontWeight: 700, color: '#111', marginBottom: 8 }}>Top plats</p>
-            <PBar label="Poulet DG" value="34" pct={82} color="#F97316" trackColor="#FFEDD5" />
-            <PBar label="Ndolé boeuf" value="28" pct={67} color="#FB923C" trackColor="#FFEDD5" />
-            <PBar label="Poisson braisé" value="19" pct={46} color="#FD974A" trackColor="#FFEDD5" />
-            <PBar label="Okok" value="11" pct={26} color="#FDBA74" trackColor="#FFF7ED" />
-          </div>
-        </div>
-        <div style={{ background: '#fff', borderRadius: 10, padding: '9px 12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid ' + TH_RESTO.cardBorder }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-            <p style={{ fontSize: 9, fontWeight: 700, color: '#111' }}>Commandes en cours</p>
-            <span style={{ fontSize: 7.5, color: '#EA580C', fontWeight: 600 }}>Voir tout</span>
-          </div>
-          <SHeader cols="32px 1fr 68px 58px" headers={['', 'Commande', 'Montant', 'Statut']} />
-          {[
-            { t: 'T-04', cmd: 'Poulet DG × 2, Jus gingembre', m: '14 800 F', s: 'En cuisine', c: '#F59E0B' },
-            { t: 'T-07', cmd: 'Ndolé boeuf, Castel × 2', m: '18 200 F', s: 'Servi', c: '#22c55e' },
-            { t: 'T-12', cmd: 'Poisson braisé, Eau minérale', m: '9 500 F', s: 'Payé', c: '#F97316' },
-            { t: 'T-03', cmd: 'Okok, Mbongo tchobi', m: '12 000 F', s: 'Attente', c: '#94A3B8' },
-          ].map(o => (
-            <SRow key={o.t} cols="32px 1fr 68px 58px" border="#FFF7ED" cells={[
-              <div style={{ width: 20, height: 20, borderRadius: 5, background: '#FFF7ED', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 7, fontWeight: 700, color: '#EA580C' }}>{o.t}</div>,
-              <span style={{ fontSize: 7.5, color: '#555', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 4 }}>{o.cmd}</span>,
-              <span style={{ fontSize: 7.5, fontWeight: 700, color: '#333' }}>{o.m}</span>,
-              <SBadge text={o.s} color={o.c} />,
-            ]} />
-          ))}
-        </div>
-      </div>
-    </SaasShell>
-  );
-}
-
-/* ═══ SECTEUR 2 — E-COMMERCE  (indigo) ════════════════ */
-function SaasEcom() {
-  const nav: SNavItem[] = [
-    { ic: <LayoutDashboard size={10} color="#4F46E5" />, l: 'Dashboard', a: true },
-    { ic: <ShoppingBag size={10} color="#ccc" />, l: 'Commandes' },
-    { ic: <Package size={10} color="#ccc" />, l: 'Produits' },
-    { ic: <Users size={10} color="#ccc" />, l: 'Clients' },
-    { ic: <TrendingUp size={10} color="#ccc" />, l: 'Analytics' },
-    { ic: <Settings size={10} color="#ccc" />, l: 'Réglages' },
-  ];
-  return (
-    <SaasShell slug="app.ozirus.shop/dashboard" nav={nav} theme={TH_ECOM}>
-      <div style={{ padding: '12px 13px', height: '100%', display: 'flex', flexDirection: 'column', gap: 9, boxSizing: 'border-box', overflowY: 'auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, color: '#111' }}>Dashboard</p>
-            <p style={{ fontSize: 7.5, color: '#bbb', marginTop: 1 }}>Mai 2026 — Vue globale</p>
-          </div>
-          <div style={{ display: 'flex', gap: 6 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4, border: '1px solid #E0E7FF', borderRadius: 6, padding: '3px 8px' }}>
-              <Filter size={8} color="#6366F1" />
-              <span style={{ fontSize: 7.5, color: '#6366F1', fontWeight: 600 }}>Filtrer</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 4, border: '1px solid #E0E7FF', borderRadius: 6, padding: '3px 8px' }}>
-              <Download size={8} color="#888" />
-              <span style={{ fontSize: 7.5, color: '#888', fontWeight: 600 }}>Export</span>
-            </div>
-          </div>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 7 }}>
-          <KpiCard icon={<ShoppingBag size={10} color="#4F46E5" />} label="Commandes" value="1 482" delta="+12%" ok bg="#EEF2FF" />
-          <KpiCard icon={<DollarSign size={10} color="#16a34a" />} label="CA du mois" value="8,4M F" delta="+22%" ok bg="#F0FDF4" />
-          <KpiCard icon={<Package size={10} color="#F59E0B" />} label="Paniers abnd." value="23%" delta="-5%" ok bg="#FFF7ED" />
-          <KpiCard icon={<Users size={10} color="#4F46E5" />} label="Nvx clients" value="142" delta="+31%" ok bg="#EEF2FF" />
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 9 }}>
-          <div style={{ background: '#fff', borderRadius: 10, padding: '10px 12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid ' + TH_ECOM.cardBorder }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-              <p style={{ fontSize: 9, fontWeight: 700, color: '#111' }}>CA · 30 derniers jours</p>
-              <div style={{ display: 'flex', gap: 5 }}>
-                <span style={{ fontSize: 7, color: '#4F46E5', fontWeight: 700, background: '#EEF2FF', padding: '1px 5px', borderRadius: 99 }}>Ce mois</span>
-                <span style={{ fontSize: 7, color: '#ccc' }}>Mois préc.</span>
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {nav.map(item => (
+              <div key={item.label} style={{ height: 23, borderRadius: 6, display: 'flex', alignItems: 'center', gap: 6, padding: '0 7px', background: item.active ? 'rgba(255,255,255,0.12)' : 'transparent', color: item.active ? '#fff' : 'rgba(255,255,255,0.48)' }}>
+                {item.icon}
+                <span style={{ fontSize: 6.8, fontWeight: item.active ? 800 : 600 }}>{item.label}</span>
               </div>
+            ))}
+          </nav>
+          <div style={{ marginTop: 'auto', padding: 8, borderRadius: 8, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.07)' }}>
+            <p style={{ ...cropText, fontSize: 6.4, color: 'rgba(255,255,255,0.45)', fontWeight: 800, textTransform: 'uppercase', marginBottom: 4 }}>{sideNote?.label ?? 'Statut'}</p>
+            <p style={{ ...cropText, fontSize: 9.2, color: '#fff', fontWeight: 900, lineHeight: 1.05 }}>{sideNote?.value ?? 'Actif'}</p>
+            <p style={{ ...cropText, fontSize: 6.4, color: 'rgba(255,255,255,0.44)', marginTop: 5 }}>{sideNote?.hint ?? 'Mis a jour'}</p>
+          </div>
+        </aside>
+        <section style={{ minWidth: 0, display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
+          <div style={{ height: 48, background: 'rgba(255,255,255,0.86)', borderBottom: '1px solid #E8E4DC', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 14px' }}>
+            <div>
+              <p style={{ fontSize: 11.5, fontWeight: 900, color: '#111', lineHeight: 1 }}>{title}</p>
+              <p style={{ fontSize: 6.8, color: '#9B9489', marginTop: 4 }}>{meta}</p>
             </div>
-            <SvgLine data={[120, 145, 180, 165, 210, 195, 240, 280, 260, 310, 295, 340, 380, 350, 420, 395, 445, 480, 460, 510, 490, 540, 580, 555, 620, 600, 650, 690, 660, 710]} color="#6366F1" />
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-              {['1 Mai', '8', '15', '22', '31'].map(d => <span key={d} style={{ fontSize: 7, color: '#ccc' }}>{d}</span>)}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{ width: 126, height: 22, border: '1px solid #E5E0D8', borderRadius: 6, background: '#fff', display: 'flex', alignItems: 'center', gap: 5, padding: '0 7px', color: '#A6A19A', fontSize: 6.8, fontWeight: 600 }}>
+                <Search size={8} color="#A6A19A" /> Rechercher
+              </div>
+              <button style={{ height: 22, border: 'none', borderRadius: 6, background: theme.accent, color: '#fff', display: 'flex', alignItems: 'center', gap: 4, padding: '0 8px', fontSize: 6.8, fontWeight: 900 }}>
+                <PlusCircle size={8} color="#fff" /> {action}
+              </button>
             </div>
           </div>
-          <div style={{ background: '#fff', borderRadius: 10, padding: '10px 12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid ' + TH_ECOM.cardBorder }}>
-            <p style={{ fontSize: 9, fontWeight: 700, color: '#111', marginBottom: 8 }}>Top catégories</p>
-            <PBar label="Mode & Vêtements" value="42%" pct={42} color="#4F46E5" trackColor="#E0E7FF" />
-            <PBar label="Chaussures" value="28%" pct={28} color="#6366F1" trackColor="#E0E7FF" />
-            <PBar label="Beauté" value="18%" pct={18} color="#818CF8" trackColor="#E0E7FF" />
-            <PBar label="Accessoires" value="12%" pct={12} color="#A5B4FC" trackColor="#EEF2FF" />
+          <div style={{ flex: 1, minHeight: 0, padding: 10 }}>
+            {children}
           </div>
-        </div>
-        <div style={{ background: '#fff', borderRadius: 10, padding: '9px 12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid ' + TH_ECOM.cardBorder }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-            <p style={{ fontSize: 9, fontWeight: 700, color: '#111' }}>Dernières commandes</p>
-            <span style={{ fontSize: 7.5, color: '#4F46E5', fontWeight: 600 }}>Voir tout</span>
-          </div>
-          <SHeader cols="1fr 1fr 68px 55px 66px" headers={['Client', 'Produit', 'Montant', 'Livraison', 'Statut']} />
-          {[
-            { n: 'Aïcha Koné', av: 'AK', p: 'Robe Ankara', m: '18 500 F', l: 'Express', s: 'Expédié', c: '#4F46E5' },
-            { n: 'Paul Mbarga', av: 'PM', p: 'Sneakers Air', m: '34 000 F', l: 'Standard', s: 'Livré', c: '#22c55e' },
-            { n: 'Fatou Diallo', av: 'FD', p: 'Kit soin chev.', m: '9 200 F', l: 'Express', s: 'En transit', c: '#F59E0B' },
-            { n: 'Bruno Tamba', av: 'BT', p: 'Montre classiq.', m: '52 000 F', l: 'Standard', s: 'Préparation', c: '#94A3B8' },
-          ].map(o => (
-            <SRow key={o.n} cols="1fr 1fr 68px 55px 66px" border="#EEF2FF" cells={[
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'linear-gradient(135deg,#4F46E5,#818CF8)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 6.5, color: '#fff', fontWeight: 700, flexShrink: 0 }}>{o.av}</div>
-                <span style={{ fontSize: 7.5, fontWeight: 600, color: '#111' }}>{o.n}</span>
-              </div>,
-              <span style={{ fontSize: 7.5, color: '#666', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', paddingRight: 4 }}>{o.p}</span>,
-              <span style={{ fontSize: 7.5, fontWeight: 700, color: '#333' }}>{o.m}</span>,
-              <span style={{ fontSize: 7, color: '#888' }}>{o.l}</span>,
-              <SBadge text={o.s} color={o.c} />,
-            ]} />
-          ))}
-        </div>
+        </section>
       </div>
-    </SaasShell>
+    </SaasFrame>
   );
 }
 
-/* ═══ SECTEUR 3 — SANTÉ  (teal) ═══════════════════════ */
+function PlainCard({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
+  return (
+    <div style={{ background: '#fff', border: '1px solid #E9E5DD', borderRadius: 7, boxShadow: '0 1px 2px rgba(15,15,15,0.03)', textAlign: 'left', ...style }}>
+      {children}
+    </div>
+  );
+}
+
+function MiniMetric({ label, value, tone, bg }: { label: string; value: string; tone: string; bg: string }) {
+  return (
+    <div style={{ background: '#fff', border: '1px solid #E9E5DD', borderRadius: 7, padding: '5px 7px' }}>
+      <p style={{ fontSize: 6.8, color: '#9B9489', marginBottom: 3 }}>{label}</p>
+      <p style={{ fontSize: 13, fontWeight: 900, color: tone, lineHeight: 1 }}>{value}</p>
+      <div style={{ height: 3, borderRadius: 99, background: bg, marginTop: 5 }}>
+        <div style={{ width: '68%', height: '100%', borderRadius: 99, background: tone }} />
+      </div>
+    </div>
+  );
+}
+
+const cropText: React.CSSProperties = {
+  minWidth: 0,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+};
+
+function Cell({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
+  return <span style={{ ...cropText, display: 'block', lineHeight: 1.15, ...style }}>{children}</span>;
+}
+
+function CustomerSaasShell({ children, slug, brand, title, subtitle, theme, nav, action }: {
+  children: React.ReactNode;
+  slug: string;
+  brand: string;
+  title: string;
+  subtitle: string;
+  theme: BackOfficeTheme;
+  nav: string[];
+  action: string;
+}) {
+  return (
+    <SaasFrame slug={slug}>
+      <div style={{ height: '100%', background: theme.bg, display: 'flex', flexDirection: 'column', textAlign: 'left' }}>
+        <div style={{ height: 52, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', background: 'rgba(255,255,255,0.88)', borderBottom: '1px solid #E8E4DC' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+            <div style={{ width: 26, height: 26, borderRadius: 8, background: theme.accent, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8, fontWeight: 900 }}>AI</div>
+            <div style={{ minWidth: 0 }}>
+              <Cell style={{ fontSize: 11.5, fontWeight: 900, color: '#111' }}>{brand}</Cell>
+              <Cell style={{ fontSize: 6.8, color: '#9B9489', marginTop: 3 }}>{subtitle}</Cell>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            {nav.map((item, i) => (
+              <span key={item} style={{ fontSize: 7, fontWeight: 800, color: i === 0 ? theme.accent : '#7C766E', whiteSpace: 'nowrap' }}>{item}</span>
+            ))}
+            <button style={{ height: 23, border: 'none', borderRadius: 7, background: theme.accent, color: '#fff', padding: '0 9px', fontSize: 6.8, fontWeight: 900 }}>{action}</button>
+          </div>
+        </div>
+        <div style={{ flex: 1, minHeight: 0, padding: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 14, marginBottom: 9 }}>
+            <div style={{ minWidth: 0 }}>
+              <Cell style={{ fontSize: 18, fontWeight: 900, color: '#111', lineHeight: 1.05 }}>{title}</Cell>
+              <Cell style={{ fontSize: 7.5, color: '#8A867D', marginTop: 5 }}>{subtitle}</Cell>
+            </div>
+            <UiPill tone={theme.accent} bg={theme.soft}>Mode IA active</UiPill>
+          </div>
+          {children}
+        </div>
+      </div>
+    </SaasFrame>
+  );
+}
+
+function SaasResto() {
+  const theme = { accent: '#E66A2C', soft: '#FFF1E8', bg: '#FBF7F2' };
+  return (
+    <CustomerSaasShell
+      slug="mealai.ozirus.app/today"
+      brand="MealAI"
+      title="Ton menu intelligent de la semaine"
+      subtitle="Assistant nutrition IA · recettes, courses, budget et preferences"
+      action="Generer"
+      theme={theme}
+      nav={['Aujourd hui', 'Menus', 'Courses', 'Coach']}
+    >
+      <div style={{ height: 'calc(100% - 34px)', display: 'grid', gridTemplateColumns: '218px 1fr 154px', gap: 8 }}>
+        <PlainCard style={{ overflow: 'hidden' }}>
+          <img src="/dev-assets/resto-plate.png" alt="" style={{ width: '100%', height: 116, objectFit: 'cover', display: 'block' }} />
+          <div style={{ padding: 8 }}>
+            <Cell style={{ fontSize: 9.5, fontWeight: 900, color: '#171717' }}>Diner recommande</Cell>
+            <Cell style={{ fontSize: 6.8, color: '#8A867D', marginTop: 3 }}>Poulet grille, plantains, legumes verts. Ajuste a ton budget et tes objectifs.</Cell>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 5, marginTop: 8 }}>
+              <MiniMetric label="Kcal" value="620" tone={theme.accent} bg={theme.soft} />
+              <MiniMetric label="Prot." value="42g" tone="#15803D" bg="#DFF3E6" />
+              <MiniMetric label="Budget" value="4.8K" tone="#B45309" bg="#FEF3C7" />
+            </div>
+          </div>
+        </PlainCard>
+        <PlainCard style={{ padding: 7, overflow: 'hidden' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '56px minmax(0,1fr) 48px 54px', gap: 7, fontSize: 6.2, color: '#A6A19A', fontWeight: 900, textTransform: 'uppercase', marginBottom: 4 }}>
+            <Cell>Jour</Cell><Cell>Menu IA</Cell><Cell>But</Cell><Cell>Statut</Cell>
+          </div>
+          {[
+            ['Lundi', 'Bowl poulet grille · avocat · riz brun', 'Energie', 'Pret', '#15803D'],
+            ['Mardi', 'Ndole leger · plantain vapeur · poisson', 'Proteines', 'Pret', '#15803D'],
+            ['Mercredi', 'Salade thon · patate douce · crudites', 'Leger', 'Ajuster', '#B45309'],
+            ['Jeudi', 'Poulet yassa · legumes · quinoa local', 'Budget', 'Pret', '#15803D'],
+            ['Vendredi', 'Poisson braise · salade mangue · riz', 'Sport', 'Pret', '#315BFF'],
+            ['Samedi', 'Omelette verte · fruits · yaourt nature', 'Rapide', 'Pret', '#15803D'],
+            ['Dimanche', 'Poulet DG light · portion controlee', 'Plaisir', 'Ajuster', '#B45309'],
+          ].map(([day, meal, goal, status, color]) => (
+            <div key={day} style={{ display: 'grid', gridTemplateColumns: '56px minmax(0,1fr) 48px 54px', gap: 7, alignItems: 'center', padding: '4px 0', minHeight: 22, borderTop: '1px solid #F1ECE5' }}>
+              <Cell style={{ fontSize: 7.1, fontWeight: 900, color: '#171717' }}>{day}</Cell>
+              <Cell style={{ fontSize: 7.1, fontWeight: 800, color: '#3A332D' }}>{meal}</Cell>
+              <Cell style={{ fontSize: 6.7, color: '#8A867D' }}>{goal}</Cell>
+              <span style={cropText}><UiPill tone={color} bg={color + '14'}>{status}</UiPill></span>
+            </div>
+          ))}
+        </PlainCard>
+        <div style={{ display: 'grid', gap: 8, gridTemplateRows: '1fr 1fr' }}>
+          <PlainCard style={{ padding: 8 }}>
+            <Cell style={{ fontSize: 7.2, color: '#9B9489', fontWeight: 900, textTransform: 'uppercase', marginBottom: 6 }}>Coach IA</Cell>
+            {['Remplacer arachide', 'Courses a Carrefour', 'Batch cooking 45 min', 'Hydratation +1L'].map(x => (
+              <div key={x} style={{ padding: '4px 0', borderTop: '1px solid #F1ECE5' }}><Cell style={{ fontSize: 7.1, fontWeight: 800, color: '#302A24' }}>{x}</Cell></div>
+            ))}
+          </PlainCard>
+          <PlainCard style={{ padding: 8 }}>
+            <Cell style={{ fontSize: 7.2, color: '#9B9489', fontWeight: 900, textTransform: 'uppercase', marginBottom: 6 }}>Courses</Cell>
+            {['Poulet 1.2kg', 'Plantain 8 pcs', 'Legumes verts', 'Yaourt nature'].map(x => (
+              <div key={x} style={{ padding: '4px 0', borderTop: '1px solid #F1ECE5' }}><Cell style={{ fontSize: 7.1, fontWeight: 800, color: '#302A24' }}>{x}</Cell></div>
+            ))}
+          </PlainCard>
+        </div>
+      </div>
+    </CustomerSaasShell>
+  );
+}
+
+function SaasEcom() {
+  const theme = { accent: '#315BFF', soft: '#E9EEFF', bg: '#F6F7FB' };
+  return (
+    <BackOfficeShell
+      slug="shop.ozirus.app/catalog"
+      title="Catalogue boutique"
+      meta="Maison Kora · 214 produits · stock synchronise"
+      action="Produit"
+      theme={theme}
+      sideNote={{ label: 'Stock', value: '214 refs', hint: '7 alertes' }}
+      nav={[
+        { label: 'Catalogue', icon: <Package size={8} />, active: true },
+        { label: 'Commandes', icon: <ShoppingBag size={8} /> },
+        { label: 'Clients', icon: <Users size={8} /> },
+        { label: 'Livraison', icon: <Truck size={8} /> },
+        { label: 'Promos', icon: <Percent size={8} /> },
+      ]}
+    >
+      <div style={{ height: '100%', display: 'grid', gridTemplateColumns: '166px 1fr', gap: 8 }}>
+        <PlainCard style={{ overflow: 'hidden' }}>
+          <img src="/dev-assets/ankara-dress.png" alt="" style={{ width: '100%', height: 146, objectFit: 'cover', objectPosition: 'center 43%', display: 'block' }} />
+          <div style={{ padding: 8 }}>
+            <Cell style={{ fontSize: 9.8, fontWeight: 900, color: '#151515' }}>Robe Ankara Premium</Cell>
+            <Cell style={{ fontSize: 7, color: '#8A867D', marginTop: 3 }}>Robe portefeuille midi, coton wax double, manches evasees.</Cell>
+            <Cell style={{ fontSize: 7.2, color: theme.accent, fontWeight: 900, marginTop: 5 }}>18 500 FCFA · 42 pieces</Cell>
+            <div style={{ display: 'flex', gap: 4, marginTop: 8 }}>
+              {['S', 'M', 'L', 'XL'].map((s, i) => <UiPill key={s} tone={i === 1 ? theme.accent : '#5B5852'} bg={i === 1 ? theme.soft : '#F4F3EF'}>{s}</UiPill>)}
+            </div>
+          </div>
+        </PlainCard>
+        <div style={{ display: 'grid', gridTemplateRows: '52px 1fr', gap: 7 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 7 }}>
+            <MiniMetric label="Ventes du jour" value="84" tone={theme.accent} bg={theme.soft} />
+            <MiniMetric label="Paniers ouverts" value="23" tone="#B45309" bg="#FEF3C7" />
+            <MiniMetric label="Livraisons" value="31" tone="#15803D" bg="#DFF3E6" />
+          </div>
+          <PlainCard style={{ padding: 8, overflow: 'hidden' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 72px 54px 58px', gap: 8, color: '#A6A19A', fontSize: 6.3, fontWeight: 900, textTransform: 'uppercase', marginBottom: 5 }}>
+              <Cell>Produit</Cell><Cell>Stock</Cell><Cell>Prix</Cell><Cell>Statut</Cell>
+            </div>
+            {[
+              ['Robe Ankara Premium', 'Coton wax · robe midi · manches evasees', '42 pcs', '18 500 F', 'Publie', theme.accent],
+              ['Sandales cuir', 'Cuir local · semelle cousue · marron', '18 pcs', '24 000 F', 'Publie', '#15803D'],
+              ['Sac tresse', 'Raphia naturel · doublure coton · zip', '9 pcs', '12 000 F', 'Faible', '#B45309'],
+              ['Chemise wax', 'Coupe droite · manches courtes · homme', '0 pcs', '16 000 F', 'Masque', '#64748B'],
+              ['Boucles laiton', 'Finition mate · lot artisanal · dore', '27 pcs', '7 500 F', 'Publie', '#15803D'],
+              ['Pantalon lin', 'Lin beige · taille haute · coupe ample', '14 pcs', '21 000 F', 'Publie', '#315BFF'],
+              ['Foulard soie', 'Motif floral · 70x70 · bord roule', '33 pcs', '8 500 F', 'Publie', '#15803D'],
+              ['Boubou court', 'Broderie col · coton epais · unisexe', '6 pcs', '29 000 F', 'Faible', '#B45309'],
+              ['Kimono court', 'Tissu leger · ceinture assortie', '11 pcs', '19 000 F', 'Publie', '#315BFF'],
+              ['Top bustier', 'Wax rouge · dos elastique', '25 pcs', '9 500 F', 'Publie', '#15803D'],
+              ['Jupe portefeuille', 'Longueur genou · lien cote', '16 pcs', '14 000 F', 'Publie', '#15803D'],
+            ].map(([p, desc, stock, price, status, color]) => (
+              <div key={p} style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 72px 54px 58px', gap: 8, alignItems: 'center', padding: '3px 0', borderTop: '1px solid #EEF0F5', minHeight: 21 }}>
+                <div style={{ minWidth: 0 }}>
+                  <Cell style={{ fontSize: 7.4, fontWeight: 900, color: '#171717' }}>{p}</Cell>
+                  <Cell style={{ fontSize: 6.2, color: '#8A867D', marginTop: 2 }}>{desc}</Cell>
+                </div>
+                <Cell style={{ fontSize: 6.9, color: '#6B6760' }}>{stock}</Cell>
+                <Cell style={{ fontSize: 6.9, fontWeight: 900, color: '#171717' }}>{price}</Cell>
+                <span style={cropText}><UiPill tone={color} bg={color + '14'}>{status}</UiPill></span>
+              </div>
+            ))}
+          </PlainCard>
+        </div>
+      </div>
+    </BackOfficeShell>
+  );
+}
+
 function SaasHealth() {
-  const nav: SNavItem[] = [
-    { ic: <LayoutDashboard size={10} color="#0D9488" />, l: 'Dashboard', a: true },
-    { ic: <Calendar size={10} color="#ccc" />, l: 'Rendez-vous' },
-    { ic: <Users size={10} color="#ccc" />, l: 'Patients' },
-    { ic: <Stethoscope size={10} color="#ccc" />, l: 'Médecins' },
-    { ic: <Pill size={10} color="#ccc" />, l: 'Stock' },
-    { ic: <Settings size={10} color="#ccc" />, l: 'Réglages' },
-  ];
+  const theme = { accent: '#0F8A83', soft: '#DDF5F2', bg: '#F4FAF8' };
   return (
-    <SaasShell slug="app.ozirus.clinic/dashboard" nav={nav} theme={TH_HEALTH}>
-      <div style={{ padding: '12px 13px', height: '100%', display: 'flex', flexDirection: 'column', gap: 9, boxSizing: 'border-box', overflowY: 'auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, color: '#111' }}>Dashboard</p>
-            <p style={{ fontSize: 7.5, color: '#bbb', marginTop: 1 }}>Samedi 31 Mai — Consultations du jour</p>
-          </div>
-          <div style={{ background: '#0D9488', borderRadius: 6, padding: '4px 9px', fontSize: 7.5, color: '#fff', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 3 }}>
-            <PlusCircle size={8} color="#fff" /> Nouveau RDV
-          </div>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 7 }}>
-          <KpiCard icon={<Calendar size={10} color="#0D9488" />} label="RDV aujourd'hui" value="38" delta="+4" ok bg="#F0FDFA" />
-          <KpiCard icon={<UserCheck size={10} color="#16a34a" />} label="Consultés" value="24" delta="63%" ok bg="#F0FDF4" />
-          <KpiCard icon={<AlertCircle size={10} color="#dc2626" />} label="No-shows" value="3" delta="-2" ok={false} bg="#FEF2F2" />
-          <KpiCard icon={<DollarSign size={10} color="#0D9488" />} label="Recettes" value="142K F" delta="+11%" ok bg="#F0FDFA" />
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 9 }}>
-          <div style={{ background: '#fff', borderRadius: 10, padding: '10px 12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid ' + TH_HEALTH.cardBorder }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-              <p style={{ fontSize: 9, fontWeight: 700, color: '#111' }}>Consultations · 7 jours</p>
-              <span style={{ fontSize: 7.5, color: '#0D9488', fontWeight: 600 }}>+14% vs sem. passée</span>
+    <CustomerSaasShell
+      slug="careai.ozirus.app/checkin"
+      brand="CareAI"
+      title="Ton suivi sante personnalise"
+      subtitle="Assistant bien-etre IA · symptomes, habitudes, rappels et conseils"
+      action="Analyser"
+      theme={theme}
+      nav={['Check-in', 'Plan', 'Rappels', 'Journal']}
+    >
+      <div style={{ height: 'calc(100% - 34px)', display: 'grid', gridTemplateColumns: '154px 1fr 172px', gap: 8 }}>
+        <PlainCard style={{ padding: 8 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 8 }}>
+            <div style={{ width: 28, height: 28, borderRadius: 99, background: theme.soft, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Heart size={15} color={theme.accent} />
             </div>
-            <SvgBar data={[22, 35, 28, 42, 38, 55, 38]} color="#0D9488" trackBg="#CCFBF1" labels={['L', 'M', 'M', 'J', 'V', 'S', 'D']} />
+            <div style={{ minWidth: 0 }}>
+              <Cell style={{ fontSize: 9.2, fontWeight: 900, color: '#171717' }}>Score bien-etre</Cell>
+              <Cell style={{ fontSize: 6.5, color: '#8C948F', marginTop: 2 }}>Mis a jour ce matin</Cell>
+            </div>
           </div>
-          <div style={{ background: '#fff', borderRadius: 10, padding: '10px 12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid ' + TH_HEALTH.cardBorder }}>
-            <p style={{ fontSize: 9, fontWeight: 700, color: '#111', marginBottom: 8 }}>Types de consultations</p>
-            <PBar label="Médecine générale" value="45%" pct={45} color="#0D9488" trackColor="#CCFBF1" />
-            <PBar label="Pédiatrie" value="25%" pct={25} color="#2DD4BF" trackColor="#CCFBF1" />
-            <PBar label="Gynécologie" value="18%" pct={18} color="#5EEAD4" trackColor="#CCFBF1" />
-            <PBar label="Urgences" value="12%" pct={12} color="#99F6E4" trackColor="#F0FDFA" />
-          </div>
-        </div>
-        <div style={{ background: '#fff', borderRadius: 10, padding: '9px 12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid ' + TH_HEALTH.cardBorder }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-            <p style={{ fontSize: 9, fontWeight: 700, color: '#111' }}>Planning du jour</p>
-            <span style={{ fontSize: 7.5, color: '#0D9488', fontWeight: 600 }}>Voir complet</span>
-          </div>
-          <SHeader cols="44px 1fr 1fr 66px 60px" headers={['Heure', 'Patient', 'Médecin', 'Motif', 'Statut']} />
+          <p style={{ fontSize: 28, fontWeight: 900, color: theme.accent, lineHeight: 1 }}>82</p>
+          <Cell style={{ fontSize: 6.8, color: '#8A867D', marginTop: 3 }}>Sommeil stable, stress modere, hydratation faible.</Cell>
+          <div style={{ height: 1, background: '#E4ECE9', margin: '8px 0' }} />
           {[
-            { h: '09:00', p: 'Ngo Biya C.', m: 'Dr. Njoya', mo: 'Fièvre', s: 'Terminé', c: '#22c55e' },
-            { h: '09:30', p: 'Enow Martin', m: 'Dr. Foka', mo: 'Tension', s: 'En cours', c: '#0D9488' },
-            { h: '10:00', p: 'Samba Ibra.', m: 'Dr. Njoya', mo: 'Pédiatrie', s: 'Salle att.', c: '#F59E0B' },
-            { h: '10:30', p: 'Bella Mireille', m: 'Dr. Kamdem', mo: 'Vaccination', s: 'Confirmé', c: '#6366F1' },
-          ].map(o => (
-            <SRow key={o.h} cols="44px 1fr 1fr 66px 60px" border="#F0FDFA" cells={[
-              <span style={{ fontSize: 7.5, fontWeight: 700, color: '#0D9488' }}>{o.h}</span>,
-              <span style={{ fontSize: 7.5, fontWeight: 600, color: '#111' }}>{o.p}</span>,
-              <span style={{ fontSize: 7.5, color: '#777' }}>{o.m}</span>,
-              <span style={{ fontSize: 7, color: '#666' }}>{o.mo}</span>,
-              <SBadge text={o.s} color={o.c} />,
-            ]} />
+            ['Sommeil', '7h20'],
+            ['Stress', 'Moyen'],
+            ['Eau', '1.1L'],
+            ['Marche', '6 240'],
+            ['Rythme', '74 bpm'],
+          ].map(([l, v]) => (
+            <div key={l} style={{ display: 'grid', gridTemplateColumns: '1fr 42px', gap: 8, padding: '3px 0', borderTop: '1px solid #EEF3F1', minHeight: 18 }}>
+              <Cell style={{ fontSize: 6.8, color: '#8A867D' }}>{l}</Cell>
+              <Cell style={{ fontSize: 7.2, fontWeight: 900, color: '#171717' }}>{v}</Cell>
+            </div>
           ))}
+        </PlainCard>
+        <PlainCard style={{ padding: 8, overflow: 'hidden' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '64px minmax(0,1fr) 58px 58px', gap: 7, fontSize: 6.2, color: '#A6A19A', fontWeight: 900, textTransform: 'uppercase', marginBottom: 4 }}>
+            <Cell>Moment</Cell><Cell>Insight IA</Cell><Cell>Impact</Cell><Cell>Action</Cell>
+          </div>
+          {[
+            ['Matin', 'Hydratation sous objectif depuis 3 jours', 'Energie', 'Boire 500ml', '#B45309'],
+            ['Midi', 'Repas riche en sel detecte dans le journal', 'Tension', 'Allege soir', '#B45309'],
+            ['Apres-midi', 'Pas de pause active depuis 4h', 'Stress', '5 min marche', theme.accent],
+            ['Soir', 'Heure de coucher ideale entre 22h30 et 23h', 'Sommeil', 'Rappel 22h', '#15803D'],
+            ['Demain', 'Risque fatigue si sommeil < 7h', 'Focus', 'Plan leger', '#315BFF'],
+            ['Semaine', 'Objectif marche atteint 4 jours sur 7', 'Cardio', 'Garder rythme', '#15803D'],
+          ].map(([time, text, impact, action, color]) => (
+            <div key={time} style={{ display: 'grid', gridTemplateColumns: '58px minmax(0,1fr) 52px 54px', gap: 6, padding: '2px 0', borderTop: '1px solid #EDF1EF', minHeight: 17, alignItems: 'center' }}>
+              <Cell style={{ fontSize: 6.7, color: theme.accent, fontWeight: 900 }}>{time}</Cell>
+              <div style={{ minWidth: 0 }}>
+                <Cell style={{ fontSize: 6.8, color: '#403D38', fontWeight: 800 }}>{text}</Cell>
+              </div>
+              <Cell style={{ fontSize: 6.3, color: '#8A867D' }}>{impact}</Cell>
+              <span style={cropText}><UiPill tone={color} bg={color + '14'}>{action}</UiPill></span>
+            </div>
+          ))}
+        </PlainCard>
+        <div style={{ display: 'grid', gridTemplateRows: '1fr 112px', gap: 8, minWidth: 0 }}>
+        <PlainCard style={{ padding: 8 }}>
+          <Cell style={{ fontSize: 7.2, color: '#9B9489', fontWeight: 900, textTransform: 'uppercase', marginBottom: 6 }}>Plan perso</Cell>
+          {[
+            ['Respiration', '3 min · 14h00'],
+            ['Eau', '500ml · avant 15h'],
+            ['Sommeil', 'Mode calme 22h'],
+          ].map(([name, detail]) => (
+            <div key={name} style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr)', padding: '4px 0', borderTop: '1px solid #EDF1EF', minHeight: 24 }}>
+              <Cell style={{ fontSize: 7.2, fontWeight: 900, color: '#171717' }}>{name}</Cell>
+              <Cell style={{ fontSize: 6.2, color: '#8A867D', marginTop: 1 }}>{detail}</Cell>
+            </div>
+          ))}
+        </PlainCard>
+        <PlainCard style={{ padding: 8, background: '#10201E', borderColor: '#10201E', color: '#fff', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
+            <div style={{ minWidth: 0 }}>
+              <Cell style={{ fontSize: 8.4, fontWeight: 900, color: '#fff' }}>Chat vocal IA</Cell>
+              <Cell style={{ fontSize: 6.2, color: 'rgba(255,255,255,0.54)', marginTop: 2 }}>Modal ouverte · écoute active</Cell>
+            </div>
+            <div style={{ width: 24, height: 24, borderRadius: 99, background: theme.accent, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <MessageCircle size={12} color="#fff" />
+            </div>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '30px minmax(0,1fr)', gap: 7, alignItems: 'center', marginBottom: 6 }}>
+            <div style={{ width: 30, height: 30, borderRadius: 99, background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Activity size={13} color="#7DE3DA" />
+            </div>
+            <div style={{ minWidth: 0 }}>
+              <Cell style={{ fontSize: 7.4, color: '#fff', fontWeight: 800 }}>“Je me sens fatigue apres midi”</Cell>
+              <Cell style={{ fontSize: 6.2, color: 'rgba(255,255,255,0.48)', marginTop: 2 }}>Transcription en direct</Cell>
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+            <UiPill tone="#7DE3DA" bg="rgba(125,227,218,0.14)">Analyser fatigue</UiPill>
+            <UiPill tone="#fff" bg="rgba(255,255,255,0.11)">Plan 5 min</UiPill>
+          </div>
+        </PlainCard>
         </div>
       </div>
-    </SaasShell>
+    </CustomerSaasShell>
   );
 }
 
-/* ═══ SECTEUR 4 — IMMOBILIER  (vert) ══════════════════ */
 function SaasImmo() {
-  const nav: SNavItem[] = [
-    { ic: <LayoutDashboard size={10} color="#16A34A" />, l: 'Dashboard', a: true },
-    { ic: <BagIcon size={10} color="#ccc" />, l: 'Biens' },
-    { ic: <Users size={10} color="#ccc" />, l: 'Locataires' },
-    { ic: <DollarSign size={10} color="#ccc" />, l: 'Loyers' },
-    { ic: <BarChart2 size={10} color="#ccc" />, l: 'Rapports' },
-    { ic: <Settings size={10} color="#ccc" />, l: 'Réglages' },
-  ];
+  const theme = { accent: '#2F7D55', soft: '#E8F5EC', bg: '#F7FAF6' };
   return (
-    <SaasShell slug="app.ozirus.immo/dashboard" nav={nav} theme={TH_IMMO}>
-      <div style={{ padding: '12px 13px', height: '100%', display: 'flex', flexDirection: 'column', gap: 9, boxSizing: 'border-box', overflowY: 'auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, color: '#111' }}>Dashboard</p>
-            <p style={{ fontSize: 7.5, color: '#bbb', marginTop: 1 }}>Mai 2026 — Portefeuille locatif</p>
-          </div>
-          <div style={{ background: '#16A34A', borderRadius: 6, padding: '4px 9px', fontSize: 7.5, color: '#fff', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 3 }}>
-            <PlusCircle size={8} color="#fff" /> Ajouter un bien
-          </div>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 7 }}>
-          <KpiCard icon={<BagIcon size={10} color="#16A34A" />} label="Biens gérés" value="47" delta="+3" ok bg="#F0FDF4" />
-          <KpiCard icon={<DollarSign size={10} color="#16a34a" />} label="Loyers" value="6,2M F" delta="+8%" ok bg="#F0FDF4" />
-          <KpiCard icon={<AlertCircle size={10} color="#dc2626" />} label="Impayés" value="5" delta="+2" ok={false} bg="#FEF2F2" />
-          <KpiCard icon={<Percent size={10} color="#16A34A" />} label="Taux occupation" value="91%" delta="+3%" ok bg="#F0FDF4" />
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 9 }}>
-          <div style={{ background: '#fff', borderRadius: 10, padding: '10px 12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid ' + TH_IMMO.cardBorder }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-              <p style={{ fontSize: 9, fontWeight: 700, color: '#111' }}>Encaissements · 6 mois</p>
-              <span style={{ fontSize: 7.5, color: '#16A34A', fontWeight: 600 }}>+11% vs 6 mois avant</span>
+    <BackOfficeShell
+      slug="immo.ozirus.app/properties"
+      title="Gestion locative"
+      meta="Agence Akwa · Portefeuille Douala"
+      action="Bien"
+      theme={theme}
+      sideNote={{ label: 'Visites', value: '6 RDV', hint: '3 confirmes' }}
+      nav={[
+        { label: 'Biens', icon: <Hotel size={8} />, active: true },
+        { label: 'Visites', icon: <Calendar size={8} /> },
+        { label: 'Leads', icon: <Users size={8} /> },
+        { label: 'Baux', icon: <ClipboardList size={8} /> },
+        { label: 'Loyers', icon: <DollarSign size={8} /> },
+      ]}
+    >
+      <div style={{ height: '100%', display: 'grid', gridTemplateColumns: '208px 1fr', gap: 8 }}>
+        <PlainCard style={{ overflow: 'hidden' }}>
+          <img src="/dev-assets/apartment-living.png" alt="" style={{ width: '100%', height: 122, objectFit: 'cover', display: 'block' }} />
+          <div style={{ padding: 8 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 4 }}>
+              <div>
+                <p style={{ fontSize: 10.2, fontWeight: 900, color: '#171717' }}>F3 Bonapriso</p>
+                <p style={{ fontSize: 7, color: '#8A867D', marginTop: 3 }}>2 chambres · balcon · parking</p>
+              </div>
+              <p style={{ fontSize: 9.4, fontWeight: 900, color: theme.accent }}>250K FCFA/mois</p>
             </div>
-            <SvgBar data={[4800, 5200, 5100, 5600, 5900, 6200]} color="#16A34A" trackBg="#BBF7D0" labels={['Déc', 'Jan', 'Fév', 'Mar', 'Avr', 'Mai']} />
+            <div style={{ display: 'flex', gap: 4, marginTop: 8, flexWrap: 'wrap' }}>
+              <UiPill tone={theme.accent} bg={theme.soft}>Disponible</UiPill>
+              <UiPill>3 visites</UiPill>
+              <UiPill>Video 360</UiPill>
+            </div>
           </div>
-          <div style={{ background: '#fff', borderRadius: 10, padding: '10px 12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid ' + TH_IMMO.cardBorder }}>
-            <p style={{ fontSize: 9, fontWeight: 700, color: '#111', marginBottom: 8 }}>Répartition par type</p>
-            <PBar label="Appartements" value="52%" pct={52} color="#16A34A" trackColor="#BBF7D0" />
-            <PBar label="Studios" value="26%" pct={26} color="#22C55E" trackColor="#BBF7D0" />
-            <PBar label="Maisons" value="14%" pct={14} color="#4ADE80" trackColor="#BBF7D0" />
-            <PBar label="Commerces" value="8%" pct={8} color="#86EFAC" trackColor="#DCFCE7" />
+        </PlainCard>
+        <div style={{ display: 'grid', gridTemplateRows: '52px 1fr', gap: 7 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 7 }}>
+            <MiniMetric label="Biens actifs" value="47" tone={theme.accent} bg={theme.soft} />
+            <MiniMetric label="Occupation" value="91%" tone="#15803D" bg="#DFF3E6" />
+            <MiniMetric label="Impayes" value="5" tone="#B45309" bg="#FEF3C7" />
           </div>
-        </div>
-        <div style={{ background: '#fff', borderRadius: 10, padding: '9px 12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid ' + TH_IMMO.cardBorder }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-            <p style={{ fontSize: 9, fontWeight: 700, color: '#111' }}>Suivi des loyers — Mai 2026</p>
-            <span style={{ fontSize: 7.5, color: '#16A34A', fontWeight: 600 }}>Voir tout</span>
-          </div>
-          <SHeader cols="1fr 76px 78px 55px 60px" headers={['Locataire', 'Bien', 'Loyer', 'Échéance', 'Statut']} />
-          {[
-            { n: 'Mireille Foka', b: 'Appt F3 Bali', l: '120 000 F', e: '01 Juin', s: 'Payé', c: '#22c55e' },
-            { n: 'Jean-Pierre N.', b: 'Studio Melen', l: '65 000 F', e: '01 Juin', s: 'En retard', c: '#dc2626' },
-            { n: 'Grace Mballa', b: 'Maison Odza', l: '250 000 F', e: '05 Juin', s: 'En attente', c: '#F59E0B' },
-            { n: 'Ibrahima Sow', b: 'Commerce Akwa', l: '180 000 F', e: '01 Juin', s: 'Payé', c: '#22c55e' },
-          ].map(o => (
-            <SRow key={o.n} cols="1fr 76px 78px 55px 60px" border="#F0FDF4" cells={[
-              <span style={{ fontSize: 7.5, fontWeight: 600, color: '#111' }}>{o.n}</span>,
-              <span style={{ fontSize: 7, color: '#888', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{o.b}</span>,
-              <span style={{ fontSize: 7.5, fontWeight: 700, color: '#333' }}>{o.l}</span>,
-              <span style={{ fontSize: 7, color: '#777' }}>{o.e}</span>,
-              <SBadge text={o.s} color={o.c} />,
-            ]} />
-          ))}
+          <PlainCard style={{ padding: 8 }}>
+            <p style={{ fontSize: 7.2, color: '#9B9489', fontWeight: 900, textTransform: 'uppercase', marginBottom: 6 }}>Pipeline visites</p>
+            {[
+              ['10:00', 'M. Talla', 'F3 Bonapriso · 2 chambres', 'Confirme', theme.accent],
+              ['11:30', 'Grace Mballa', 'Studio Melen · meuble', 'A rappeler', '#B45309'],
+              ['15:00', 'Ibrahima Sow', 'Commerce Akwa · 38m2', 'Dossier recu', '#315BFF'],
+              ['17:15', 'Mireille Foka', 'Villa Odza · jardin', 'Visite 360', '#64748B'],
+              ['18:00', 'Claudine Bika', 'F2 Bali · balcon', 'Option pose', '#2F7D55'],
+              ['18:45', 'Roger Fongang', 'Duplex Makepe · garage', 'Garant demande', '#B45309'],
+              ['19:20', 'Aicha Konate', 'Studio Bonamoussadi', 'Message envoye', '#315BFF'],
+              ['20:00', 'Paul Ngono', 'F4 Deido · vue ville', 'A qualifier', '#64748B'],
+              ['20:30', 'Linda Tamo', 'Bureau Akwa · 62m2', 'Prix envoye', '#2F7D55'],
+              ['21:00', 'Yvan Etoundi', 'Villa Logpom · piscine', 'Relance J+1', '#B45309'],
+            ].map(([h, name, bien, status, color]) => (
+              <div key={h} style={{ display: 'grid', gridTemplateColumns: '38px minmax(0,1fr) 80px 62px', gap: 7, alignItems: 'center', padding: '4px 0', borderTop: '1px solid #EDF0EA', minHeight: 21 }}>
+                <span style={{ fontSize: 7.2, fontWeight: 900, color }}>{h}</span>
+                <span style={{ ...cropText, fontSize: 7.6, fontWeight: 900, color: '#171717' }}>{name}</span>
+                <span style={{ ...cropText, fontSize: 6.8, color: '#8A867D' }}>{bien}</span>
+                <span style={cropText}><UiPill tone={color} bg={color + '14'}>{status}</UiPill></span>
+              </div>
+            ))}
+          </PlainCard>
         </div>
       </div>
-    </SaasShell>
+    </BackOfficeShell>
   );
 }
 
-/* ═══ SECTEUR 5 — RH & PAIE  (violet profond) ═════════ */
 function SaasRH() {
-  const nav: SNavItem[] = [
-    { ic: <LayoutDashboard size={10} color="#7C3AED" />, l: 'Dashboard', a: true },
-    { ic: <Users size={10} color="#ccc" />, l: 'Employés' },
-    { ic: <DollarSign size={10} color="#ccc" />, l: 'Paie' },
-    { ic: <Calendar size={10} color="#ccc" />, l: 'Congés' },
-    { ic: <Activity size={10} color="#ccc" />, l: 'Présences' },
-    { ic: <Settings size={10} color="#ccc" />, l: 'Réglages' },
-  ];
+  const theme = { accent: '#6B4DE6', soft: '#EEEAFE', bg: '#F8F7FB' };
   return (
-    <SaasShell slug="app.ozirus.rh/dashboard" nav={nav} theme={TH_RH}>
-      <div style={{ padding: '12px 13px', height: '100%', display: 'flex', flexDirection: 'column', gap: 9, boxSizing: 'border-box', overflowY: 'auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <p style={{ fontFamily: 'DM Sans, sans-serif', fontWeight: 700, fontSize: 12, color: '#111' }}>Dashboard RH</p>
-            <p style={{ fontSize: 7.5, color: '#bbb', marginTop: 1 }}>Mai 2026 — 48 employés actifs</p>
+    <BackOfficeShell
+      slug="rh.ozirus.app/payroll"
+      title="Paie & presence"
+      meta="Mai 2026 · 48 employes · validation finale"
+      action="Valider"
+      theme={theme}
+      sideNote={{ label: 'Paie', value: '42 pretes', hint: '6 a verifier' }}
+      nav={[
+        { label: 'Paie', icon: <DollarSign size={8} />, active: true },
+        { label: 'Equipe', icon: <Users size={8} /> },
+        { label: 'Conges', icon: <Calendar size={8} /> },
+        { label: 'Presence', icon: <Activity size={8} /> },
+        { label: 'Contrats', icon: <ClipboardList size={8} /> },
+      ]}
+    >
+      <div style={{ height: '100%', display: 'grid', gridTemplateColumns: '1fr 154px', gap: 8 }}>
+        <PlainCard style={{ padding: 8, overflow: 'hidden' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 64px 68px 58px', gap: 8, color: '#A6A19A', fontSize: 6.3, fontWeight: 900, textTransform: 'uppercase', marginBottom: 5 }}>
+            <span>Employe</span><span>Presence</span><span>Net</span><span>Statut</span>
           </div>
-          <div style={{ background: '#7C3AED', borderRadius: 6, padding: '4px 9px', fontSize: 7.5, color: '#fff', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 3 }}>
-            <PlusCircle size={8} color="#fff" /> Ajouter employé
-          </div>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 7 }}>
-          <KpiCard icon={<Users size={10} color="#7C3AED" />} label="Effectif total" value="48" delta="+3" ok bg="#F5F3FF" />
-          <KpiCard icon={<DollarSign size={10} color="#16a34a" />} label="Masse salariale" value="12,4M F" delta="+5%" ok bg="#F0FDF4" />
-          <KpiCard icon={<Calendar size={10} color="#F59E0B" />} label="Congés en cours" value="7" delta="-2" ok bg="#FFF7ED" />
-          <KpiCard icon={<Activity size={10} color="#7C3AED" />} label="Taux présence" value="94%" delta="+2%" ok bg="#F5F3FF" />
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: 9 }}>
-          <div style={{ background: '#fff', borderRadius: 10, padding: '10px 12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid ' + TH_RH.cardBorder }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-              <p style={{ fontSize: 9, fontWeight: 700, color: '#111' }}>Masse salariale · 6 mois</p>
-              <span style={{ fontSize: 7.5, color: '#7C3AED', fontWeight: 600 }}>+5% vs 6 mois avant</span>
-            </div>
-            <SvgBar data={[11200, 11500, 11800, 11900, 12100, 12400]} color="#7C3AED" trackBg="#DDD6FE" labels={['Déc', 'Jan', 'Fév', 'Mar', 'Avr', 'Mai']} />
-          </div>
-          <div style={{ background: '#fff', borderRadius: 10, padding: '10px 12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid ' + TH_RH.cardBorder }}>
-            <p style={{ fontSize: 9, fontWeight: 700, color: '#111', marginBottom: 8 }}>Par département</p>
-            <PBar label="Commercial" value="35%" pct={35} color="#7C3AED" trackColor="#DDD6FE" />
-            <PBar label="Technique" value="28%" pct={28} color="#8B5CF6" trackColor="#DDD6FE" />
-            <PBar label="Administration" value="22%" pct={22} color="#A78BFA" trackColor="#DDD6FE" />
-            <PBar label="Support" value="15%" pct={15} color="#C4B5FD" trackColor="#EDE9FE" />
-          </div>
-        </div>
-        <div style={{ background: '#fff', borderRadius: 10, padding: '9px 12px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid ' + TH_RH.cardBorder }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-            <p style={{ fontSize: 9, fontWeight: 700, color: '#111' }}>Fiches de paie — Mai 2026</p>
-            <div style={{ display: 'flex', gap: 5 }}>
-              <span style={{ fontSize: 7, fontWeight: 600, color: '#22c55e', background: '#F0FDF4', padding: '2px 5px', borderRadius: 99 }}>42 validées</span>
-              <span style={{ fontSize: 7, fontWeight: 600, color: '#F59E0B', background: '#FFF7ED', padding: '2px 5px', borderRadius: 99 }}>6 en attente</span>
-            </div>
-          </div>
-          <SHeader cols="1fr 76px 78px 55px 60px" headers={['Employé', 'Poste', 'Salaire net', 'Présences', 'Statut']} />
           {[
-            { n: 'Thierry Ondoa', av: 'TO', p: 'Dev Senior', s: '350 000 F', pr: '22/22 j', st: 'Validé', c: '#22c55e' },
-            { n: 'Claudine Bika', av: 'CB', p: 'Commerciale', s: '220 000 F', pr: '20/22 j', st: 'Validé', c: '#22c55e' },
-            { n: 'Roger Fongang', av: 'RF', p: 'Comptable', s: '280 000 F', pr: '18/22 j', st: 'En attente', c: '#F59E0B' },
-            { n: 'Nadège Ateba', av: 'NA', p: 'RH Manager', s: '310 000 F', pr: '22/22 j', st: 'Validé', c: '#22c55e' },
-          ].map(o => (
-            <SRow key={o.n} cols="1fr 76px 78px 55px 60px" border="#F5F3FF" cells={[
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                <div style={{ width: 18, height: 18, borderRadius: '50%', background: 'linear-gradient(135deg,#7C3AED,#8B5CF6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 6.5, color: '#fff', fontWeight: 700, flexShrink: 0 }}>{o.av}</div>
-                <span style={{ fontSize: 7.5, fontWeight: 600, color: '#111' }}>{o.n}</span>
-              </div>,
-              <span style={{ fontSize: 7, color: '#888' }}>{o.p}</span>,
-              <span style={{ fontSize: 7.5, fontWeight: 700, color: '#333' }}>{o.s}</span>,
-              <span style={{ fontSize: 7, color: '#777' }}>{o.pr}</span>,
-              <SBadge text={o.st} color={o.c} />,
-            ]} />
+            ['Thierry Ondoa', 'Dev senior · prime astreinte', '22/22 j', '350 000 F', 'Pret', '#15803D'],
+            ['Claudine Bika', 'Commerciale · commission incluse', '20/22 j', '220 000 F', 'Pret', '#15803D'],
+            ['Roger Fongang', 'Comptable · absence justifiee', '18/22 j', '280 000 F', 'Verifier', '#B45309'],
+            ['Nadege Ateba', 'RH manager · avance deduite', '22/22 j', '310 000 F', 'Pret', '#15803D'],
+            ['Alain Mboa', 'Support · heures supp. 6h', '21/22 j', '180 000 F', 'Pret', '#15803D'],
+            ['Fatou Diallo', 'Assistante · transport ajoute', '22/22 j', '160 000 F', 'Pret', '#15803D'],
+            ['Bruno Tamba', 'Logistique · retenue materiel', '19/22 j', '195 000 F', 'Verifier', '#B45309'],
+            ['Aline Simo', 'Designer · bonus projet', '22/22 j', '260 000 F', 'Pret', '#15803D'],
+            ['Jean Nsame', 'Technicien · panier repas', '22/22 j', '175 000 F', 'Pret', '#15803D'],
+            ['Mireille Foka', 'Finance · prime cloture', '21/22 j', '300 000 F', 'Pret', '#15803D'],
+            ['Kevin Meli', 'Stagiaire · prorata mois', '15/22 j', '90 000 F', 'Verifier', '#B45309'],
+          ].map(([n, p, pres, net, st, color]) => (
+            <div key={n} style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) 64px 68px 58px', gap: 8, alignItems: 'center', padding: '4px 0', borderTop: '1px solid #ECE9F5', minHeight: 22 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7, minWidth: 0 }}>
+                <div style={{ width: 20, height: 20, borderRadius: 99, background: theme.soft, display: 'flex', alignItems: 'center', justifyContent: 'center', color: theme.accent, fontSize: 6.2, fontWeight: 900, flexShrink: 0 }}>{n.split(' ').map(x => x[0]).join('')}</div>
+                <div style={{ minWidth: 0 }}>
+                  <p style={{ ...cropText, fontSize: 7.6, fontWeight: 900, color: '#171717' }}>{n}</p>
+                  <p style={{ ...cropText, fontSize: 6.3, color: '#8A867D', marginTop: 1 }}>{p}</p>
+                </div>
+              </div>
+              <span style={{ ...cropText, fontSize: 7.1, color: '#6B6760' }}>{pres}</span>
+              <span style={{ ...cropText, fontSize: 7.1, fontWeight: 900, color: '#171717' }}>{net}</span>
+              <span style={cropText}><UiPill tone={color} bg={color + '14'}>{st}</UiPill></span>
+            </div>
           ))}
-        </div>
+        </PlainCard>
+        <PlainCard style={{ padding: 8, display: 'flex', flexDirection: 'column' }}>
+          <p style={{ fontSize: 7.2, fontWeight: 900, color: '#A6A19A', textTransform: 'uppercase', marginBottom: 8 }}>A payer</p>
+          <p style={{ fontSize: 23, fontWeight: 900, color: '#171717', lineHeight: 1 }}>12,4M</p>
+          <p style={{ fontSize: 7, color: '#8A867D', marginTop: 3 }}>FCFA net total</p>
+          <div style={{ height: 1, background: '#ECE9F5', margin: '9px 0' }} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'flex-start' }}>
+            <UiPill tone={theme.accent} bg={theme.soft}>42 fiches pretes</UiPill>
+            <UiPill tone="#B45309" bg="#FEF3C7">6 a verifier</UiPill>
+            <UiPill>Virement vendredi</UiPill>
+          </div>
+          <button style={{ marginTop: 'auto', width: '100%', height: 24, border: 'none', borderRadius: 6, background: theme.accent, color: '#fff', fontSize: 6.8, fontWeight: 900, textAlign: 'left', padding: '0 9px' }}>Generer les bulletins</button>
+        </PlainCard>
       </div>
-    </SaasShell>
+    </BackOfficeShell>
   );
 }
 
 const SAAS_LIST = [
-  { id: 'resto', label: 'Restauration', sub: 'Restaurant & maquis', el: <SaasResto /> },
+  { id: 'mealai', label: 'MealAI', sub: 'Assistant nutrition IA', el: <SaasResto /> },
   { id: 'ecom', label: 'E-commerce', sub: 'Boutique en ligne', el: <SaasEcom /> },
-  { id: 'health', label: 'Santé', sub: 'Clinique & cabinet médical', el: <SaasHealth /> },
+  { id: 'careai', label: 'CareAI', sub: 'Suivi santé personnel IA', el: <SaasHealth /> },
   { id: 'immo', label: 'Immobilier', sub: 'Gestion locative', el: <SaasImmo /> },
   { id: 'rh', label: 'RH & Paie', sub: 'Ressources humaines', el: <SaasRH /> },
 ];
 
 const APPS = [
-  { id: 'fintech', label: 'Fintech — NeoBank',        sub: 'Application bancaire mobile',   color: '#34d399', light: false, screen: <NeoBankApp /> },
-  { id: 'fitness', label: 'Fitness — WorkoutAI',      sub: 'Coach sportif intelligent',     color: '#fb923c', light: false, screen: <FitnessApp /> },
+  { id: 'fintech', label: 'Fintech — NeoBank',        sub: 'Application bancaire mobile',   color: '#0A84FF', light: true, screen: <NeoBankApp /> },
+  { id: 'fitness', label: 'Fitness — WorkoutAI',      sub: 'Coach sportif intelligent',     color: '#FF9F0A', light: false, screen: <FitnessApp /> },
   { id: 'food',    label: 'Food Delivery — QuickEat', sub: 'Livraison de repas locale',      color: '#FF5A5F', light: true,  screen: <FoodApp /> },
-  { id: 'school',  label: 'Gestion scolaire',          sub: 'SaaS établissements scolaires', color: '#7C6AF7', light: false, screen: <SchoolApp /> },
-  { id: 'clinic',  label: 'Clinique & Santé',           sub: 'Dossier patient & RDV',         color: '#0891b2', light: false, screen: <ClinicApp /> },
+  { id: 'school',  label: 'Gestion scolaire',          sub: 'SaaS établissements scolaires', color: '#5856D6', light: true, screen: <SchoolApp /> },
+  { id: 'clinic',  label: 'Clinique & Santé',           sub: 'Dossier patient & RDV',         color: '#00A7A7', light: true, screen: <ClinicApp /> },
 ];
 
 
@@ -1527,26 +1507,16 @@ export default function DevPage() {
   return (
     <main style={{ background: '#fff', color: '#111', fontFamily: 'DM Sans, sans-serif' }}>
 
-      {/* NAV */}
-      <header style={{ position: 'sticky', top: 0, zIndex: 50, background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
-        <div style={{ maxWidth: 1080, margin: '0 auto', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px' }}>
-          <Link href="/" style={{ textDecoration: 'none' }}>
-            <img src="/logo.png" alt="Ozirus" style={{ height: 30 }} />
-          </Link>
-          <nav style={{ display: 'flex', gap: 28, fontSize: 14, fontWeight: 500 }}>
-            {[['#offres', 'Offres'], ['#processus', 'Processus'], ['#realisations', 'Réalisations'], ['#contact', 'Contact']].map(([href, label]) => (
-              <a key={href} href={href} style={{ color: '#555', textDecoration: 'none', transition: 'color 0.15s' }}
-                onMouseEnter={e => (e.currentTarget.style.color = '#7967FF')}
-                onMouseLeave={e => (e.currentTarget.style.color = '#555')}>{label}</a>
-            ))}
-          </nav>
-          <a href="#contact" style={{ background: '#7967FF', color: '#fff', padding: '10px 20px', borderRadius: 8, fontSize: 14, fontWeight: 600, textDecoration: 'none', transition: 'background 0.15s' }}
-            onMouseEnter={e => (e.currentTarget.style.background = '#6654F0')}
-            onMouseLeave={e => (e.currentTarget.style.background = '#7967FF')}>
-            Démarrer un projet
-          </a>
-        </div>
-      </header>
+      <SharedNav
+        anchors={[
+          { label: 'Offres', href: '#offres' },
+          { label: 'Processus', href: '#processus' },
+          { label: 'Réalisations', href: '#realisations' },
+          { label: 'Contact', href: '#contact' },
+        ]}
+        ctaLabel="Démarrer un projet"
+        ctaHref="#contact"
+      />
 
       {/* ── HERO ─────────────────────────────────── */}
       <section style={{ position: 'relative', overflow: 'hidden', background: '#fff' }}>
@@ -1791,12 +1761,12 @@ export default function DevPage() {
             Décrivez votre idée, votre contexte et vos utilisateurs cibles. On revient avec une estimation et une approche claire — sans engagement.
           </p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 28 }}>
-            <a href="mailto:contact@ozirus.agency" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#7967FF', color: '#fff', padding: '14px 28px', borderRadius: 8, fontSize: 15, fontWeight: 600, textDecoration: 'none', boxShadow: '0 4px 20px rgba(121,103,255,0.25)', transition: 'background 0.15s' }}
+            <a href="mailto:contact.fotie@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#7967FF', color: '#fff', padding: '14px 28px', borderRadius: 8, fontSize: 15, fontWeight: 600, textDecoration: 'none', boxShadow: '0 4px 20px rgba(121,103,255,0.25)', transition: 'background 0.15s' }}
               onMouseEnter={e => (e.currentTarget.style.background = '#6654F0')}
               onMouseLeave={e => (e.currentTarget.style.background = '#7967FF')}>
               Démarrer un projet <ArrowRight size={16} />
             </a>
-            <a href="https://wa.me/237000000000" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '1.5px solid #25D366', color: '#25D366', padding: '14px 24px', borderRadius: 8, fontSize: 15, fontWeight: 600, textDecoration: 'none', transition: 'background 0.15s, color 0.15s' }}
+            <a href="https://wa.me/237678615677" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '1.5px solid #25D366', color: '#25D366', padding: '14px 24px', borderRadius: 8, fontSize: 15, fontWeight: 600, textDecoration: 'none', transition: 'background 0.15s, color 0.15s' }}
               onMouseEnter={e => { e.currentTarget.style.background = '#25D366'; e.currentTarget.style.color = '#fff'; }}
               onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#25D366'; }}>
               <MessageCircle size={16} /> WhatsApp

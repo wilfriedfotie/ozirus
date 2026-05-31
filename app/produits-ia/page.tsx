@@ -99,77 +99,77 @@ const PRODUCTS = [
     cta: 'Je veux ce système',
   },
 
-  /* ── Restauration ── */
+  /* ── Production & opérations ── */
   {
     id: 'menu-predictif',
-    title: 'Menu Prédictif IA',
+    title: 'Planificateur de Production IA',
     price: '59 000 FCFA',
     type: 'Paiement unique',
-    desc: 'L\'IA croise vos ventes passées, la météo, les jours fériés locaux et les habitudes de votre quartier pour vous dire exactement quels plats préparer chaque jour — et en quelle quantité. Fini le gaspillage, fini les ruptures à 13h.',
-    features: ['Prévision quotidienne des plats à préparer', 'Intégration météo et calendrier local', 'Calcul des quantités par plat et par service', 'Alertes stocks cuisine avant le rush', 'Analyse des plats les moins/plus rentables', 'Rapport hebdo gaspillage et marges par plat'],
+    desc: 'L\'IA croise vos ventes passées, la météo, les jours fériés locaux et les habitudes de votre zone pour vous dire exactement quoi préparer, produire ou mettre en avant chaque jour — et en quelle quantité. Utile pour la restauration, les cantines, les ateliers de transformation, les traiteurs ou toute activité où il faut anticiper la demande avant de produire.',
+    features: ['Prévision quotidienne des quantités à préparer', 'Intégration météo et calendrier local', 'Calcul des quantités par produit et par service', 'Alertes stocks avant les pics de demande', 'Analyse des produits les moins/plus rentables', 'Rapport hebdo gaspillage et marges par produit'],
     gains: ['−40 % de gaspillage alimentaire en moyenne', '+18 à 28 % de marge brute récupérée', 'Ruptures de plats phares divisées par 3'],
     for: 'Restaurants, maquis, snacks, cantines',
-    cta: 'Je veux ce menu intelligent',
+    cta: 'Je veux ce planificateur',
   },
   {
     id: 'commandes-resto',
     title: 'Prise de Commandes WhatsApp',
     price: '69 000 FCFA',
     type: 'Paiement unique',
-    desc: 'Un assistant IA sur WhatsApp qui prend les commandes, confirme les tables, gère les pré-commandes et encaisse via Mobile Money — même pendant les rushs du midi quand vous ne pouvez pas décrocher.',
-    features: ['Menu interactif envoyé automatiquement sur WhatsApp', 'Prise de commande + confirmation de table', 'Pré-commandes et commandes à emporter', 'Encaissement Mobile Money avant l\'arrivée', 'Transmission directe en cuisine (ticket numérique)', 'Historique des commandes par client'],
+    desc: 'Un assistant IA sur WhatsApp qui prend les commandes, confirme les demandes, gère les pré-commandes et encaisse via Mobile Money — même quand vous ne pouvez pas décrocher. Il peut servir pour un restaurant, une boutique, un catalogue B2B, un service de livraison, un commerce WhatsApp ou un artisan qui reçoit beaucoup de demandes répétitives.',
+    features: ['Catalogue interactif envoyé automatiquement sur WhatsApp', 'Prise de commande + confirmation client', 'Pré-commandes et commandes à emporter/livrer', 'Encaissement Mobile Money avant traitement', 'Transmission directe à l\'équipe opérationnelle', 'Historique des commandes par client'],
     gains: ['+30 % de commandes traitées pendant les rushs', 'Zéro commande perdue ou mal saisie', 'Paiements encaissés avant l\'arrivée du client'],
-    for: 'Restaurants, maquis, fast-foods, traiteurs',
+    for: 'Restaurants, commerces WhatsApp, artisans, livraison, B2B',
     cta: 'Je veux automatiser mes commandes',
   },
   {
     id: 'tableau-cuisine',
-    title: 'Tableau de Bord Cuisine IA',
+    title: 'Tableau de Bord Opérationnel IA',
     price: '49 000 FCFA',
     type: 'Paiement unique',
-    desc: 'Chaque matin à 7h, un rapport WhatsApp vous attend : plats à préparer en priorité, stocks à réapprovisionner, ventes de la veille, chiffre de la semaine. Tout ça sans ouvrir un ordinateur ni un fichier Excel.',
-    features: ['Rapport matinal automatique à 7h sur WhatsApp', 'Classement des plats par vitesse de rotation', 'Alerte réapprovisionnement stocks cuisine', 'Résumé ventes J-1 et tendance semaine', 'Comparaison même jour semaine précédente', 'Export CSV mensuel pour votre comptable'],
+    desc: 'Chaque matin à 7h, un rapport WhatsApp vous attend : priorités du jour, stocks à réapprovisionner, ventes de la veille, chiffre de la semaine. Il peut être utilisé pour piloter une cuisine, une boutique, un atelier, une pharmacie, un point de vente ou une petite équipe terrain sans ouvrir Excel.',
+    features: ['Rapport matinal automatique à 7h sur WhatsApp', 'Classement des produits par vitesse de rotation', 'Alerte réapprovisionnement sur les stocks critiques', 'Résumé ventes J-1 et tendance semaine', 'Comparaison même jour semaine précédente', 'Export CSV mensuel pour votre comptable'],
     gains: ['1 à 3h de gestion économisées chaque jour', 'Décisions cuisine basées sur des données réelles', 'Visibilité totale sans ordinateur ni logiciel'],
-    for: 'Chefs, gérants de restaurant, responsables cuisine',
+    for: 'Gérants, responsables d\'équipe, points de vente, ateliers',
     cta: 'Je veux ce tableau de bord',
   },
 
-  /* ── Immobilier ── */
+  /* ── Qualification & rendez-vous ── */
   {
     id: 'immo-assistant',
-    title: 'Assistant IA Immobilier',
+    title: 'Assistant Qualification & Rendez-vous IA',
     price: '119 000 FCFA',
     type: 'Paiement unique',
-    desc: 'Un assistant IA qui répond instantanément aux demandes de visites, qualifie les acheteurs/locataires potentiels, envoie les fiches descriptives et planifie les visites — pendant que vous vous concentrez sur la négociation et la signature.',
-    features: ['Réponse automatique aux demandes de visite (WhatsApp/SMS)', 'Qualification acheteur/locataire par questionnaire IA', 'Envoi automatique des fiches et photos des biens', 'Planification des visites + rappels automatiques', 'Relance des contacts inactifs après 7/14/30 jours', 'Tableau de bord pipeline biens et contacts'],
+    desc: 'Un assistant IA qui répond instantanément aux demandes, qualifie les prospects, envoie les bonnes informations et planifie les rendez-vous — pendant que vous vous concentrez sur les échanges à forte valeur. Il convient aux agences immobilières, écoles, cabinets, services B2B, formations, assurances et toutes les activités qui doivent filtrer beaucoup de demandes avant un rendez-vous.',
+    features: ['Réponse automatique aux demandes entrantes (WhatsApp/SMS)', 'Qualification prospect par questionnaire IA', 'Envoi automatique des fiches, documents ou informations utiles', 'Planification des rendez-vous + rappels automatiques', 'Relance des contacts inactifs après 7/14/30 jours', 'Tableau de bord pipeline prospects et rendez-vous'],
     gains: ['+60 % de visites effectivement planifiées', 'Aucun prospect non relancé', '5 à 8h/semaine économisées sur les échanges téléphoniques'],
-    for: 'Agents immobiliers, promoteurs, agences',
+    for: 'Immobilier, formation, services B2B, cabinets, assurances',
     cta: 'Je veux cet assistant',
   },
 
-  /* ── Agriculture ── */
+  /* ── Prix & opportunités ── */
   {
     id: 'agri-prix',
-    title: 'Prédicteur de Prix Agricoles IA',
+    title: 'Prédicteur de Prix & Opportunités IA',
     price: '129 000 FCFA',
     type: 'Paiement unique',
-    desc: 'L\'IA analyse les prix des marchés locaux, les données météo et les cycles saisonniers pour prédire les prix de vos cultures 2 à 4 semaines à l\'avance. Vendez au bon moment, stockez au bon moment.',
-    features: ['Prévision des prix à 2, 3 et 4 semaines', 'Couverture des principaux marchés locaux et régionaux', 'Alertes WhatsApp quand les prix montent ou baissent', 'Recommandation : vendre maintenant ou stocker', 'Analyse comparative entre marchés (trouver le meilleur acheteur)', 'Historique des prix sur 24 mois pour votre culture'],
+    desc: 'L\'IA analyse les prix du marché, les données météo, les saisons et vos historiques pour anticiper les hausses, les baisses et les meilleurs moments d\'achat ou de vente. Elle peut servir dans l\'agriculture, l\'agroalimentaire, le commerce de gros, l\'import/export local ou toute activité exposée à des prix qui changent vite.',
+    features: ['Prévision des prix à 2, 3 et 4 semaines', 'Couverture des principaux marchés locaux et régionaux', 'Alertes WhatsApp quand les prix montent ou baissent', 'Recommandation : vendre, acheter, stocker ou attendre', 'Analyse comparative entre marchés', 'Historique des prix sur 24 mois par produit'],
     gains: ['+20 à 35 % de revenus par vente au meilleur moment', 'Fin des ventes à perte faute d\'information', 'Décisions de stockage basées sur des données réelles'],
-    for: 'Agriculteurs, coopératives, grossistes agroalimentaires',
+    for: 'Agriculture, agroalimentaire, grossistes, import/export local',
     cta: 'Je veux ce prédicteur',
   },
 
-  /* ── Éducation ── */
+  /* ── Administration ── */
   {
     id: 'ecole-ia',
-    title: 'Assistant Admin École IA',
+    title: 'Assistant Administratif IA',
     price: '89 000 FCFA',
     type: 'Paiement unique',
-    desc: 'Un assistant IA qui gère toute la communication de votre école : inscriptions par WhatsApp, bulletins automatiques, rappels de frais de scolarité, convocations parents — sans secrétaire supplémentaire.',
-    features: ['Inscription en ligne via WhatsApp avec confirmation auto', 'Envoi automatique des bulletins aux parents par WhatsApp', 'Rappels de paiement des frais de scolarité (doux puis fermes)', 'Convocations et circulaires aux parents en masse', 'Suivi des présences et alertes absences aux parents', 'Tableau de bord : inscriptions, paiements, effectifs'],
-    gains: ['−80 % du temps de secrétariat sur la communication', '+40 % de recouvrement des frais de scolarité', 'Parents informés en temps réel sans effort'],
-    for: 'Écoles primaires, collèges, lycées, centres de formation',
+    desc: 'Un assistant IA qui centralise la communication, les inscriptions, les rappels de paiement, les documents et les messages de masse — sans surcharge administrative. Il s\'adapte aux écoles, centres de formation, associations, cabinets, cliniques, résidences ou toute structure qui échange régulièrement avec des familles, clients, patients ou adhérents.',
+    features: ['Inscription ou demande en ligne via WhatsApp avec confirmation auto', 'Envoi automatique de documents aux bons contacts', 'Rappels de paiement doux puis fermes', 'Messages groupés et convocations en masse', 'Suivi des présences, rendez-vous ou dossiers selon le cadre', 'Tableau de bord : inscriptions, paiements, effectifs ou dossiers'],
+    gains: ['−80 % du temps administratif sur la communication', '+40 % de recouvrement sur les paiements récurrents', 'Contacts informés en temps réel sans effort'],
+    for: 'Éducation, formation, santé, associations, services récurrents',
     cta: 'Je veux cet assistant',
   },
 
@@ -243,7 +243,7 @@ function ProductsPanel() {
             transition={{ duration: 0.22, ease: 'easeOut' }}
             style={{ padding: '24px 20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
-              <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#aaa' }}>Pour : {product.for}</p>
+              <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#aaa' }}>Cadres d'utilisation : {product.for}</p>
             </div>
             <h3 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 20, color: '#111', lineHeight: 1.2, marginBottom: 6 }}>{product.title}</h3>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 16 }}>
@@ -281,7 +281,7 @@ function ProductsPanel() {
               </div>
             </div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              <a href="https://wa.me/237000000000" target="_blank" rel="noreferrer"
+              <a href="https://wa.me/237678615677" target="_blank" rel="noreferrer"
                 style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: '#7967FF', color: '#fff', padding: '11px 18px', borderRadius: 8, fontSize: 13, fontWeight: 600, textDecoration: 'none' }}
                 onMouseEnter={e => (e.currentTarget.style.background = '#6654F0')}
                 onMouseLeave={e => (e.currentTarget.style.background = '#7967FF')}>
@@ -336,7 +336,7 @@ function ProductsPanel() {
           transition={{ duration: 0.22, ease: 'easeOut' }}
           style={{ padding: isTablet ? '28px 28px' : '40px 44px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#aaa' }}>Idéal pour : {product.for}</p>
+            <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#aaa' }}>Cadres d'utilisation : {product.for}</p>
           </div>
           <h3 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: isTablet ? 20 : 24, color: '#111', lineHeight: 1.2, marginBottom: 8 }}>{product.title}</h3>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 20 }}>
@@ -385,7 +385,7 @@ function ProductsPanel() {
           </div>
 
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            <a href="https://wa.me/237000000000" target="_blank" rel="noreferrer"
+            <a href="https://wa.me/237678615677" target="_blank" rel="noreferrer"
               style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: '#7967FF', color: '#fff', padding: '12px 22px', borderRadius: 8, fontSize: 13, fontWeight: 600, textDecoration: 'none', transition: 'background 0.15s' }}
               onMouseEnter={e => (e.currentTarget.style.background = '#6654F0')}
               onMouseLeave={e => (e.currentTarget.style.background = '#7967FF')}>
@@ -446,7 +446,7 @@ export default function ProduitsPage() {
                 onMouseLeave={e => (e.currentTarget.style.background = '#7967FF')}>
                 Voir les produits <ArrowRight size={14} />
               </a>
-              <a href="https://wa.me/237000000000" target="_blank" rel="noreferrer"
+              <a href="https://wa.me/237678615677" target="_blank" rel="noreferrer"
                 style={{ display: 'inline-flex', alignItems: 'center', gap: 7, border: '1.5px solid #25D366', color: '#25D366', padding: '13px 22px', borderRadius: 8, fontSize: 14, fontWeight: 600, textDecoration: 'none', transition: 'background 0.15s, color 0.15s' }}
                 onMouseEnter={e => { e.currentTarget.style.background = '#25D366'; e.currentTarget.style.color = '#fff'; }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#25D366'; }}>
@@ -501,12 +501,12 @@ export default function ProduitsPage() {
             </div>
           </motion.div>
 
-          {/* chips secteurs sous la vidéo */}
+          {/* chips contextes sous la vidéo */}
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.3 }}
             style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', justifyContent: 'center', marginTop: 24 }}
           >
-            <span style={{ fontSize: 11, fontWeight: 700, color: '#bbb', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Pour :</span>
+            <span style={{ fontSize: 11, fontWeight: 700, color: '#bbb', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Contextes :</span>
             {SECTORS.slice(0, 7).map(s => {
               const Icon = s.icon;
               return (
@@ -527,11 +527,11 @@ export default function ProduitsPage() {
 
           {/* WhatsApp CTA bas de panel */}
           <div style={{ marginTop: 32, borderTop: '1.5px solid #EDEAFF', paddingTop: 24, display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', align: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
               <p style={{ fontSize: 13, color: '#888' }}>Une question sur un produit ?</p>
               <span style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>On répond en moins de 2h.</span>
             </div>
-            <a href="https://wa.me/237000000000" target="_blank" rel="noreferrer"
+            <a href="https://wa.me/237678615677" target="_blank" rel="noreferrer"
               style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#25D366', color: '#fff', padding: '12px 20px', borderRadius: 8, fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
               <MessageCircle size={15} /> Discuter sur WhatsApp
             </a>

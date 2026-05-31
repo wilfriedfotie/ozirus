@@ -51,16 +51,16 @@ const upView = (delay = 0) => ({
 
 /* ─── data ───────────────────────────────────────────── */
 const STATS = [
-  { v: '35+',  l: 'PME accompagnées au Cameroun' },
+  { v: '35+', l: 'PME accompagnées au Cameroun' },
   { v: '280%', l: 'ROI moyen observé sur 6 mois' },
-  { v: '92%',  l: 'des clients renouvellent leur contrat' },
+  { v: '92%', l: 'des clients renouvellent leur contrat' },
 ];
 
 const WHY = [
-  { icon: MapPin,     title: 'On pense local',               body: 'Mobile Money, WhatsApp, pidgin, électricité aléatoire — nos solutions sont conçues pour les réalités camerounaises.' },
-  { icon: TrendingUp, title: 'ROI rapide et mesurable',      body: 'Chaque solution est chiffrée avant démarrage. Vous savez exactement ce que vous allez gagner.' },
-  { icon: RefreshCw,  title: 'Accompagnement A à Z',         body: 'Diagnostic → développement → formation → suivi continu. On ne disparaît pas après la livraison.' },
-  { icon: Zap,        title: 'De l\'idée au produit en 90j', body: 'Pas de tunnel de 6 mois. Vous voyez le produit avancer et vous donnez votre avis à chaque étape.' },
+  { icon: MapPin, title: 'On pense local', body: 'Mobile Money, WhatsApp, pidgin, électricité aléatoire — nos solutions sont conçues pour les réalités camerounaises.' },
+  { icon: TrendingUp, title: 'ROI rapide et mesurable', body: 'Chaque solution est chiffrée avant démarrage. Vous savez exactement ce que vous allez gagner.' },
+  { icon: RefreshCw, title: 'Accompagnement A à Z', body: 'Diagnostic → développement → formation → suivi continu. On ne disparaît pas après la livraison.' },
+  { icon: Zap, title: 'De l\'idée au produit en 90j', body: 'Pas de tunnel de 6 mois. Vous voyez le produit avancer et vous donnez votre avis à chaque étape.' },
 ];
 
 const SECTORS = [
@@ -412,25 +412,25 @@ const SECTORS = [
 ];
 
 const PROCESS = [
-  { n: '01', week: 'Semaine 1',     title: 'Diagnostic gratuit',   price: 'Gratuit',                   body: 'On analyse votre activité, vos problèmes réels et vos opportunités IA. Vous repartez avec un plan clair et un chiffrage précis — sans engagement.' },
-  { n: '02', week: 'Semaines 2–6',  title: 'Pilote IA',            price: '100 000 – 250 000',         body: 'On développe une première version de la solution sur votre cas concret. Vous voyez les résultats réels avant de tout déployer.' },
-  { n: '03', week: 'Semaines 7–12', title: 'Déploiement complet',  price: '200 000 – 600 000',         body: 'Mise en production complète, intégration avec vos outils existants (Mobile Money, WhatsApp, caisse, etc.).' },
-  { n: '04', week: 'En continu',    title: 'Formation & suivi',    price: '20 000 – 45 000 / mois',    body: 'Votre équipe est formée et autonome. On reste disponibles pour les ajustements, nouvelles fonctionnalités et suivi des KPIs.' },
+  { n: '01', week: 'Semaine 1', title: 'Diagnostic gratuit', price: 'Gratuit', body: 'On analyse votre activité, vos problèmes réels et vos opportunités IA. Vous repartez avec un plan clair et un chiffrage précis — sans engagement.' },
+  { n: '02', week: 'Semaines 2–6', title: 'Pilote IA', price: '100 000 – 250 000', body: 'On développe une première version de la solution sur votre cas concret. Vous voyez les résultats réels avant de tout déployer.' },
+  { n: '03', week: 'Semaines 7–12', title: 'Déploiement complet', price: '200 000 – 600 000', body: 'Mise en production complète, intégration avec vos outils existants (Mobile Money, WhatsApp, caisse, etc.).' },
+  { n: '04', week: 'En continu', title: 'Formation & suivi', price: '20 000 – 45 000 / mois', body: 'Votre équipe est formée et autonome. On reste disponibles pour les ajustements, nouvelles fonctionnalités et suivi des KPIs.' },
 ];
 
 const PRICING_SECTORS = [
-  { sector: 'Commerce & Supérettes',    from: '180 000', to: '450 000' },
-  { sector: 'Restauration & Maquis',    from: '150 000', to: '380 000' },
-  { sector: 'Pharmacies',               from: '200 000', to: '500 000' },
-  { sector: 'Artisans & Services',      from: '120 000', to: '300 000' },
-  { sector: 'Transport & Logistique',   from: '250 000', to: '700 000' },
-  { sector: 'Éducation & Écoles',       from: '180 000', to: '480 000' },
-  { sector: 'Santé & Cliniques',        from: '200 000', to: '550 000' },
-  { sector: 'Agriculture',              from: '150 000', to: '400 000' },
-  { sector: 'Immobilier',               from: '220 000', to: '600 000' },
-  { sector: 'Hôtellerie',               from: '280 000', to: '750 000' },
-  { sector: 'Microfinance',             from: '300 000', to: '850 000' },
-  { sector: 'BTP & Construction',       from: '350 000', to: '900 000' },
+  { sector: 'Commerce & Supérettes', from: '180 000', to: '450 000' },
+  { sector: 'Restauration & Maquis', from: '150 000', to: '380 000' },
+  { sector: 'Pharmacies', from: '200 000', to: '500 000' },
+  { sector: 'Artisans & Services', from: '120 000', to: '300 000' },
+  { sector: 'Transport & Logistique', from: '250 000', to: '700 000' },
+  { sector: 'Éducation & Écoles', from: '180 000', to: '480 000' },
+  { sector: 'Santé & Cliniques', from: '200 000', to: '550 000' },
+  { sector: 'Agriculture', from: '150 000', to: '400 000' },
+  { sector: 'Immobilier', from: '220 000', to: '600 000' },
+  { sector: 'Hôtellerie', from: '280 000', to: '750 000' },
+  { sector: 'Microfinance', from: '300 000', to: '850 000' },
+  { sector: 'BTP & Construction', from: '350 000', to: '900 000' },
 ];
 
 const REALIZATIONS = [
@@ -644,10 +644,10 @@ export default function HomePage() {
 
       <SharedNav
         anchors={[
-          { label: 'Secteurs',  href: '#secteurs' },
+          { label: 'Secteurs', href: '#secteurs' },
           { label: 'Processus', href: '#processus' },
-          { label: 'Tarifs',    href: '#tarifs' },
-          { label: 'Contact',   href: '#contact' },
+          { label: 'Tarifs', href: '#tarifs' },
+          { label: 'Contact', href: '#contact' },
         ]}
         ctaLabel="Diagnostic gratuit"
         ctaHref="#contact"
@@ -697,7 +697,6 @@ export default function HomePage() {
             style={{ maxWidth: 560, marginTop: 28, fontSize: 18, lineHeight: 1.75, color: '#555', margin: '28px auto 0' }}
           >
             Nous transformons vos problèmes quotidiens en solutions simples, rentables et intelligentes.
-            <br />De l'idée au produit opérationnel en <strong style={{ color: '#111' }}>90 jours maximum</strong>.
           </motion.p>
 
           <motion.div
@@ -746,7 +745,7 @@ export default function HomePage() {
             }}
           >
             <div style={{ display: 'flex' }}>
-              {['#7967FF','#A78BFA','#C4BCFF','#6654F0'].map((c, i) => (
+              {['#7967FF', '#A78BFA', '#C4BCFF', '#6654F0'].map((c, i) => (
                 <div key={c} style={{
                   width: 28, height: 28, borderRadius: '50%',
                   background: c, border: '2px solid #fff',
@@ -754,7 +753,7 @@ export default function HomePage() {
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 10, color: '#fff', fontWeight: 700,
                 }}>
-                  {['A','K','M','F'][i]}
+                  {['A', 'K', 'M', 'F'][i]}
                 </div>
               ))}
             </div>
@@ -844,9 +843,9 @@ export default function HomePage() {
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
               {[
-                { title: 'Chatbots & Agents WhatsApp',    body: 'Répondent à vos clients 24h/24, prennent les commandes et gèrent les paiements Mobile Money.' },
-                { title: 'Prédiction & Analyse IA',       body: 'Stocks, ventes, prix du marché, risques — l\'IA prédit pour que vous agissiez au bon moment.' },
-                { title: 'Automatisation des process',    body: 'Facturation, relances, planning, reporting — vos tâches répétitives disparaissent.' },
+                { title: 'Chatbots & Agents WhatsApp', body: 'Répondent à vos clients 24h/24, prennent les commandes et gèrent les paiements Mobile Money.' },
+                { title: 'Prédiction & Analyse IA', body: 'Stocks, ventes, prix du marché, risques — l\'IA prédit pour que vous agissiez au bon moment.' },
+                { title: 'Automatisation des process', body: 'Facturation, relances, planning, reporting — vos tâches répétitives disparaissent.' },
                 { title: 'Tableaux de bord intelligents', body: 'Vos KPIs en temps réel, accessibles depuis votre téléphone, sans formation technique.' },
               ].map(({ title, body }) => (
                 <div key={title} style={{ background: 'rgba(255,255,255,0.12)', borderRadius: 14, padding: 24, backdropFilter: 'blur(4px)' }}>
@@ -1042,10 +1041,10 @@ export default function HomePage() {
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginTop: 44, textAlign: 'left' }}>
               {[
-                { icon: Users,       t: '35+ PME accompagnées',   b: 'Cameroun et Afrique subsaharienne, tous secteurs confondus.' },
-                { icon: TrendingUp,  t: 'ROI moyen de 280 %',     b: 'Sur 6 mois, mesuré sur nos projets déployés en production.' },
-                { icon: RefreshCw,   t: '92 % de renouvellement', b: 'Nos clients continuent parce que les résultats sont là.' },
-                { icon: Clock,       t: '90 jours max',            b: 'De la première conversation au produit opérationnel.' },
+                { icon: Users, t: '35+ PME accompagnées', b: 'Cameroun et Afrique subsaharienne, tous secteurs confondus.' },
+                { icon: TrendingUp, t: 'ROI moyen de 280 %', b: 'Sur 6 mois, mesuré sur nos projets déployés en production.' },
+                { icon: RefreshCw, t: '92 % de renouvellement', b: 'Nos clients continuent parce que les résultats sont là.' },
+                { icon: Clock, t: '90 jours max', b: 'De la première conversation au produit opérationnel.' },
               ].map(({ icon: Icon, t, b }) => (
                 <div key={t} style={{ background: 'rgba(255,255,255,0.1)', borderRadius: 14, padding: 22 }}>
                   <Icon size={18} color="rgba(255,255,255,0.7)" />
@@ -1073,7 +1072,7 @@ export default function HomePage() {
 
           <div style={{ display: 'flex', gap: 12, marginTop: 40, justifyContent: 'center', flexWrap: 'wrap' }}>
             <a
-              href="mailto:contact@ozirus.agency"
+              href="mailto:contact.fotie@gmail.com"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
                 background: '#7967FF', color: '#fff',
@@ -1088,7 +1087,7 @@ export default function HomePage() {
               Obtenir mon diagnostic gratuit <ArrowRight size={16} />
             </a>
             <a
-              href="https://wa.me/237000000000"
+              href="https://wa.me/237678615677"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
                 border: '1.5px solid #25D366', color: '#25D366',
@@ -1124,10 +1123,10 @@ export default function HomePage() {
             <img src="/logo.png" alt="Ozirus" style={{ height: 24, opacity: 0.5 }} />
             <span style={{ fontSize: 13, color: '#aaa' }}>© {new Date().getFullYear()} Ozirus Agency — Cameroun</span>
           </div>
-          <a href="mailto:contact@ozirus.agency" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: '#aaa', textDecoration: 'none', transition: 'color 0.15s' }}
+          <a href="mailto:contact.fotie@gmail.com" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: '#aaa', textDecoration: 'none', transition: 'color 0.15s' }}
             onMouseEnter={e => (e.currentTarget.style.color = '#7967FF')}
             onMouseLeave={e => (e.currentTarget.style.color = '#aaa')}>
-            <Phone size={13} /> contact@ozirus.agency
+            <Phone size={13} /> contact.fotie@gmail.com
           </a>
         </div>
       </footer>

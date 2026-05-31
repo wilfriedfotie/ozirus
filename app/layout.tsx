@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { DM_Sans } from 'next/font/google';
+import GlobalLoader from '@/components/GlobalLoader';
 import './globals.css';
 
 const dmSans = DM_Sans({
@@ -51,6 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body style={{ fontFamily: 'var(--font-sans, "DM Sans"), -apple-system, BlinkMacSystemFont, sans-serif' }}>
+        <GlobalLoader />
         {children}
       </body>
     </html>
