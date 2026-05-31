@@ -190,7 +190,7 @@ hr { border: none; border-top: 1px solid #E8E6FF; }
 .global-loader__logo {
   width: 46px;
   height: auto;
-  filter: brightness(0) saturate(100%) invert(35%) sepia(80%) saturate(2000%) hue-rotate(230deg) brightness(95%);
+  filter: brightness(0) saturate(100%) invert(43%) sepia(91%) saturate(2126%) hue-rotate(224deg) brightness(101%) contrast(101%);
 }
 
 .global-loader__copy {

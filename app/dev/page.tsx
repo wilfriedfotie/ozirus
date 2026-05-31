@@ -62,7 +62,7 @@ const OFFERS = [
     stack: ['Flutter (iOS & Android)', 'Firebase / Supabase', 'API REST ou GraphQL', 'Paiement Mobile Money & Stripe'],
     steps: ['1 semaine de discovery utilisateurs', 'Wireframes validés avant le code', 'Sprints de 2 semaines, démos à chaque étape', 'Déploiement App Store & Play Store inclus'],
     gains: ['MVP livrable en 6 à 10 semaines', 'Code source 100 % propriété du client', 'App Store & Play Store gérés par nous', 'Support 3 mois post-lancement inclus'],
-    from: '1 200 000',
+    from: '1 800 000',
     cta: 'Démarrer mon app mobile',
   },
   {

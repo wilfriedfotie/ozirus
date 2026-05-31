@@ -8,7 +8,8 @@ import {
   ShoppingBag, Wheat, UtensilsCrossed, Pill, Scissors,
   Truck, Building2, GraduationCap, Heart, Sparkles,
   Tractor, Landmark, ShoppingCart, Hotel, HardHat,
-  MessageCircle,
+  MessageCircle, Users, Calendar, LayoutDashboard, Receipt,
+  Target, TrendingUp, FileText, Package,
 } from 'lucide-react';
 
 const DotGrid = ({ opacity = 0.1 }: { opacity?: number }) => (
@@ -23,27 +24,28 @@ const DotGrid = ({ opacity = 0.1 }: { opacity?: number }) => (
 );
 
 const SECTORS = [
-  { icon: ShoppingBag,     label: 'Commerce' },
-  { icon: Wheat,           label: 'Agroalimentaire' },
+  { icon: ShoppingBag, label: 'Commerce' },
+  { icon: Wheat, label: 'Agroalimentaire' },
   { icon: UtensilsCrossed, label: 'Restauration' },
-  { icon: Pill,            label: 'Pharmacies' },
-  { icon: Scissors,        label: 'Artisans' },
-  { icon: Truck,           label: 'Transport' },
-  { icon: Building2,       label: 'Immobilier' },
-  { icon: GraduationCap,   label: 'Éducation' },
-  { icon: Heart,           label: 'Santé' },
-  { icon: Sparkles,        label: 'Beauté' },
-  { icon: Tractor,         label: 'Agriculture' },
-  { icon: Landmark,        label: 'Microfinance' },
-  { icon: ShoppingCart,    label: 'E-commerce' },
-  { icon: Hotel,           label: 'Hôtellerie' },
-  { icon: HardHat,         label: 'BTP' },
+  { icon: Pill, label: 'Pharmacies' },
+  { icon: Scissors, label: 'Artisans' },
+  { icon: Truck, label: 'Transport' },
+  { icon: Building2, label: 'Immobilier' },
+  { icon: GraduationCap, label: 'Éducation' },
+  { icon: Heart, label: 'Santé' },
+  { icon: Sparkles, label: 'Beauté' },
+  { icon: Tractor, label: 'Agriculture' },
+  { icon: Landmark, label: 'Microfinance' },
+  { icon: ShoppingCart, label: 'E-commerce' },
+  { icon: Hotel, label: 'Hôtellerie' },
+  { icon: HardHat, label: 'BTP' },
 ];
 
 const PRODUCTS = [
   /* ── Essentiels ── */
   {
     id: 'chatbot',
+    icon: MessageCircle,
     title: 'Chatbot WhatsApp IA Pro',
     price: '99 000 FCFA',
     type: 'Paiement unique – accès à vie',
@@ -51,11 +53,13 @@ const PRODUCTS = [
     features: ['Réponses automatiques personnalisées 24h/24', 'Prise de commande + encaissement Mobile Money', 'Relances impayés automatiques par message', 'Programme de fidélité intégré (points, coupons)', 'Tableau de bord des conversations en temps réel', 'Personnalisation au ton et vocabulaire de votre marque'],
     gains: ['+35 % de ventes en moyenne dès le 1er mois', '−70 % du temps passé à répondre au téléphone', 'Clients qui reviennent 2× plus souvent'],
     for: 'Boutiques, restaurants, salons, services',
+    sectors: ['Commerce', 'Restauration', 'Beauté', 'Artisans', 'E-commerce'],
     cta: 'Je veux ce chatbot',
     whatsappBrief: "Bonjour Ozirus, je suis intéressé par votre solution de Chatbot WhatsApp IA Pro.",
   },
   {
     id: 'stocks',
+    icon: Package,
     title: 'Gestionnaire de Stocks Intelligent',
     price: '59 000 FCFA',
     type: 'Paiement unique',
@@ -63,11 +67,13 @@ const PRODUCTS = [
     features: ['Prévision des ventes par produit et par jour', 'Alertes automatiques avant rupture ou péremption', 'Génération des bons de commande fournisseurs', 'Suivi multi-sites (plusieurs boutiques ou entrepôts)', 'Rapport hebdo sur les produits qui dorment', 'Intégration WhatsApp pour les alertes urgentes'],
     gains: ['−40 % de pertes sur stocks en moyenne', '800 000 à 2,5M FCFA économisés par mois', 'Zéro rupture sur les produits clés'],
     for: 'Boutiques, pharmacies, agroalimentaire, restaurants',
+    sectors: ['Commerce', 'Pharmacies', 'Agroalimentaire', 'Restauration', 'BTP'],
     cta: 'Je veux maîtriser mes stocks',
     whatsappBrief: "Bonjour Ozirus, je souhaiterais automatiser ma gestion de stocks avec l'IA.",
   },
   {
     id: 'facturation',
+    icon: Receipt,
     title: 'Facturation & Relance Clients IA',
     price: '39 000 FCFA',
     type: 'Paiement unique',
@@ -75,11 +81,13 @@ const PRODUCTS = [
     features: ['Devis et factures PDF en 3 secondes', 'Envoi automatique WhatsApp + email', 'Relances échelonnées J+3, J+7, J+15 personnalisées', 'Suivi de l\'état de chaque paiement en temps réel', 'Tableau de bord créances clients', 'Compatible Mobile Money, Wave, virement, espèces'],
     gains: ['+25 à 40 % de taux de recouvrement', 'Image professionnelle dès le premier envoi', '3 à 5h/semaine économisées sur la gestion admin'],
     for: 'Artisans, services, commerçants, petites entreprises',
+    sectors: ['Artisans', 'Commerce', 'BTP', 'Microfinance'],
     cta: 'Je veux être payé plus vite',
     whatsappBrief: "Bonjour Ozirus, je suis intéressé par votre solution de facturation et relances automatiques.",
   },
   {
     id: 'crm',
+    icon: Users,
     title: 'Mini-CRM IA',
     price: '69 000 FCFA',
     type: 'Paiement unique',
@@ -87,11 +95,13 @@ const PRODUCTS = [
     features: ['Capture automatique des leads WhatsApp/formulaires', 'Scoring IA de probabilité d\'achat (0–100)', 'Pipeline visuel prospect → client', 'Relances automatiques personnalisées par segment', 'Historique complet des échanges par contact', 'Rapport quotidien : top 5 des prospects à rappeler'],
     gains: ['+45 % de taux de conversion moyen', 'Aucune opportunité oubliée ou mal relancée', 'Temps commercial réduit de moitié'],
     for: 'Commerciaux, agences, consultants, services B2B',
+    sectors: ['Commerce', 'Artisans', 'Microfinance'],
     cta: 'Je veux ce CRM',
     whatsappBrief: "Bonjour Ozirus, j'aimerais mettre en place votre CRM WhatsApp pour mon équipe commerciale.",
   },
   {
     id: 'booking',
+    icon: Calendar,
     title: 'Booking Intelligent',
     price: '49 000 FCFA',
     type: 'Paiement unique',
@@ -99,6 +109,7 @@ const PRODUCTS = [
     features: ['Réservation en libre-service via WhatsApp', 'Rappels automatiques 24h et 2h avant le rendez-vous', 'Gestion intelligente des annulations et remplacements', 'Programme de fidélité intégré (x visites = cadeau)', 'Synchronisation agenda Google/Outlook', 'Statistiques remplissage et taux de no-show'],
     gains: ['−50 % de no-shows grâce aux rappels', '+40 % de fidélisation sur 6 mois', '8 à 12h/semaine récupérées sur la gestion agenda'],
     for: 'Salons, cliniques, hôtels, coaches, formateurs',
+    sectors: ['Beauté', 'Santé', 'Hôtellerie', 'Éducation'],
     cta: 'Je veux ce système',
     whatsappBrief: "Bonjour Ozirus, je souhaiterais automatiser ma prise de rendez-vous via WhatsApp.",
   },
@@ -106,6 +117,7 @@ const PRODUCTS = [
   /* ── Production & opérations ── */
   {
     id: 'menu-predictif',
+    icon: UtensilsCrossed,
     title: 'Planificateur de Production IA',
     price: '29 000 FCFA',
     type: 'Paiement unique',
@@ -113,11 +125,13 @@ const PRODUCTS = [
     features: ['Prévision quotidienne des quantités à préparer', 'Intégration météo et calendrier local', 'Calcul des quantités par produit et par service', 'Alertes stocks avant les pics de demande', 'Analyse des produits les moins/plus rentables', 'Rapport hebdo gaspillage et marges par produit'],
     gains: ['−40 % de gaspillage alimentaire en moyenne', '+18 à 28 % de marge brute récupérée', 'Ruptures de plats phares divisées par 3'],
     for: 'Restaurants, maquis, snacks, cantines',
+    sectors: ['Restauration', 'Agroalimentaire'],
     cta: 'Je veux ce planificateur',
     whatsappBrief: "Bonjour Ozirus, je souhaiterais en savoir plus sur votre Planificateur de Production IA.",
   },
   {
     id: 'commandes-resto',
+    icon: ShoppingCart,
     title: 'Prise de Commandes WhatsApp',
     price: '39 000 FCFA',
     type: 'Paiement unique',
@@ -125,11 +139,13 @@ const PRODUCTS = [
     features: ['Catalogue interactif envoyé automatiquement sur WhatsApp', 'Prise de commande + confirmation client', 'Pré-commandes et commandes à emporter/livrer', 'Encaissement Mobile Money avant traitement', 'Transmission directe à l\'équipe opérationnelle', 'Historique des commandes par client'],
     gains: ['+30 % de commandes traitées pendant les rushs', 'Zéro commande perdue ou mal saisie', 'Paiements encaissés avant l\'arrivée du client'],
     for: 'Restaurants, commerces WhatsApp, artisans, livraison, B2B',
+    sectors: ['Restauration', 'Commerce', 'Artisans', 'Transport'],
     cta: 'Je veux automatiser mes commandes',
     whatsappBrief: "Bonjour Ozirus, je suis intéressé par votre système de prise de commandes WhatsApp.",
   },
   {
     id: 'tableau-cuisine',
+    icon: LayoutDashboard,
     title: 'Tableau de Bord Opérationnel IA',
     price: '19 000 FCFA',
     type: 'Paiement unique',
@@ -137,6 +153,7 @@ const PRODUCTS = [
     features: ['Rapport matinal automatique à 7h on WhatsApp', 'Classement des produits par vitesse de rotation', 'Alerte réapprovisionnement sur les stocks critiques', 'Résumé ventes J-1 et tendance semaine', 'Comparaison même jour semaine précédente', 'Export CSV mensuel pour votre comptable'],
     gains: ['1 à 3h de gestion économisées chaque jour', 'Décisions cuisine basées sur des données réelles', 'Visibilité totale sans ordinateur ni logiciel'],
     for: 'Gérants, responsables d\'équipe, points de vente, ateliers',
+    sectors: ['Restauration', 'Commerce', 'Artisans', 'Pharmacies', 'BTP'],
     cta: 'Je veux ce tableau de bord',
     whatsappBrief: "Bonjour Ozirus, je souhaiterais installer votre Tableau de Bord Opérationnel IA.",
   },
@@ -144,6 +161,7 @@ const PRODUCTS = [
   /* ── Qualification & rendez-vous ── */
   {
     id: 'immo-assistant',
+    icon: Building2,
     title: 'Assistant Qualification & Rendez-vous IA',
     price: '79 000 FCFA',
     type: 'Paiement unique',
@@ -151,6 +169,7 @@ const PRODUCTS = [
     features: ['Réponse automatique aux demandes entrantes (WhatsApp/SMS)', 'Qualification prospect par questionnaire IA', 'Envoi automatique des fiches, documents ou informations utiles', 'Planification des rendez-vous + rappels automatiques', 'Relance des contacts inactifs après 7/14/30 jours', 'Tableau de bord pipeline prospects et rendez-vous'],
     gains: ['+60 % de visites effectivement planifiées', 'Aucun prospect non relancé', '5 à 8h/semaine économisées sur les échanges téléphoniques'],
     for: 'Immobilier, formation, services B2B, cabinets, assurances',
+    sectors: ['Immobilier', 'Éducation'],
     cta: 'Je veux cet assistant',
     whatsappBrief: "Bonjour Ozirus, je suis intéressé par votre Assistant Qualification & Rendez-vous IA.",
   },
@@ -158,6 +177,7 @@ const PRODUCTS = [
   /* ── Prix & opportunités ── */
   {
     id: 'agri-prix',
+    icon: TrendingUp,
     title: 'Prédicteur de Prix & Opportunités IA',
     price: '79 000 FCFA',
     type: 'Paiement unique',
@@ -165,6 +185,7 @@ const PRODUCTS = [
     features: ['Prévision des prix à 2, 3 et 4 semaines', 'Couverture des principaux marchés locaux et régionaux', 'Alertes WhatsApp quand les prix montent ou baissent', 'Recommandation : vendre, acheter, stocker ou attendre', 'Analyse comparative entre marchés', 'Historique des prix sur 24 mois par produit'],
     gains: ['+20 à 35 % de revenus par vente au meilleur moment', 'Fin des ventes à perte faute d\'information', 'Décisions de stockage basées sur des données réelles'],
     for: 'Agriculture, agroalimentaire, grossistes, import/export local',
+    sectors: ['Agriculture', 'Agroalimentaire'],
     cta: 'Je veux ce prédicteur',
     whatsappBrief: "Bonjour Ozirus, je souhaiterais en savoir plus sur votre Prédicteur de Prix & Opportunités IA.",
   },
@@ -172,6 +193,7 @@ const PRODUCTS = [
   /* ── Administration ── */
   {
     id: 'ecole-ia',
+    icon: GraduationCap,
     title: 'Assistant Administratif IA',
     price: '59 000 FCFA',
     type: 'Paiement unique',
@@ -179,6 +201,7 @@ const PRODUCTS = [
     features: ['Inscription ou demande en ligne via WhatsApp avec confirmation auto', 'Envoi automatique de documents aux bons contacts', 'Rappels de paiement doux puis fermes', 'Messages groupés et convocations en masse', 'Suivi des présences, rendez-vous ou dossiers selon le cadre', 'Tableau de bord : inscriptions, paiements, effectifs ou dossiers'],
     gains: ['−80 % du temps administratif sur la communication', '+40 % de recouvrement sur les paiements récurrents', 'Contacts informés en temps réel sans effort'],
     for: 'Éducation, formation, santé, associations, services récurrents',
+    sectors: ['Éducation', 'Santé'],
     cta: 'Je veux cet assistant',
     whatsappBrief: "Bonjour Ozirus, je suis intéressé par votre Assistant Administratif IA pour mon établissement.",
   },
@@ -186,6 +209,7 @@ const PRODUCTS = [
   /* ── Digital-first ── */
   {
     id: 'scoring-lead',
+    icon: Target,
     title: 'Scoring & Qualification Lead IA',
     price: '59 000 FCFA',
     type: 'Paiement unique',
@@ -193,6 +217,7 @@ const PRODUCTS = [
     features: ['Capture leads multi-canal (WhatsApp, formulaire, Facebook)', 'Score IA 0–100 basé sur le profil et le comportement', 'Classement quotidien : les prospects à contacter en premier', 'Séquences de nurturing automatiques pour les leads froids', 'Alertes en temps réel pour les leads très chaud', 'Rapport hebdo : leads convertis vs perdus avec analyse'],
     gains: ['+45 % de taux de closing', 'Temps commercial divisé par 2', 'Aucun prospect chaud ne passe entre les mailles'],
     for: 'Agences immobilières, assurances, B2B, e-commerce, formation',
+    sectors: ['Immobilier', 'E-commerce', 'Éducation', 'Microfinance'],
     cta: 'Je veux qualifier mes leads',
     whatsappBrief: "Bonjour Ozirus, je souhaiterais mettre en place votre système de Scoring & Qualification de Leads IA.",
   },
@@ -215,98 +240,100 @@ function ProductsPanel() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  /* ── Mobile layout: horizontal scrollable tabs + detail below ── */
+  /* ── Mobile layout: Chips above the panel + detail below ── */
   if (isMobile) {
     return (
-      <div style={{ background: '#fff', borderRadius: 20, border: '1.5px solid #EDEAFF', overflow: 'hidden', boxShadow: '0 4px 32px rgba(121,103,255,0.07)' }}>
-        {/* horizontal tab bar */}
-        <div style={{
-          display: 'flex', overflowX: 'auto', gap: 0,
-          borderBottom: '1.5px solid #EDEAFF',
-          WebkitOverflowScrolling: 'touch' as React.CSSProperties['WebkitOverflowScrolling'],
-          scrollbarWidth: 'none' as React.CSSProperties['scrollbarWidth'],
-        }}>
+      <>
+        {/* Titre explicatif mobile */}
+        <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 16 }}>
+          Nos solutions IA (Sélectionnez pour voir)
+        </p>
+
+        {/* Navigation via chips (style page d'accueil) */}
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 24 }}>
           {PRODUCTS.map((p, i) => {
+            const Icon = p.icon;
             const isActive = i === active;
             return (
               <button key={p.id} onClick={() => setActive(i)}
                 style={{
-                  flexShrink: 0, padding: '12px 16px',
-                  background: isActive ? '#F0EEFF' : 'transparent',
-                  border: 'none', borderBottom: `2px solid ${isActive ? '#7967FF' : 'transparent'}`,
-                  cursor: 'pointer', transition: 'background 0.15s',
-                  display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 3,
-                  minWidth: 120,
+                  display: 'inline-flex', alignItems: 'center', gap: 6,
+                  background: isActive ? '#7967FF' : '#fff',
+                  border: `1.5px solid ${isActive ? '#7967FF' : '#EDEAFF'}`,
+                  borderRadius: 99, padding: '7px 14px',
+                  fontSize: 13, fontWeight: isActive ? 600 : 500,
+                  color: isActive ? '#fff' : '#555',
+                  cursor: 'pointer', transition: 'all 0.15s',
                 }}>
-                <span style={{ fontSize: 12, fontWeight: isActive ? 600 : 400, color: isActive ? '#7967FF' : '#555', whiteSpace: 'nowrap' }}>
-                  {p.title.length > 18 ? p.title.slice(0, 18) + '…' : p.title}
-                </span>
-                <span style={{ fontSize: 10, color: isActive ? '#A78BFA' : '#aaa', fontWeight: 600 }}>{p.price}</span>
+                <Icon size={13} />
+                {p.title}
               </button>
             );
           })}
         </div>
 
-        {/* detail panel below */}
-        <AnimatePresence mode="wait">
-          <motion.div key={active}
-            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.22, ease: 'easeOut' }}
-            style={{ padding: '24px 20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
-              <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#aaa' }}>Cadres d'utilisation : {product.for}</p>
-            </div>
-            <h3 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 20, color: '#111', lineHeight: 1.2, marginBottom: 6 }}>{product.title}</h3>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 16 }}>
-              <span style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 700, fontSize: 22, color: '#7967FF' }}>{product.price}</span>
-              <span style={{ fontSize: 11, color: '#aaa' }}>{product.type}</span>
-            </div>
-            <div style={{ height: 1, background: '#EDEAFF', marginBottom: 16 }} />
-            <p style={{ fontSize: 14, color: '#555', lineHeight: 1.75, marginBottom: 20 }}>{product.desc}</p>
-            <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#bbb', marginBottom: 10 }}>Ce qui est inclus</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 7, marginBottom: 20 }}>
-              {product.features.map(f => (
-                <div key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-                  <CheckCircle2 size={12} color="#A78BFA" style={{ flexShrink: 0, marginTop: 2 }} />
-                  <span style={{ fontSize: 12, color: '#555', lineHeight: 1.5 }}>{f}</span>
-                </div>
-              ))}
-            </div>
-            <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#bbb', marginBottom: 10 }}>Ce que vous gagnez</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
-              {product.gains.map(g => (
-                <div key={g} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-                  <span style={{ fontSize: 13, color: '#7967FF', fontWeight: 700, flexShrink: 0 }}>→</span>
-                  <span style={{ fontSize: 13, color: '#111', fontWeight: 600, lineHeight: 1.4 }}>{g}</span>
-                </div>
-              ))}
-            </div>
-            <div style={{ background: '#F8F7FF', borderRadius: 10, padding: '10px 12px', marginBottom: 20, display: 'flex', flexDirection: 'column', gap: 5 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Zap size={11} color="#7967FF" />
-                <span style={{ fontSize: 11, color: '#666' }}>Activation en moins de 24h</span>
+        {/* Panneau de détail */}
+        <div style={{ background: '#fff', borderRadius: 20, border: '1.5px solid #EDEAFF', overflow: 'hidden', boxShadow: '0 4px 32px rgba(121,103,255,0.07)' }}>
+          <AnimatePresence mode="wait">
+            <motion.div key={active}
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
+              style={{ padding: '24px 20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
+                <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#aaa' }}>Cadres d'utilisation : {product.for}</p>
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <Shield size={11} color="#22c55e" />
-                <span style={{ fontSize: 11, color: '#666' }}>Garantie satisfait ou remboursé 14 jours</span>
+              <h3 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 20, color: '#111', lineHeight: 1.2, marginBottom: 6 }}>{product.title}</h3>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 16 }}>
+                <span style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 700, fontSize: 22, color: '#7967FF' }}>{product.price}</span>
+                <span style={{ fontSize: 11, color: '#aaa' }}>{product.type}</span>
               </div>
-            </div>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              <a href={`https://wa.me/237694086571?text=${encodeURIComponent(product.whatsappBrief)}`} target="_blank" rel="noreferrer"
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: '#7967FF', color: '#fff', padding: '11px 18px', borderRadius: 8, fontSize: 13, fontWeight: 600, textDecoration: 'none' }}
-                onMouseEnter={e => (e.currentTarget.style.background = '#6654F0')}
-                onMouseLeave={e => (e.currentTarget.style.background = '#7967FF')}>
-                {product.cta} <ArrowRight size={13} />
-              </a>
-              <Link href="/formation-ia" style={{ display: 'inline-flex', alignItems: 'center', gap: 7, border: '1.5px solid #EDEAFF', color: '#666', padding: '11px 16px', borderRadius: 8, fontSize: 13, fontWeight: 500, textDecoration: 'none' }}
-                onMouseEnter={e => (e.currentTarget.style.borderColor = '#C4BCFF')}
-                onMouseLeave={e => (e.currentTarget.style.borderColor = '#EDEAFF')}>
-                Marque blanche
-              </Link>
-            </div>
-          </motion.div>
-        </AnimatePresence>
-      </div>
+              <div style={{ height: 1, background: '#EDEAFF', marginBottom: 16 }} />
+              <p style={{ fontSize: 14, color: '#555', lineHeight: 1.75, marginBottom: 20 }}>{product.desc}</p>
+              <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#bbb', marginBottom: 10 }}>Ce qui est inclus</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 7, marginBottom: 20 }}>
+                {product.features.map(f => (
+                  <div key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                    <CheckCircle2 size={12} color="#A78BFA" style={{ flexShrink: 0, marginTop: 2 }} />
+                    <span style={{ fontSize: 12, color: '#555', lineHeight: 1.5 }}>{f}</span>
+                  </div>
+                ))}
+              </div>
+              <p style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#bbb', marginBottom: 10 }}>Ce que vous gagnez</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+                {product.gains.map(g => (
+                  <div key={g} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                    <span style={{ fontSize: 13, color: '#7967FF', fontWeight: 700, flexShrink: 0 }}>→</span>
+                    <span style={{ fontSize: 13, color: '#111', fontWeight: 600, lineHeight: 1.4 }}>{g}</span>
+                  </div>
+                ))}
+              </div>
+              <div style={{ background: '#F8F7FF', borderRadius: 10, padding: '10px 12px', marginBottom: 20, display: 'flex', flexDirection: 'column', gap: 5 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Zap size={11} color="#7967FF" />
+                  <span style={{ fontSize: 11, color: '#666' }}>Activation en moins de 24h</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <Shield size={11} color="#22c55e" />
+                  <span style={{ fontSize: 11, color: '#666' }}>Garantie satisfait ou remboursé 14 jours</span>
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <a href={`https://wa.me/237694086571?text=${encodeURIComponent(product.whatsappBrief)}`} target="_blank" rel="noreferrer"
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: '#7967FF', color: '#fff', padding: '11px 18px', borderRadius: 8, fontSize: 13, fontWeight: 600, textDecoration: 'none' }}
+                  onMouseEnter={e => (e.currentTarget.style.background = '#6654F0')}
+                  onMouseLeave={e => (e.currentTarget.style.background = '#7967FF')}>
+                  {product.cta} <ArrowRight size={13} />
+                </a>
+                <Link href="/formation-ia" style={{ display: 'inline-flex', alignItems: 'center', gap: 7, border: '1.5px solid #EDEAFF', color: '#666', padding: '11px 16px', borderRadius: 8, fontSize: 13, fontWeight: 500, textDecoration: 'none' }}
+                  onMouseEnter={e => (e.currentTarget.style.borderColor = '#C4BCFF')}
+                  onMouseLeave={e => (e.currentTarget.style.borderColor = '#EDEAFF')}>
+                  Marque blanche
+                </Link>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </>
     );
   }
 
@@ -414,6 +441,36 @@ function ProductsPanel() {
   );
 }
 
+function SectorsChips() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  if (isMobile) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.3 }}
+      style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', justifyContent: 'center', marginTop: 24 }}
+    >
+      <span style={{ fontSize: 11, fontWeight: 700, color: '#bbb', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Secteurs :</span>
+      {SECTORS.map(s => {
+        const Icon = s.icon;
+        return (
+          <span key={s.label} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: '#FAFAFA', border: '1px solid #EDEAFF', borderRadius: 99, padding: '4px 12px', fontSize: 12, color: '#666', fontWeight: 500 }}>
+            <Icon size={10} /> {s.label}
+          </span>
+        );
+      })}
+    </motion.div>
+  );
+}
+
 export default function ProduitsPage() {
   return (
     <main style={{ background: '#fff', color: '#111', fontFamily: 'DM Sans, sans-serif' }}>
@@ -502,21 +559,8 @@ export default function ProduitsPage() {
             </div>
           </motion.div>
 
-          {/* chips contextes sous la vidéo */}
-          <motion.div
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.3 }}
-            style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap', justifyContent: 'center', marginTop: 24 }}
-          >
-            <span style={{ fontSize: 11, fontWeight: 700, color: '#bbb', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Contextes :</span>
-            {SECTORS.slice(0, 7).map(s => {
-              const Icon = s.icon;
-              return (
-                <span key={s.label} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: '#FAFAFA', border: '1px solid #EDEAFF', borderRadius: 99, padding: '4px 12px', fontSize: 12, color: '#666', fontWeight: 500 }}>
-                  <Icon size={10} /> {s.label}
-                </span>
-              );
-            })}
-          </motion.div>
+          {/* chips contextes sous la vidéo (cachés sur mobile) */}
+          <SectorsChips />
 
         </div>
       </section>
@@ -593,7 +637,7 @@ export default function ProduitsPage() {
               <motion.div key={t.name} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.1 }}
                 style={{ background: '#FAFAFA', border: '1.5px solid #EDEAFF', borderRadius: 16, padding: '28px 24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <div style={{ display: 'flex', gap: 3 }}>
-                  {[1,2,3,4,5].map(s => <Star key={s} size={13} color="#F59E0B" fill="#F59E0B" />)}
+                  {[1, 2, 3, 4, 5].map(s => <Star key={s} size={13} color="#F59E0B" fill="#F59E0B" />)}
                 </div>
                 <p style={{ fontSize: 14, color: '#444', lineHeight: 1.75, fontStyle: 'italic', flex: 1 }}>« {t.quote} »</p>
                 <div style={{ height: 1, background: '#EDEAFF' }} />
@@ -634,7 +678,7 @@ export default function ProduitsPage() {
         <div style={{ position: 'relative', zIndex: 1, maxWidth: 640, margin: '0 auto', textAlign: 'center' }}>
           <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 14 }}>Aller plus loin</p>
           <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(1.8rem, 4vw, 3rem)', lineHeight: 1.1, color: '#fff', letterSpacing: '-0.02em', marginBottom: 16 }}>
-            Vous voulez vendre ces produits à d'others ?
+            Vous voulez vendre ces produits à d'autres ?
           </h2>
           <p style={{ fontSize: 15, color: '#888', lineHeight: 1.75, marginBottom: 28 }}>
             Notre formation vous donne accès à tous ces produits en marque blanche + tout ce qu'il faut pour lancer votre agence IA et facturer 300 000 à 800 000 FCFA/mois.

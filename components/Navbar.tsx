@@ -50,7 +50,14 @@ export default function Navbar() {
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
               style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', alignItems: 'center', gap: 10 }}
             >
-              <img src="/logo.png" alt="Ozirus Agency" style={{ height: 34 }} />
+              <img 
+                src="/logo.png" 
+                alt="Ozirus Agency" 
+                style={{ 
+                  height: 34,
+                  filter: 'brightness(0) saturate(100%) invert(43%) sepia(91%) saturate(2126%) hue-rotate(224deg) brightness(101%) contrast(101%)'
+                }} 
+              />
             </button>
 
             {/* Desktop Nav */}

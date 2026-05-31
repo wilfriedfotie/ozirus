@@ -104,6 +104,8 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
+  if (pathname.startsWith('/admin')) return null;
+
   /* lock body scroll when mobile menu is open */
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
@@ -121,7 +123,7 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
   const separatorColor = dark ? 'rgba(255,255,255,0.1)' : '#E8E6FF';
   const logoFilter    = dark
     ? 'brightness(0) invert(1)'
-    : 'brightness(0) saturate(100%) invert(35%) sepia(80%) saturate(2000%) hue-rotate(230deg) brightness(95%)';
+    : 'brightness(0) saturate(100%) invert(43%) sepia(91%) saturate(2126%) hue-rotate(224deg) brightness(101%) contrast(101%)';
 
   /* burger bar colors */
   const burgerBarBg = dark ? 'rgba(255,255,255,0.85)' : '#0F172A';
