@@ -413,24 +413,24 @@ const SECTORS = [
 
 const PROCESS = [
   { n: '01', week: 'Semaine 1', title: 'Diagnostic gratuit', price: 'Gratuit', body: 'On analyse votre activité, vos problèmes réels et vos opportunités IA. Vous repartez avec un plan clair et un chiffrage précis — sans engagement.' },
-  { n: '02', week: 'Semaines 2–6', title: 'Pilote IA', price: '100 000 – 250 000', body: 'On développe une première version de la solution sur votre cas concret. Vous voyez les résultats réels avant de tout déployer.' },
-  { n: '03', week: 'Semaines 7–12', title: 'Déploiement complet', price: '200 000 – 600 000', body: 'Mise en production complète, intégration avec vos outils existants (Mobile Money, WhatsApp, caisse, etc.).' },
-  { n: '04', week: 'En continu', title: 'Formation & suivi', price: '20 000 – 45 000 / mois', body: 'Votre équipe est formée et autonome. On reste disponibles pour les ajustements, nouvelles fonctionnalités et suivi des KPIs.' },
+  { n: '02', week: 'Semaines 2–6', title: 'Pilote IA', price: '75 000 – 150 000', body: 'On développe une première version de la solution sur votre cas concret. Vous voyez les résultats réels avant de tout déployer.' },
+  { n: '03', week: 'Semaines 7–12', title: 'Déploiement complet', price: '150 000 – 400 000', body: 'Mise en production complète, intégration avec vos outils existants (Mobile Money, WhatsApp, caisse, etc.).' },
+  { n: '04', week: 'En continu', title: 'Formation & suivi', price: '15 000 – 30 000 / mois', body: 'Votre équipe est formée et autonome. On reste disponibles pour les ajustements, nouvelles fonctionnalités et suivi des KPIs.' },
 ];
 
 const PRICING_SECTORS = [
-  { sector: 'Commerce & Supérettes', from: '180 000', to: '450 000' },
-  { sector: 'Restauration & Maquis', from: '150 000', to: '380 000' },
-  { sector: 'Pharmacies', from: '200 000', to: '500 000' },
-  { sector: 'Artisans & Services', from: '120 000', to: '300 000' },
-  { sector: 'Transport & Logistique', from: '250 000', to: '700 000' },
-  { sector: 'Éducation & Écoles', from: '180 000', to: '480 000' },
-  { sector: 'Santé & Cliniques', from: '200 000', to: '550 000' },
-  { sector: 'Agriculture', from: '150 000', to: '400 000' },
-  { sector: 'Immobilier', from: '220 000', to: '600 000' },
-  { sector: 'Hôtellerie', from: '280 000', to: '750 000' },
-  { sector: 'Microfinance', from: '300 000', to: '850 000' },
-  { sector: 'BTP & Construction', from: '350 000', to: '900 000' },
+  { sector: 'Commerce & Supérettes', from: '149 000', to: '349 000' },
+  { sector: 'Restauration & Maquis', from: '119 000', to: '299 000' },
+  { sector: 'Pharmacies', from: '159 000', to: '399 000' },
+  { sector: 'Artisans & Services', from: '99 000', to: '249 000' },
+  { sector: 'Transport & Logistique', from: '199 000', to: '549 000' },
+  { sector: 'Éducation & Écoles', from: '149 000', to: '379 000' },
+  { sector: 'Santé & Cliniques', from: '159 000', to: '449 000' },
+  { sector: 'Agriculture', from: '119 000', to: '319 000' },
+  { sector: 'Immobilier', from: '179 000', to: '479 000' },
+  { sector: 'Hôtellerie', from: '229 000', to: '599 000' },
+  { sector: 'Microfinance', from: '249 000', to: '699 000' },
+  { sector: 'BTP & Construction', from: '299 000', to: '749 000' },
 ];
 
 const REALIZATIONS = [

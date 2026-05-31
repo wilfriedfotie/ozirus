@@ -6,7 +6,7 @@ import { Check, ArrowRight } from 'lucide-react';
 const plans = [
   {
     name: 'Starter IA',
-    price: '199 000',
+    price: '149 000',
     period: 'FCFA',
     badge: null,
     desc: 'Idéal pour débuter avec un premier outil IA dans votre entreprise.',
@@ -24,7 +24,7 @@ const plans = [
   },
   {
     name: 'PME Automatisée',
-    price: '499 000',
+    price: '349 000',
     period: 'FCFA',
     badge: 'Recommandé',
     desc: 'La solution complète pour transformer la gestion de votre PME.',

@@ -45,7 +45,7 @@ const PRODUCTS = [
   {
     id: 'chatbot',
     title: 'Chatbot WhatsApp IA Pro',
-    price: '149 000 FCFA',
+    price: '119 000 FCFA',
     type: 'Paiement unique – accès à vie',
     desc: 'Votre assistant 24h/24 qui répond à vos clients exactement comme vous le feriez. Il prend les commandes, encaisse via Mobile Money, relance les impayés, envoie des promotions ciblées et fidélise automatiquement — même à 3h du matin.',
     features: ['Réponses automatiques personnalisées 24h/24', 'Prise de commande + encaissement Mobile Money', 'Relances impayés automatiques par message', 'Programme de fidélité intégré (points, coupons)', 'Tableau de bord des conversations en temps réel', 'Personnalisation au ton et vocabulaire de votre marque'],
@@ -57,7 +57,7 @@ const PRODUCTS = [
   {
     id: 'stocks',
     title: 'Gestionnaire de Stocks Intelligent',
-    price: '89 000 FCFA',
+    price: '69 000 FCFA',
     type: 'Paiement unique',
     desc: 'L\'IA prédit exactement ce qui va se vendre, quand et en quelle quantité — en tenant compte de la météo, des jours fériés et des habitudes locales. Elle alerte avant les ruptures et les périmés, et génère automatiquement les bons de commande fournisseurs.',
     features: ['Prévision des ventes par produit et par jour', 'Alertes automatiques avant rupture ou péremption', 'Génération des bons de commande fournisseurs', 'Suivi multi-sites (plusieurs boutiques ou entrepôts)', 'Rapport hebdo sur les produits qui dorment', 'Intégration WhatsApp pour les alertes urgentes'],
@@ -69,7 +69,7 @@ const PRODUCTS = [
   {
     id: 'facturation',
     title: 'Facturation & Relance Clients IA',
-    price: '69 000 FCFA',
+    price: '49 000 FCFA',
     type: 'Paiement unique',
     desc: 'Générez une facture professionnelle en 3 secondes, envoyez-la automatiquement par WhatsApp, et laissez l\'IA relancer vos clients avec votre ton de voix — sans jamais avoir à faire la police vous-même.',
     features: ['Devis et factures PDF en 3 secondes', 'Envoi automatique WhatsApp + email', 'Relances échelonnées J+3, J+7, J+15 personnalisées', 'Suivi de l\'état de chaque paiement en temps réel', 'Tableau de bord créances clients', 'Compatible Mobile Money, Wave, virement, espèces'],
@@ -81,7 +81,7 @@ const PRODUCTS = [
   {
     id: 'crm',
     title: 'Mini-CRM IA',
-    price: '99 000 FCFA',
+    price: '79 000 FCFA',
     type: 'Paiement unique',
     desc: 'Un CRM conçu pour fonctionner entièrement depuis WhatsApp. L\'IA qualifie chaque lead entrant, lui attribue un score d\'achat, programme vos relances et vous dit chaque matin sur qui concentrer vos efforts du jour.',
     features: ['Capture automatique des leads WhatsApp/formulaires', 'Scoring IA de probabilité d\'achat (0–100)', 'Pipeline visuel prospect → client', 'Relances automatiques personnalisées par segment', 'Historique complet des échanges par contact', 'Rapport quotidien : top 5 des prospects à rappeler'],
@@ -93,7 +93,7 @@ const PRODUCTS = [
   {
     id: 'booking',
     title: 'Booking Intelligent',
-    price: '79 000 FCFA',
+    price: '59 000 FCFA',
     type: 'Paiement unique',
     desc: 'Votre agenda se remplit tout seul. Les clients réservent depuis WhatsApp, reçoivent des rappels automatiques, et l\'IA gère les annulations, les remplacements de créneaux et le programme de fidélité sans que vous n\'ayez à intervenir.',
     features: ['Réservation en libre-service via WhatsApp', 'Rappels automatiques 24h et 2h avant le rendez-vous', 'Gestion intelligente des annulations et remplacements', 'Programme de fidélité intégré (x visites = cadeau)', 'Synchronisation agenda Google/Outlook', 'Statistiques remplissage et taux de no-show'],
@@ -107,7 +107,7 @@ const PRODUCTS = [
   {
     id: 'menu-predictif',
     title: 'Planificateur de Production IA',
-    price: '59 000 FCFA',
+    price: '39 000 FCFA',
     type: 'Paiement unique',
     desc: 'L\'IA croise vos ventes passées, la météo, les jours fériés locaux et les habitudes de votre zone pour vous dire exactement quoi préparer, produire ou mettre en avant chaque jour — et en quelle quantité. Utile pour la restauration, les cantines, les ateliers de transformation, les traiteurs ou toute activité où il faut anticiper la demande avant de produire.',
     features: ['Prévision quotidienne des quantités à préparer', 'Intégration météo et calendrier local', 'Calcul des quantités par produit et par service', 'Alertes stocks avant les pics de demande', 'Analyse des produits les moins/plus rentables', 'Rapport hebdo gaspillage et marges par produit'],
@@ -119,7 +119,7 @@ const PRODUCTS = [
   {
     id: 'commandes-resto',
     title: 'Prise de Commandes WhatsApp',
-    price: '69 000 FCFA',
+    price: '49 000 FCFA',
     type: 'Paiement unique',
     desc: 'Un assistant IA on WhatsApp qui prend les commandes, confirme les demandes, gère les pré-commandes et encaisse via Mobile Money — même quand vous ne pouvez pas décrocher. Il peut servir pour un restaurant, une boutique, un catalogue B2B, un service de livraison, un commerce WhatsApp ou un artisan qui reçoit beaucoup de demandes répétitives.',
     features: ['Catalogue interactif envoyé automatiquement sur WhatsApp', 'Prise de commande + confirmation client', 'Pré-commandes et commandes à emporter/livrer', 'Encaissement Mobile Money avant traitement', 'Transmission directe à l\'équipe opérationnelle', 'Historique des commandes par client'],
@@ -131,10 +131,10 @@ const PRODUCTS = [
   {
     id: 'tableau-cuisine',
     title: 'Tableau de Bord Opérationnel IA',
-    price: '49 000 FCFA',
+    price: '29 000 FCFA',
     type: 'Paiement unique',
     desc: 'Chaque matin à 7h, un rapport WhatsApp vous attend : priorités du jour, stocks à réapprovisionner, ventes de la veille, chiffre de la semaine. Il peut être utilisé pour piloter une cuisine, une boutique, un atelier, une pharmacie, un point de vente ou une petite équipe terrain sans ouvrir Excel.',
-    features: ['Rapport matinal automatique à 7h sur WhatsApp', 'Classement des produits par vitesse de rotation', 'Alerte réapprovisionnement sur les stocks critiques', 'Résumé ventes J-1 et tendance semaine', 'Comparaison même jour semaine précédente', 'Export CSV mensuel pour votre comptable'],
+    features: ['Rapport matinal automatique à 7h on WhatsApp', 'Classement des produits par vitesse de rotation', 'Alerte réapprovisionnement sur les stocks critiques', 'Résumé ventes J-1 et tendance semaine', 'Comparaison même jour semaine précédente', 'Export CSV mensuel pour votre comptable'],
     gains: ['1 à 3h de gestion économisées chaque jour', 'Décisions cuisine basées sur des données réelles', 'Visibilité totale sans ordinateur ni logiciel'],
     for: 'Gérants, responsables d\'équipe, points de vente, ateliers',
     cta: 'Je veux ce tableau de bord',
@@ -145,7 +145,7 @@ const PRODUCTS = [
   {
     id: 'immo-assistant',
     title: 'Assistant Qualification & Rendez-vous IA',
-    price: '119 000 FCFA',
+    price: '89 000 FCFA',
     type: 'Paiement unique',
     desc: 'Un assistant IA qui répond instantanément aux demandes, qualifie les prospects, envoie les bonnes informations et planifie les rendez-vous — pendant que vous vous concentrez sur les échanges à forte valeur. Il convient aux agences immobilières, écoles, cabinets, services B2B, formations, assurances et toutes les activités qui doivent filtrer beaucoup de demandes avant un rendez-vous.',
     features: ['Réponse automatique aux demandes entrantes (WhatsApp/SMS)', 'Qualification prospect par questionnaire IA', 'Envoi automatique des fiches, documents ou informations utiles', 'Planification des rendez-vous + rappels automatiques', 'Relance des contacts inactifs après 7/14/30 jours', 'Tableau de bord pipeline prospects et rendez-vous'],
@@ -159,7 +159,7 @@ const PRODUCTS = [
   {
     id: 'agri-prix',
     title: 'Prédicteur de Prix & Opportunités IA',
-    price: '129 000 FCFA',
+    price: '99 000 FCFA',
     type: 'Paiement unique',
     desc: 'L\'IA analyse les prix du marché, les données météo, les saisons et vos historiques pour anticiper les hausses, les baisses et les meilleurs moments d\'achat ou de vente. Elle peut servir dans l\'agriculture, l\'agroalimentaire, le commerce de gros, l\'import/export local ou toute activité exposée à des prix qui changent vite.',
     features: ['Prévision des prix à 2, 3 et 4 semaines', 'Couverture des principaux marchés locaux et régionaux', 'Alertes WhatsApp quand les prix montent ou baissent', 'Recommandation : vendre, acheter, stocker ou attendre', 'Analyse comparative entre marchés', 'Historique des prix sur 24 mois par produit'],
@@ -173,7 +173,7 @@ const PRODUCTS = [
   {
     id: 'ecole-ia',
     title: 'Assistant Administratif IA',
-    price: '89 000 FCFA',
+    price: '69 000 FCFA',
     type: 'Paiement unique',
     desc: 'Un assistant IA qui centralise la communication, les inscriptions, les rappels de paiement, les documents et les messages de masse — sans surcharge administrative. Il s\'adapte aux écoles, centres de formation, associations, cabinets, cliniques, résidences ou toute structure qui échange régulièrement avec des familles, clients, patients ou adhérents.',
     features: ['Inscription ou demande en ligne via WhatsApp avec confirmation auto', 'Envoi automatique de documents aux bons contacts', 'Rappels de paiement doux puis fermes', 'Messages groupés et convocations en masse', 'Suivi des présences, rendez-vous ou dossiers selon le cadre', 'Tableau de bord : inscriptions, paiements, effectifs ou dossiers'],
@@ -187,7 +187,7 @@ const PRODUCTS = [
   {
     id: 'scoring-lead',
     title: 'Scoring & Qualification Lead IA',
-    price: '89 000 FCFA',
+    price: '69 000 FCFA',
     type: 'Paiement unique',
     desc: 'L\'IA analyse chaque prospect entrant (via WhatsApp, formulaire ou réseaux sociaux), lui attribue un score de probabilité d\'achat et vous dit exactement dans quel ordre les rappeler. Arrêtez de perdre du temps sur les mauvais leads.',
     features: ['Capture leads multi-canal (WhatsApp, formulaire, Facebook)', 'Score IA 0–100 basé sur le profil et le comportement', 'Classement quotidien : les prospects à contacter en premier', 'Séquences de nurturing automatiques pour les leads froids', 'Alertes en temps réel pour les leads très chaud', 'Rapport hebdo : leads convertis vs perdus avec analyse'],

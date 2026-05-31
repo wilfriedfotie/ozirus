@@ -62,7 +62,7 @@ const OFFERS = [
     stack: ['Flutter (iOS & Android)', 'Firebase / Supabase', 'API REST ou GraphQL', 'Paiement Mobile Money & Stripe'],
     steps: ['1 semaine de discovery utilisateurs', 'Wireframes validés avant le code', 'Sprints de 2 semaines, démos à chaque étape', 'Déploiement App Store & Play Store inclus'],
     gains: ['MVP livrable en 6 à 10 semaines', 'Code source 100 % propriété du client', 'App Store & Play Store gérés par nous', 'Support 3 mois post-lancement inclus'],
-    from: '1 500 000',
+    from: '1 200 000',
     cta: 'Démarrer mon app mobile',
   },
   {
@@ -75,7 +75,7 @@ const OFFERS = [
     stack: ['Next.js / React', 'Node.js ou Python (API)', 'PostgreSQL / MongoDB', 'Stripe, Lemon Squeezy ou Mobile Money'],
     steps: ['Cadrage produit et définition du MVP', 'Architecture technique scalable dès le départ', 'Interface admin + espace client', 'Intégration billing et onboarding utilisateur'],
     gains: ['Premier client en 8 à 12 semaines', 'Architecture scalable dès J1', 'Tableau de bord admin complet', 'Documentation technique livrée'],
-    from: '2 000 000',
+    from: '1 500 000',
     cta: 'Construire mon SaaS',
   },
   {
@@ -88,7 +88,7 @@ const OFFERS = [
     stack: ['React ou Next.js', 'Connexion à vos données existantes', 'Exports PDF / Excel automatiques', 'Droits et rôles utilisateurs'],
     steps: ['Audit de vos processus actuels', 'Design centré sur les utilisateurs finaux', 'Connexion à vos APIs et bases de données', 'Formation équipe incluse'],
     gains: ['Prise en main sans formation longue', 'Remplacement des fichiers Excel', 'Gain de 5 à 15h/semaine par équipe', 'Accès rôles granulaires par profil'],
-    from: '800 000',
+    from: '600 000',
     cta: 'Moderniser mes outils internes',
   },
 ];
