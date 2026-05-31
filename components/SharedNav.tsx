@@ -20,13 +20,60 @@ const PAGES = [
   { href: '/dev',          label: 'Studio Dev' },
 ];
 
-export default function SharedNav({ anchors, ctaLabel = 'Diagnostic gratuit', ctaHref = '#contact', dark = false }: Props) {
+export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel, ctaHref: propCtaHref, dark: propDark = false }: Props) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isTablet, setIsTablet] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+
+  /* ── auto-config based on route ── */
+  const config = {
+    anchors: propAnchors,
+    ctaLabel: propCtaLabel || 'Diagnostic gratuit',
+    ctaHref: propCtaHref || '#contact',
+    dark: propDark,
+  };
+
+  if (!propAnchors) {
+    if (pathname === '/') {
+      config.anchors = [
+        { label: 'Secteurs', href: '#secteurs' },
+        { label: 'Processus', href: '#processus' },
+        { label: 'Tarifs', href: '#tarifs' },
+        { label: 'Contact', href: '#contact' },
+      ];
+    } else if (pathname === '/produits-ia') {
+      config.anchors = [
+        { label: 'Produits IA', href: '#produits' },
+        { label: 'Formation',   href: '#formation' },
+        { label: 'Contact',     href: '#contact' },
+      ];
+      config.ctaLabel = 'Lancer mon agence IA';
+      config.ctaHref = '/formation-ia';
+    } else if (pathname === '/formation-ia') {
+      config.anchors = [
+        { label: 'Programme', href: '#programme' },
+        { label: 'Résultats',  href: '#resultats' },
+        { label: 'Inscription', href: '#inscription' },
+      ];
+      config.ctaLabel = 'Réserver ma place';
+      config.ctaHref = '#inscription';
+      config.dark = true;
+    } else if (pathname === '/dev') {
+      config.anchors = [
+        { label: 'Offres', href: '#offres' },
+        { label: 'Processus', href: '#processus' },
+        { label: 'Réalisations', href: '#realisations' },
+        { label: 'Contact', href: '#contact' },
+      ];
+      config.ctaLabel = 'Démarrer un projet';
+      config.ctaHref = '#contact';
+    }
+  }
+
+  const { anchors, ctaLabel, ctaHref, dark } = config;
 
   /* ── responsive detection ── */
   useEffect(() => {

@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Transition } from 'framer-motion';
-import SharedNav from '../components/SharedNav';
 import {
   ArrowRight,
   CheckCircle2,
@@ -188,7 +187,7 @@ const SECTORS = [
       'Vos chauffeurs perdent 30 minutes chaque matin dans les bouchons de Deido ou Akwa faute de route optimisée.',
       'Un client appelle pour savoir où est sa livraison — votre chauffeur ne répond pas ou donne une estimation inexacte.',
       'Vous ne savez pas la rentabilité réelle de chaque tournée : carburant, temps, usure — c\'est un mystère.',
-      'Les chauffeurs déclarent plus de carburant qu\'ils n\'en consomment — difficile à vérifier sans suivi.',
+      'Les chauffeurs déclarent plus de carburant qu\'en consomment — difficile à vérifier sans suivi.',
       'La coordination de plusieurs véhicules se fait par appels WhatsApp en cascade — erreurs et retards fréquents.',
       'Les documents de livraison (bons, signatures) se perdent — litiges fréquents avec les clients.',
     ],
@@ -196,7 +195,7 @@ const SECTORS = [
       'Optimisation des tournées en temps réel : l\'IA calcule le meilleur itinéraire selon les bouchons, les points de livraison et le carburant disponible.',
       'Suivi GPS partagé avec le client par WhatsApp : lien de tracking direct, heure d\'arrivée estimée mise à jour en continu.',
       'Tableau de bord de rentabilité par véhicule et par tournée : coût réel, marge, taux de remplissage — vous voyez ce qui est profitable.',
-      'Rapprochement automatique entre carburant déclaré et kilomètres parcourus — les anomalies remontent instantanément.',
+      'Rapprochement automatique entre carburant déclaré et kilomètres parcourus — les anomalies ressortent immédiatement.',
       'Dispatch intelligent : l\'IA affecte les courses aux chauffeurs disponibles les plus proches selon leur position GPS.',
       'Bon de livraison numérique signé sur WhatsApp avec photo — archivé automatiquement, infalsifiable.',
     ],
@@ -221,7 +220,7 @@ const SECTORS = [
       'Relances de loyers entièrement automatisées : rappel à J-3, J0, J+5 avec ton progressif — vous n\'appelez que les cas graves.',
       'CRM immobilier IA : chaque prospect est suivi et relancé au bon moment, avec rappel sur les biens qui correspondent à son profil.',
       'Tableau de bord portefeuille en temps réel : taux d\'occupation, vacance par bien, loyers à recevoir, commissions à facturer.',
-      'Rapport mensuel automatique pour chaque propriétaire : état du bien, paiements reçus, dépenses — généré et envoyé sans intervention.',
+      'Rapport manuel automatique pour chaque propriétaire : état du bien, paiements reçus, dépenses — généré et envoyé sans intervention.',
     ],
     gains: ['+35 % de baux signés', '−80 % de visites inutiles', '+40 % de recouvrement des loyers', 'Rapport propriétaire automatique chaque mois'],
   },
@@ -642,17 +641,6 @@ export default function HomePage() {
   return (
     <main className="bg-white text-[#111]" style={{ fontFamily: 'DM Sans, sans-serif' }}>
 
-      <SharedNav
-        anchors={[
-          { label: 'Secteurs', href: '#secteurs' },
-          { label: 'Processus', href: '#processus' },
-          { label: 'Tarifs', href: '#tarifs' },
-          { label: 'Contact', href: '#contact' },
-        ]}
-        ctaLabel="Diagnostic gratuit"
-        ctaHref="#contact"
-      />
-
       {/* ══ HERO ═════════════════════════════════════════ */}
       <section style={{ position: 'relative', overflow: 'hidden', background: '#fff' }}>
         <div aria-hidden style={{
@@ -795,7 +783,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
+          <div style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', display: 'grid', gap: 16 }}>
             {WHY.map((w, i) => {
               const Icon = w.icon;
               return (
@@ -1087,7 +1075,7 @@ export default function HomePage() {
               Obtenir mon diagnostic gratuit <ArrowRight size={16} />
             </a>
             <a
-              href="https://wa.me/237678615677"
+              href="https://wa.me/237694086571?text=Bonjour%20Ozirus%2C%20je%20souhaiterais%20discuter%20d%27un%20projet%20digital%20pour%20mon%20entreprise."
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
                 border: '1.5px solid #25D366', color: '#25D366',

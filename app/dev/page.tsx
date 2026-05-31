@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import SharedNav from '../../components/SharedNav';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight, CheckCircle2, Star, TrendingUp,
@@ -1549,17 +1548,6 @@ export default function DevPage() {
   return (
     <main style={{ background: '#fff', color: '#111', fontFamily: 'DM Sans, sans-serif' }}>
 
-      <SharedNav
-        anchors={[
-          { label: 'Offres', href: '#offres' },
-          { label: 'Processus', href: '#processus' },
-          { label: 'Réalisations', href: '#realisations' },
-          { label: 'Contact', href: '#contact' },
-        ]}
-        ctaLabel="Démarrer un projet"
-        ctaHref="#contact"
-      />
-
       {/* ── HERO ─────────────────────────────────── */}
       <section style={{ position: 'relative', overflow: 'hidden', background: '#fff' }}>
         <div style={{ position: 'absolute', inset: 0, opacity: 0.08 }}><DotGrid /></div>
@@ -1808,7 +1796,7 @@ export default function DevPage() {
               onMouseLeave={e => (e.currentTarget.style.background = '#7967FF')}>
               Démarrer un projet <ArrowRight size={16} />
             </a>
-            <a href="https://wa.me/237678615677" target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '1.5px solid #25D366', color: '#25D366', padding: '14px 24px', borderRadius: 8, fontSize: 15, fontWeight: 600, textDecoration: 'none', transition: 'background 0.15s, color 0.15s' }}
+            <a href="https://wa.me/237694086571?text=Bonjour%20Ozirus%2C%20je%20souhaiterais%20discuter%20d%27un%20projet%20de%20d%C3%A9veloppement%20digital%20(App%20Mobile%2C%20SaaS%20ou%20Interface%20M%C3%A9tier)%20vu%20sur%20la%20page%20Dev." target="_blank" rel="noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, border: '1.5px solid #25D366', color: '#25D366', padding: '14px 24px', borderRadius: 8, fontSize: 15, fontWeight: 600, textDecoration: 'none', transition: 'background 0.15s, color 0.15s' }}
               onMouseEnter={e => { e.currentTarget.style.background = '#25D366'; e.currentTarget.style.color = '#fff'; }}
               onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#25D366'; }}>
               <MessageCircle size={16} /> WhatsApp

@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import SharedNav from '../../components/SharedNav';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowRight, CheckCircle2, Star, Zap, Clock, Shield,
@@ -53,6 +52,7 @@ const PRODUCTS = [
     gains: ['+35 % de ventes en moyenne dès le 1er mois', '−70 % du temps passé à répondre au téléphone', 'Clients qui reviennent 2× plus souvent'],
     for: 'Boutiques, restaurants, salons, services',
     cta: 'Je veux ce chatbot',
+    whatsappBrief: "Bonjour Ozirus, je suis intéressé par votre solution de Chatbot WhatsApp IA Pro.",
   },
   {
     id: 'stocks',
@@ -64,6 +64,7 @@ const PRODUCTS = [
     gains: ['−40 % de pertes sur stocks en moyenne', '800 000 à 2,5M FCFA économisés par mois', 'Zéro rupture sur les produits clés'],
     for: 'Boutiques, pharmacies, agroalimentaire, restaurants',
     cta: 'Je veux maîtriser mes stocks',
+    whatsappBrief: "Bonjour Ozirus, je souhaiterais automatiser ma gestion de stocks avec l'IA.",
   },
   {
     id: 'facturation',
@@ -75,6 +76,7 @@ const PRODUCTS = [
     gains: ['+25 à 40 % de taux de recouvrement', 'Image professionnelle dès le premier envoi', '3 à 5h/semaine économisées sur la gestion admin'],
     for: 'Artisans, services, commerçants, petites entreprises',
     cta: 'Je veux être payé plus vite',
+    whatsappBrief: "Bonjour Ozirus, je suis intéressé par votre solution de facturation et relances automatiques.",
   },
   {
     id: 'crm',
@@ -86,6 +88,7 @@ const PRODUCTS = [
     gains: ['+45 % de taux de conversion moyen', 'Aucune opportunité oubliée ou mal relancée', 'Temps commercial réduit de moitié'],
     for: 'Commerciaux, agences, consultants, services B2B',
     cta: 'Je veux ce CRM',
+    whatsappBrief: "Bonjour Ozirus, j'aimerais mettre en place votre CRM WhatsApp pour mon équipe commerciale.",
   },
   {
     id: 'booking',
@@ -97,6 +100,7 @@ const PRODUCTS = [
     gains: ['−50 % de no-shows grâce aux rappels', '+40 % de fidélisation sur 6 mois', '8 à 12h/semaine récupérées sur la gestion agenda'],
     for: 'Salons, cliniques, hôtels, coaches, formateurs',
     cta: 'Je veux ce système',
+    whatsappBrief: "Bonjour Ozirus, je souhaiterais automatiser ma prise de rendez-vous via WhatsApp.",
   },
 
   /* ── Production & opérations ── */
@@ -110,17 +114,19 @@ const PRODUCTS = [
     gains: ['−40 % de gaspillage alimentaire en moyenne', '+18 à 28 % de marge brute récupérée', 'Ruptures de plats phares divisées par 3'],
     for: 'Restaurants, maquis, snacks, cantines',
     cta: 'Je veux ce planificateur',
+    whatsappBrief: "Bonjour Ozirus, je souhaiterais en savoir plus sur votre Planificateur de Production IA.",
   },
   {
     id: 'commandes-resto',
     title: 'Prise de Commandes WhatsApp',
     price: '69 000 FCFA',
     type: 'Paiement unique',
-    desc: 'Un assistant IA sur WhatsApp qui prend les commandes, confirme les demandes, gère les pré-commandes et encaisse via Mobile Money — même quand vous ne pouvez pas décrocher. Il peut servir pour un restaurant, une boutique, un catalogue B2B, un service de livraison, un commerce WhatsApp ou un artisan qui reçoit beaucoup de demandes répétitives.',
+    desc: 'Un assistant IA on WhatsApp qui prend les commandes, confirme les demandes, gère les pré-commandes et encaisse via Mobile Money — même quand vous ne pouvez pas décrocher. Il peut servir pour un restaurant, une boutique, un catalogue B2B, un service de livraison, un commerce WhatsApp ou un artisan qui reçoit beaucoup de demandes répétitives.',
     features: ['Catalogue interactif envoyé automatiquement sur WhatsApp', 'Prise de commande + confirmation client', 'Pré-commandes et commandes à emporter/livrer', 'Encaissement Mobile Money avant traitement', 'Transmission directe à l\'équipe opérationnelle', 'Historique des commandes par client'],
     gains: ['+30 % de commandes traitées pendant les rushs', 'Zéro commande perdue ou mal saisie', 'Paiements encaissés avant l\'arrivée du client'],
     for: 'Restaurants, commerces WhatsApp, artisans, livraison, B2B',
     cta: 'Je veux automatiser mes commandes',
+    whatsappBrief: "Bonjour Ozirus, je suis intéressé par votre système de prise de commandes WhatsApp.",
   },
   {
     id: 'tableau-cuisine',
@@ -132,6 +138,7 @@ const PRODUCTS = [
     gains: ['1 à 3h de gestion économisées chaque jour', 'Décisions cuisine basées sur des données réelles', 'Visibilité totale sans ordinateur ni logiciel'],
     for: 'Gérants, responsables d\'équipe, points de vente, ateliers',
     cta: 'Je veux ce tableau de bord',
+    whatsappBrief: "Bonjour Ozirus, je souhaiterais installer votre Tableau de Bord Opérationnel IA.",
   },
 
   /* ── Qualification & rendez-vous ── */
@@ -145,6 +152,7 @@ const PRODUCTS = [
     gains: ['+60 % de visites effectivement planifiées', 'Aucun prospect non relancé', '5 à 8h/semaine économisées sur les échanges téléphoniques'],
     for: 'Immobilier, formation, services B2B, cabinets, assurances',
     cta: 'Je veux cet assistant',
+    whatsappBrief: "Bonjour Ozirus, je suis intéressé par votre Assistant Qualification & Rendez-vous IA.",
   },
 
   /* ── Prix & opportunités ── */
@@ -158,6 +166,7 @@ const PRODUCTS = [
     gains: ['+20 à 35 % de revenus par vente au meilleur moment', 'Fin des ventes à perte faute d\'information', 'Décisions de stockage basées sur des données réelles'],
     for: 'Agriculture, agroalimentaire, grossistes, import/export local',
     cta: 'Je veux ce prédicteur',
+    whatsappBrief: "Bonjour Ozirus, je souhaiterais en savoir plus sur votre Prédicteur de Prix & Opportunités IA.",
   },
 
   /* ── Administration ── */
@@ -171,6 +180,7 @@ const PRODUCTS = [
     gains: ['−80 % du temps administratif sur la communication', '+40 % de recouvrement sur les paiements récurrents', 'Contacts informés en temps réel sans effort'],
     for: 'Éducation, formation, santé, associations, services récurrents',
     cta: 'Je veux cet assistant',
+    whatsappBrief: "Bonjour Ozirus, je suis intéressé par votre Assistant Administratif IA pour mon établissement.",
   },
 
   /* ── Digital-first ── */
@@ -180,10 +190,11 @@ const PRODUCTS = [
     price: '89 000 FCFA',
     type: 'Paiement unique',
     desc: 'L\'IA analyse chaque prospect entrant (via WhatsApp, formulaire ou réseaux sociaux), lui attribue un score de probabilité d\'achat et vous dit exactement dans quel ordre les rappeler. Arrêtez de perdre du temps sur les mauvais leads.',
-    features: ['Capture leads multi-canal (WhatsApp, formulaire, Facebook)', 'Score IA 0–100 basé sur le profil et le comportement', 'Classement quotidien : les prospects à contacter en premier', 'Séquences de nurturing automatiques pour les leads froids', 'Alertes en temps réel pour les leads très chauds', 'Rapport hebdo : leads convertis vs perdus avec analyse'],
+    features: ['Capture leads multi-canal (WhatsApp, formulaire, Facebook)', 'Score IA 0–100 basé sur le profil et le comportement', 'Classement quotidien : les prospects à contacter en premier', 'Séquences de nurturing automatiques pour les leads froids', 'Alertes en temps réel pour les leads très chaud', 'Rapport hebdo : leads convertis vs perdus avec analyse'],
     gains: ['+45 % de taux de closing', 'Temps commercial divisé par 2', 'Aucun prospect chaud ne passe entre les mailles'],
     for: 'Agences immobilières, assurances, B2B, e-commerce, formation',
     cta: 'Je veux qualifier mes leads',
+    whatsappBrief: "Bonjour Ozirus, je souhaiterais mettre en place votre système de Scoring & Qualification de Leads IA.",
   },
 ];
 
@@ -281,7 +292,7 @@ function ProductsPanel() {
               </div>
             </div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-              <a href="https://wa.me/237678615677" target="_blank" rel="noreferrer"
+              <a href={`https://wa.me/237694086571?text=${encodeURIComponent(product.whatsappBrief)}`} target="_blank" rel="noreferrer"
                 style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: '#7967FF', color: '#fff', padding: '11px 18px', borderRadius: 8, fontSize: 13, fontWeight: 600, textDecoration: 'none' }}
                 onMouseEnter={e => (e.currentTarget.style.background = '#6654F0')}
                 onMouseLeave={e => (e.currentTarget.style.background = '#7967FF')}>
@@ -385,7 +396,7 @@ function ProductsPanel() {
           </div>
 
           <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            <a href="https://wa.me/237678615677" target="_blank" rel="noreferrer"
+            <a href={`https://wa.me/237694086571?text=${encodeURIComponent(product.whatsappBrief)}`} target="_blank" rel="noreferrer"
               style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: '#7967FF', color: '#fff', padding: '12px 22px', borderRadius: 8, fontSize: 13, fontWeight: 600, textDecoration: 'none', transition: 'background 0.15s' }}
               onMouseEnter={e => (e.currentTarget.style.background = '#6654F0')}
               onMouseLeave={e => (e.currentTarget.style.background = '#7967FF')}>
@@ -406,16 +417,6 @@ function ProductsPanel() {
 export default function ProduitsPage() {
   return (
     <main style={{ background: '#fff', color: '#111', fontFamily: 'DM Sans, sans-serif' }}>
-
-      <SharedNav
-        anchors={[
-          { label: 'Produits IA', href: '#produits' },
-          { label: 'Formation',   href: '#formation' },
-          { label: 'Contact',     href: '#contact' },
-        ]}
-        ctaLabel="Lancer mon agence IA"
-        ctaHref="/formation-ia"
-      />
 
       {/* HERO */}
       <section style={{ position: 'relative', overflow: 'hidden', background: '#fff' }}>
@@ -446,7 +447,7 @@ export default function ProduitsPage() {
                 onMouseLeave={e => (e.currentTarget.style.background = '#7967FF')}>
                 Voir les produits <ArrowRight size={14} />
               </a>
-              <a href="https://wa.me/237678615677" target="_blank" rel="noreferrer"
+              <a href="https://wa.me/237694086571?text=Bonjour%20Ozirus%2C%20je%20souhaiterais%20avoir%20des%20informations%20sur%20vos%20produits%20IA." target="_blank" rel="noreferrer"
                 style={{ display: 'inline-flex', alignItems: 'center', gap: 7, border: '1.5px solid #25D366', color: '#25D366', padding: '13px 22px', borderRadius: 8, fontSize: 14, fontWeight: 600, textDecoration: 'none', transition: 'background 0.15s, color 0.15s' }}
                 onMouseEnter={e => { e.currentTarget.style.background = '#25D366'; e.currentTarget.style.color = '#fff'; }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#25D366'; }}>
@@ -531,7 +532,7 @@ export default function ProduitsPage() {
               <p style={{ fontSize: 13, color: '#888' }}>Une question sur un produit ?</p>
               <span style={{ fontSize: 13, fontWeight: 600, color: '#111' }}>On répond en moins de 2h.</span>
             </div>
-            <a href="https://wa.me/237678615677" target="_blank" rel="noreferrer"
+            <a href="https://wa.me/237694086571?text=Bonjour%20Ozirus%2C%20je%20souhaiterais%20avoir%20des%20informations%20sur%20vos%20produits%20IA." target="_blank" rel="noreferrer"
               style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#25D366', color: '#fff', padding: '12px 20px', borderRadius: 8, fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
               <MessageCircle size={15} /> Discuter sur WhatsApp
             </a>
@@ -655,6 +656,14 @@ export default function ProduitsPage() {
           </div>
           <div style={{ display: 'flex', gap: 20, fontSize: 13 }}>
             <Link href="/" style={{ color: '#aaa', textDecoration: 'none' }}>Accueil</Link>
+            <Link href="/formation-ia" style={{ color: '#aaa', textDecoration: 'none' }}>Formation</Link>
+          </div>
+        </div>
+      </footer>
+    </main>
+  );
+}
+"/" style={{ color: '#aaa', textDecoration: 'none' }}>Accueil</Link>
             <Link href="/formation-ia" style={{ color: '#aaa', textDecoration: 'none' }}>Formation</Link>
           </div>
         </div>
