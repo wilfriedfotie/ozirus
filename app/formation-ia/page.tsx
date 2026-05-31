@@ -41,6 +41,32 @@ const MODULES = [
   { n: '08', title: 'Mindset et cashflow', desc: 'Gérer sa trésorerie, rester focus, ne pas abandonner au premier obstacle. Le module que personne ne fait.' },
 ];
 
+const FAQS = [
+  { q: "Est-ce que j'ai besoin de savoir coder ?", a: "Absolument pas. Nous utilisons des outils 'No-code' et des solutions en marque blanche déjà prêtes. Votre rôle est de comprendre le besoin du client et de configurer la solution IA, pas d'écrire des lignes de code." },
+  { q: "Combien de temps avant de voir les premiers revenus ?", a: "La plupart de nos membres signent leur premier client entre la 4ème et la 8ème semaine. Certains récupèrent l'investissement de la formation dès le premier mois grâce à la revente de produits digitaux." },
+  { q: "Comment se déroule la formation ?", a: "C'est un mélange de sessions en direct (Live) pour poser vos questions, et d'un accès à une plateforme de cours vidéo disponible 24h/24. Vous avancez à votre rythme tout en étant soutenu par la communauté." },
+  { q: "Est-ce adapté si j'ai déjà un emploi ?", a: "Oui. La formation demande environ 4 à 6 heures par semaine. Les sessions live sont enregistrées et consultables à tout moment. C'est le moyen idéal pour construire votre agence en parallèle de votre activité actuelle." },
+  { q: "Quelles sont les méthodes de paiement ?", a: "Nous acceptons les paiements via Orange Money, MTN Mobile Money, Wave, ainsi que les virements bancaires classiques. Des facilités de paiement en 2 fois sont possibles sur demande." },
+];
+
+function FaqItem({ q, a }: { q: string; a: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+      <button 
+        onClick={() => setOpen(!open)}
+        style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px 0', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left', color: '#fff' }}
+      >
+        <span style={{ fontSize: 16, fontWeight: 600 }}>{q}</span>
+        <ChevronDown size={18} style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', opacity: 0.5 }} />
+      </button>
+      <div style={{ height: open ? 'auto' : 0, opacity: open ? 1 : 0, transition: 'all 0.3s', marginBottom: open ? 24 : 0 }}>
+        <p style={{ fontSize: 14, lineHeight: 1.6, color: 'rgba(255,255,255,0.5)' }}>{a}</p>
+      </div>
+    </div>
+  );
+}
+
 const TESTIMONIALS = [
   { quote: 'J\'ai signé mon premier client à 350 000 FCFA/mois seulement 6 semaines après la formation. Je n\'aurais jamais cru ça possible aussi vite.', name: 'Aïcha K.', city: 'Abidjan', result: '350K FCFA/mois' },
   { quote: 'J\'ai revendu 11 produits digitaux le premier mois. La marque blanche, c\'est la clé. Tu revends ce qu\'Ozirus a déjà construit.', name: 'Ibrahim D.', city: 'Dakar', result: '11 ventes mois 1' },
@@ -121,6 +147,86 @@ export default function FormationPage() {
         </div>
       </section>
 
+      {/* ── POUR QUI ? ── */}
+      <section style={{ padding: '80px 24px', position: 'relative' }}>
+        <div style={{ maxWidth: 860, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontSize: 28, fontWeight: 600, marginBottom: 16 }}>Cette formation est pour vous si...</h2>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 20 }}>
+            {[
+              { t: 'Freelances & Agences', b: 'Vous voulez ajouter des services IA à haute valeur ajoutée pour facturer plus cher.' },
+              { t: 'Entrepreneurs', b: 'Vous cherchez un business model rentable et moderne à lancer sur le marché africain.' },
+              { t: 'Salariés en reconversion', b: 'Vous voulez construire une source de revenus indépendante en parallèle de votre job.' },
+            ].map(item => (
+              <div key={item.t} style={{ padding: 24, borderRadius: 16, background: 'rgba(121,103,255,0.03)', border: '1px solid rgba(121,103,255,0.1)' }}>
+                <CheckCircle2 size={20} color="#7967FF" style={{ marginBottom: 16 }} />
+                <p style={{ fontWeight: 700, fontSize: 17, marginBottom: 10 }}>{item.t}</p>
+                <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>{item.b}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── POURQUOI MAINTENANT ? ── */}
+      <section style={{ padding: '40px 24px 80px' }}>
+        <div style={{ maxWidth: 860, margin: '0 auto' }}>
+          <div style={{ background: '#111', borderRadius: 24, padding: '48px', border: '1px solid rgba(121,103,255,0.15)', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', top: 0, right: 0, padding: '12px 24px', background: '#7967FF', fontSize: 12, fontWeight: 800, borderRadius: '0 0 0 16px' }}>OPPORTUNITÉ 2026</div>
+            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontSize: 28, fontWeight: 600, marginBottom: 32, maxWidth: 500 }}>Pourquoi lancer votre agence IA au Cameroun maintenant ?</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 32 }}>
+              {[
+                { t: 'Adoption massive', b: 'Les PME locales cherchent désespérément à réduire leurs coûts face à l\'inflation.' },
+                { t: 'Zéro concurrence', b: 'Le marché est immense et il n\'y a quasiment aucune agence spécialisée sérieuse.' },
+                { t: 'Coûts dérisoires', b: 'Vous n\'avez besoin d\'aucun stock physique, juste d\'une connexion internet.' },
+              ].map(item => (
+                <div key={item.t}>
+                  <p style={{ fontWeight: 800, fontSize: 18, color: '#7967FF', marginBottom: 8 }}>{item.t}</p>
+                  <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>{item.b}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── CE QUI EST INCLUS ── */}
+      <section style={{ padding: '80px 24px', background: 'linear-gradient(180deg, transparent, rgba(121,103,255,0.05) 50%, transparent)' }}>
+        <div style={{ maxWidth: 860, margin: '0 auto' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: 48, alignItems: 'center' }}>
+            <div>
+              <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontSize: 32, fontWeight: 600, marginBottom: 24 }}>Tout ce qu'il vous faut pour réussir.</h2>
+              <p style={{ color: 'rgba(255,255,255,0.6)', lineHeight: 1.7, marginBottom: 32 }}>On ne vous donne pas juste des cours. On vous donne l'infrastructure complète d'une agence IA opérationnelle.</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                {[
+                  'Accès à vie à la communauté privée (WhatsApp/Discord)',
+                  'Modèles de contrats et devis prêts à l\'emploi',
+                  'Scripts de vente WhatsApp et techniques de closing',
+                  'Droit de revente en marque blanche (Ozirus products)',
+                  'Coaching de groupe hebdomadaire pendant 3 mois',
+                  'Certificat de fin de formation Ozirus Agency',
+                ].map(l => (
+                  <div key={l} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+                    <Zap size={16} color="#7967FF" style={{ marginTop: 2, flexShrink: 0 }} />
+                    <span style={{ fontSize: 15, fontWeight: 500 }}>{l}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div style={{ background: '#111', borderRadius: 24, padding: 32, border: '1px solid rgba(121,103,255,0.2)', boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+                <Award size={32} color="#7967FF" />
+                <p style={{ fontWeight: 800, fontSize: 18 }}>Valeur totale : +850 000 F</p>
+              </div>
+              <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>Inclus gratuitement pour les membres de cette session.</p>
+              <div style={{ height: 1, background: 'rgba(255,255,255,0.1)', marginBottom: 24 }} />
+              <a href="#inscription" style={{ display: 'block', textAlign: 'center', background: '#fff', color: '#7967FF', padding: '14px', borderRadius: 10, fontSize: 15, fontWeight: 700, textDecoration: 'none' }}>Accéder à tout le pack</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── PROGRAMME ── */}
       <section id="programme" style={{ padding: '80px 24px', background: 'rgba(255,255,255,0.02)' }}>
         <div style={{ maxWidth: 860, margin: '0 auto' }}>
@@ -143,6 +249,9 @@ export default function FormationPage() {
       {/* ── RÉSULTATS ── */}
       <section id="resultats" style={{ padding: '100px 24px' }}>
         <div style={{ maxWidth: 860, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 56 }}>
+            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontSize: 28, fontWeight: 600, marginBottom: 16 }}>Ce qu'ils en pensent</h2>
+          </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 24 }}>
             {TESTIMONIALS.map(t => (
               <div key={t.name} style={{ background: 'linear-gradient(135deg, rgba(121,103,255,0.05) 0%, transparent 100%)', borderRadius: 20, padding: 32, border: '1px solid rgba(121,103,255,0.1)' }}>
@@ -156,6 +265,36 @@ export default function FormationPage() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ── */}
+      <section id="faq" style={{ padding: '80px 24px', background: 'rgba(255,255,255,0.01)' }}>
+        <div style={{ maxWidth: 720, margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: 48 }}>
+            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontSize: 32, fontWeight: 600, marginBottom: 16 }}>Questions fréquentes</h2>
+            <p style={{ color: 'rgba(255,255,255,0.5)' }}>Tout ce que vous devez savoir avant de nous rejoindre.</p>
+          </div>
+          <div style={{ background: '#111', borderRadius: 20, padding: '8px 32px', border: '1px solid rgba(255,255,255,0.06)' }}>
+            {FAQS.map((f, i) => (
+              <FaqItem key={i} q={f.q} a={f.a} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── GARANTIE ── */}
+      <section style={{ padding: '80px 24px' }}>
+        <div style={{ maxWidth: 860, margin: '0 auto' }}>
+          <div style={{ background: 'linear-gradient(135deg, rgba(52,199,89,0.05) 0%, transparent 100%)', borderRadius: 24, padding: '48px 40px', border: '1px solid rgba(52,199,89,0.2)', display: 'flex', alignItems: 'center', gap: 32, flexWrap: 'wrap' }}>
+            <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'rgba(52,199,89,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <Shield size={40} color="#34C759" />
+            </div>
+            <div style={{ flex: 1, minWidth: 280 }}>
+              <h3 style={{ fontSize: 22, fontWeight: 700, marginBottom: 12, color: '#34C759' }}>Garantie 100% Satisfait ou Remboursé</h3>
+              <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6 }}>Testez la formation pendant 14 jours. Si vous n'êtes pas absolument convaincu par la valeur du programme, nous vous remboursons intégralement, sans poser de questions.</p>
+            </div>
           </div>
         </div>
       </section>
