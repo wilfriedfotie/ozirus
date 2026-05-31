@@ -11,6 +11,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://ozirus.agency'),
   title: 'Ozirus Agency — Agence IA & Digitale | Cameroun & Afrique Francophone',
   description: 'Ozirus Agency déploie des agents IA et solutions digitales sur mesure (SaaS, Mobile) pour les PME au Cameroun et en Afrique Francophone. Automatisation WhatsApp, Chatbots IA et transformation digitale en 90 jours.',
   keywords: 'agent IA Cameroun, agence digitale Afrique francophone, intelligence artificielle Afrique, développement SaaS Cameroun, application mobile Yaoundé, solution IA PME, automatisation WhatsApp Afrique, chatbot IA Cameroun, transformation digitale Afrique',
