@@ -1501,7 +1501,7 @@ function MockupsShowcase() {
       transition={{ duration: 0.7, delay: 0.28 }}
       style={{ marginTop: 64, width: '100%' }}
     >
-      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1.55fr', gap: isMobile ? 64 : 48, alignItems: 'center', width: '100%' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 2fr', gap: isMobile ? 64 : 48, alignItems: 'center', width: '100%' }}>
 
         {/* ── MOBILE ── */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
@@ -1595,7 +1595,7 @@ export default function DevPage() {
         <div style={{ position: 'absolute', inset: 0, opacity: 0.08 }}><DotGrid /></div>
         <div aria-hidden style={{ position: 'absolute', top: -60, left: '50%', transform: 'translateX(-50%)', width: 800, height: 500, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(121,103,255,0.1) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: 1080, margin: '0 auto', minHeight: 'calc(100vh - 64px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '72px 24px', textAlign: 'center' }}>
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: 1200, margin: '0 auto', minHeight: 'calc(100vh - 64px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '72px 24px', textAlign: 'center' }}>
 
           <motion.h1 {...up(0)} style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2.8rem, 7vw, 5.8rem)', lineHeight: 0.97, letterSpacing: '-0.025em', color: '#111', margin: '0 auto' }}>
             On construit le produit
