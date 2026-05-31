@@ -991,74 +991,72 @@ function SaasResto() {
       slug="nutrition.ozirus.ai/dashboard"
       brand="NutriFlow"
       title="Optimisez votre énergie aujourd'hui"
-      subtitle="Intelligence Nutritionnelle · Analyse en temps réel & Coaching"
-      action="Nouvel Repas"
+      subtitle="Intelligence Nutritionnelle · Analyse & Coaching"
+      action="Ajouter"
       theme={theme}
-      nav={['Tableau de bord', 'Planning', 'Analyses', 'IA Coach']}
+      nav={['Dashboard', 'Planning', 'Analyses', 'IA Coach']}
     >
-      <div style={{ height: 'calc(100% - 34px)', display: 'grid', gridTemplateColumns: '1fr 280px', gap: 12 }}>
+      <div style={{ height: 'calc(100% - 34px)', display: 'grid', gridTemplateColumns: '1fr 190px', gap: 10 }}>
         {/* MAIN COLUMN */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, minHeight: 0 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10, minHeight: 0 }}>
           {/* TOP HERO STATS */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: 10 }}>
-            <PlainCard style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 16, border: 'none', background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)', color: '#fff' }}>
-              <div style={{ position: 'relative', width: 56, height: 56, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="40" height="40" viewBox="0 0 40 40">
-                  <circle cx="20" cy="20" r="18" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="4" />
-                  <circle cx="20" cy="20" r="18" fill="none" stroke="#fff" strokeWidth="4" strokeDasharray="113" strokeDashoffset="34" strokeLinecap="round" transform="rotate(-90 20 20)" />
+          <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: 8 }}>
+            <PlainCard style={{ padding: '10px 12px', display: 'flex', alignItems: 'center', gap: 12, border: 'none', background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)', color: '#fff', boxShadow: '0 4px 12px rgba(16, 185, 129, 0.12)' }}>
+              <div style={{ position: 'relative', width: 48, height: 48, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg width="48" height="48" viewBox="0 0 48 48">
+                  <circle cx="24" cy="24" r="21" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="4" />
+                  <circle cx="24" cy="24" r="21" fill="none" stroke="#fff" strokeWidth="4" strokeDasharray="132" strokeDashoffset="40" strokeLinecap="round" transform="rotate(-90 24 24)" />
                 </svg>
-                <span style={{ position: 'absolute', fontSize: 11, fontWeight: 900 }}>70%</span>
+                <span style={{ position: 'absolute', fontSize: 10, fontWeight: 900 }}>70%</span>
               </div>
-              <div>
-                <p style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', opacity: 0.8, letterSpacing: '0.05em' }}>Objectif Calorie</p>
-                <p style={{ fontSize: 20, fontWeight: 900, lineHeight: 1.1 }}>1 450 <span style={{ fontSize: 10, fontWeight: 500, opacity: 0.8 }}>/ 2 100 kcal</span></p>
+              <div style={{ minWidth: 0 }}>
+                <p style={{ fontSize: 7.5, fontWeight: 800, textTransform: 'uppercase', opacity: 0.8, letterSpacing: '0.05em', marginBottom: 2 }}>Calories</p>
+                <p style={{ fontSize: 16, fontWeight: 900, lineHeight: 1 }}>1 450</p>
+                <p style={{ fontSize: 8, fontWeight: 600, opacity: 0.7, marginTop: 2 }}>/ 2 100 kcal</p>
               </div>
             </PlainCard>
             
-            <PlainCard style={{ padding: 12, border: '1px solid #E5E7EB' }}>
-              <p style={{ fontSize: 8.5, color: '#6B7280', fontWeight: 700, marginBottom: 6 }}>HYDRATATION</p>
-              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 24, marginBottom: 4 }}>
-                {[30, 45, 60, 25, 80, 50, 65].map((h, i) => (
+            <PlainCard style={{ padding: 10, border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <p style={{ fontSize: 7.5, color: '#6B7280', fontWeight: 800, textTransform: 'uppercase', marginBottom: 6 }}>Eau</p>
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 20, marginBottom: 4 }}>
+                {[35, 50, 65, 30, 85, 55, 70].map((h, i) => (
                   <div key={i} style={{ flex: 1, height: `${h}%`, background: i === 4 ? theme.accent : '#D1FAE5', borderRadius: 2 }} />
                 ))}
               </div>
-              <p style={{ fontSize: 12, fontWeight: 900, color: '#111827' }}>1.8L <span style={{ fontSize: 8, color: '#10B981' }}>+12%</span></p>
+              <p style={{ fontSize: 10, fontWeight: 900, color: '#111827', margin: 0 }}>1.8L <span style={{ fontSize: 7.5, color: '#10B981' }}>+12%</span></p>
             </PlainCard>
 
-            <PlainCard style={{ padding: 12, border: '1px solid #E5E7EB' }}>
-              <p style={{ fontSize: 8.5, color: '#6B7280', fontWeight: 700, marginBottom: 6 }}>PROTEINES</p>
-              <div style={{ height: 6, background: '#F3F4F6', borderRadius: 99, overflow: 'hidden', margin: '8px 0' }}>
-                <div style={{ width: '65%', height: '100%', background: '#3B82F6', borderRadius: 99 }} />
+            <PlainCard style={{ padding: 10, border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <p style={{ fontSize: 7.5, color: '#6B7280', fontWeight: 800, textTransform: 'uppercase', marginBottom: 6 }}>Protéines</p>
+              <div style={{ height: 5, background: '#F3F4F6', borderRadius: 99, overflow: 'hidden', margin: '6px 0' }}>
+                <div style={{ width: '65%', height: '100%', background: '#10B981', borderRadius: 99 }} />
               </div>
-              <p style={{ fontSize: 12, fontWeight: 900, color: '#111827' }}>92g <span style={{ fontSize: 8, color: '#6B7280', fontWeight: 500 }}>/ 140g</span></p>
+              <p style={{ fontSize: 10, fontWeight: 900, color: '#111827', margin: 0 }}>92g <span style={{ fontSize: 7.5, color: '#6B7280' }}>/ 140g</span></p>
             </PlainCard>
           </div>
 
           {/* PLANNING LIST */}
           <PlainCard style={{ flex: 1, padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', border: '1px solid #E5E7EB' }}>
-            <div style={{ padding: '12px 16px', borderBottom: '1px solid #F3F4F6', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h4 style={{ fontSize: 11, fontWeight: 800, color: '#111827', margin: 0 }}>VOTRE SEMAINE IA</h4>
-              <div style={{ display: 'flex', gap: 4 }}>
-                {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
-                  <div key={i} style={{ width: 18, height: 18, borderRadius: 4, background: i === 3 ? theme.accent : 'transparent', color: i === 3 ? '#fff' : '#9CA3AF', fontSize: 8, fontWeight: 900, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{d}</div>
+            <div style={{ padding: '8px 12px', borderBottom: '1px solid #F3F4F6', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff' }}>
+              <h4 style={{ fontSize: 9.5, fontWeight: 800, color: '#111827', margin: 0 }}>PLANNING</h4>
+              <div style={{ display: 'flex', gap: 3 }}>
+                {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((d, i) => (
+                  <div key={i} style={{ width: 16, height: 16, borderRadius: 4, background: i === 3 ? theme.accent : 'transparent', color: i === 3 ? '#fff' : '#9CA3AF', fontSize: 7.5, fontWeight: 900, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{d}</div>
                 ))}
               </div>
             </div>
-            <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px' }}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '0 12px' }}>
               {[
-                { time: '08:00', type: 'Petit-déjeuner', name: 'Bowl Avoine & Baies', cal: '320 kcal', status: 'Complété', color: '#10B981' },
-                { time: '13:00', type: 'Déjeuner', name: 'Poulet Grillé & Quinoa', cal: '580 kcal', status: 'Complété', color: '#10B981' },
-                { time: '16:30', type: 'Collation', name: 'Amandes & Pomme', cal: '150 kcal', status: 'En attente', color: '#F59E0B' },
-                { time: '20:00', type: 'Dîner', name: 'Filet de Poisson & Vapeur', cal: '420 kcal', status: 'Suggéré', color: '#3B82F6' },
-                { time: '22:00', type: 'Infusion', name: 'Camomille & Magnésium', cal: '0 kcal', status: 'Suggéré', color: '#6366F1' },
+                { time: '08:00', name: 'Bowl Avoine', cal: '320', status: 'OK', color: '#10B981' },
+                { time: '13:00', name: 'Poulet Quinoa', cal: '580', status: 'OK', color: '#10B981' },
+                { time: '16:30', name: 'Amandes & Pomme', cal: '150', status: 'Wait', color: '#F59E0B' },
+                { time: '20:00', name: 'Poisson Vapeur', cal: '420', status: 'IA', color: '#3B82F6' },
+                { time: '22:00', name: 'Infusion', cal: '0', status: 'IA', color: '#6366F1' },
               ].map((item, i) => (
-                <div key={i} style={{ display: 'grid', gridTemplateColumns: '50px 1fr 80px 70px', gap: 12, padding: '10px 0', borderBottom: i === 4 ? 'none' : '1px solid #F9FAFB', alignItems: 'center' }}>
-                  <Cell style={{ fontSize: 9, fontWeight: 700, color: '#6B7280' }}>{item.time}</Cell>
-                  <div>
-                    <Cell style={{ fontSize: 10, fontWeight: 800, color: '#111827' }}>{item.name}</Cell>
-                    <Cell style={{ fontSize: 8, color: '#9CA3AF', marginTop: 1 }}>{item.type}</Cell>
-                  </div>
-                  <Cell style={{ fontSize: 9, fontWeight: 700, color: '#374151' }}>{item.cal}</Cell>
+                <div key={i} style={{ display: 'grid', gridTemplateColumns: '40px 1fr 45px 55px', gap: 8, padding: '4px 0', borderBottom: i === 4 ? 'none' : '1px solid #F3F4F6', alignItems: 'center' }}>
+                  <Cell style={{ fontSize: 8.5, fontWeight: 700, color: '#9CA3AF' }}>{item.time}</Cell>
+                  <Cell style={{ fontSize: 9, fontWeight: 800, color: '#111827' }}>{item.name}</Cell>
+                  <Cell style={{ fontSize: 8.5, fontWeight: 700, color: '#374151' }}>{item.cal}k</Cell>
                   <span style={cropText}><UiPill tone={item.color} bg={item.color + '14'}>{item.status}</UiPill></span>
                 </div>
               ))}
@@ -1067,42 +1065,37 @@ function SaasResto() {
         </div>
 
         {/* SIDEBAR */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <PlainCard style={{ padding: 14, background: '#111827', color: '#fff', border: 'none' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-              <div style={{ width: 24, height: 24, borderRadius: '50%', background: theme.accent, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Zap size={12} color="#fff" />
-              </div>
-              <p style={{ fontSize: 10, fontWeight: 800 }}>IA INSIGHT</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <PlainCard style={{ padding: 10, background: '#111827', color: '#fff', border: 'none' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+              <Zap size={10} color={theme.accent} />
+              <p style={{ fontSize: 8.5, fontWeight: 800, letterSpacing: '0.02em' }}>IA INSIGHT</p>
             </div>
-            <p style={{ fontSize: 10, lineHeight: 1.5, color: '#D1D5DB', fontWeight: 500 }}>
-              "Votre apport en <span style={{ color: theme.accent, fontWeight: 800 }}>magnésium</span> est faible cette semaine. L'IA suggère d'ajouter des épinards ou du chocolat noir à votre dîner."
+            <p style={{ fontSize: 8.5, lineHeight: 1.4, color: '#D1D5DB', fontWeight: 500, margin: 0 }}>
+              "Apport en <span style={{ color: theme.accent, fontWeight: 800 }}>magnésium</span> faible. Ajoutez des épinards au dîner."
             </p>
-            <button style={{ marginTop: 12, width: '100%', padding: '6px', borderRadius: 6, background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: 8, fontWeight: 800, cursor: 'pointer' }}>Appliquer au menu</button>
           </PlainCard>
 
-          <PlainCard style={{ flex: 1, padding: 14, border: '1px solid #E5E7EB' }}>
-            <p style={{ fontSize: 9, fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', marginBottom: 12, letterSpacing: '0.05em' }}>LISTE DE COURSES</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <PlainCard style={{ flex: 1, padding: 10, border: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column' }}>
+            <p style={{ fontSize: 8, fontWeight: 800, color: '#6B7280', textTransform: 'uppercase', marginBottom: 8 }}>Courses</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 12 }}>
               {[
-                { n: 'Poulet Fermier', q: '800g', c: true },
-                { n: 'Quinoa Bio', q: '500g', c: true },
+                { n: 'Poulet', q: '800g', c: true },
+                { n: 'Quinoa', q: '500g', c: true },
                 { n: 'Avocats', q: '3 pcs', c: false },
-                { n: 'Épinards Frais', q: '200g', c: false },
-                { n: 'Baies de Goji', q: '100g', c: false },
-                { n: 'Saumon Sauvage', q: '400g', c: false },
+                { n: 'Épinards', q: '200g', c: false },
+                { n: 'Saumon', q: '400g', c: false },
               ].map((item, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <div style={{ width: 12, height: 12, borderRadius: 3, border: `1px solid ${item.c ? theme.accent : '#D1D5DB'}`, background: item.c ? theme.accent : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {item.c && <CheckCircle2 size={8} color="#fff" />}
+                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div style={{ width: 10, height: 10, borderRadius: 3, border: `1px solid ${item.c ? theme.accent : '#D1D5DB'}`, background: item.c ? theme.accent : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {item.c && <CheckCircle2 size={7} color="#fff" />}
                   </div>
-                  <Cell style={{ fontSize: 9.5, fontWeight: 600, color: item.c ? '#9CA3AF' : '#374151', textDecoration: item.c ? 'line-through' : 'none' }}>{item.n}</Cell>
-                  <Cell style={{ fontSize: 8, color: '#9CA3AF', marginLeft: 'auto' }}>{item.q}</Cell>
+                  <Cell style={{ fontSize: 9, fontWeight: 600, color: item.c ? '#9CA3AF' : '#374151', textDecoration: item.c ? 'line-through' : 'none' }}>{item.n}</Cell>
                 </div>
               ))}
             </div>
-            <button style={{ marginTop: 'auto', width: '100%', padding: '8px', borderRadius: 8, background: theme.soft, border: `1px solid ${theme.accent}`, color: theme.accent, fontSize: 9, fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
-              <Download size={10} /> Exporter PDF
+            <button style={{ marginTop: 'auto', width: '100%', padding: '6px', borderRadius: 6, background: theme.soft, border: `1px solid ${theme.accent}`, color: theme.accent, fontSize: 8.5, fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+              <Download size={9} /> PDF
             </button>
           </PlainCard>
         </div>
