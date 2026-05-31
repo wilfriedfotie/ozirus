@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
+  turbopack: {
+    root: __dirname,
+  },
 
   typescript: {
     // Ignore les erreurs TypeScript pendant le build

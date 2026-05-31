@@ -3,195 +3,147 @@
 import { motion } from 'framer-motion';
 
 export default function CTA() {
-    const scrollToSection = (sectionId: string) => {
-        const element = document.getElementById(sectionId);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-        }
-    };
+  const scrollTo = (id: string) =>
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
-    return (
-        <section className="py-24 bg-gradient-to-b from-background to-surface/20 relative overflow-hidden">
-            {/* Background Effects */}
-            <div className="absolute inset-0">
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-primary/20 via-secondary/10 to-transparent rounded-full blur-3xl" />
-            </div>
+  return (
+    <section style={{ padding: '104px 0', background: '#0F172A', position: 'relative', overflow: 'hidden' }}>
 
-            <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                >
-                    <h2 className="font-bricolage text-4xl md:text-6xl font-bold mb-6">
-                        <span className="bg-gradient-to-b from-white to-white/80 bg-clip-text text-transparent">
-                            Prêt à transformer votre idée en{' '}
-                        </span>
-                        <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                            réalité ?
-                        </span>
-                    </h2>
-                </motion.div>
+      {/* Accent blobs */}
+      <div style={{
+        position: 'absolute', top: -100, right: '15%',
+        width: 400, height: 400,
+        background: 'radial-gradient(circle, rgba(0,135,81,0.18) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
+      <div style={{
+        position: 'absolute', bottom: -80, left: '10%',
+        width: 350, height: 350,
+        background: 'radial-gradient(circle, rgba(26,86,219,0.15) 0%, transparent 70%)',
+        pointerEvents: 'none',
+      }} />
 
-                <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
-                    className="text-xl text-text-muted mb-12 max-w-2xl mx-auto leading-relaxed"
-                >
-                    Rejoignez les entrepreneurs qui ont choisi la vitesse comme avantage concurrentiel.
-                    Parlons de votre projet dès aujourd'hui.
-                </motion.p>
+      <div style={{ maxWidth: 760, margin: '0 auto', padding: '0 24px', textAlign: 'center', position: 'relative', zIndex: 1 }}>
 
-                {/* Main CTA Buttons */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
-                    className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16"
-                >
-                    <motion.button
-                        whileHover={{
-                            scale: 1.05,
-                            boxShadow: "0 20px 40px rgba(99, 102, 241, 0.4)"
-                        }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => scrollToSection('contact')}
-                        className="bg-gradient-to-r from-primary to-secondary text-white px-8 py-4 rounded-full text-lg font-semibold shadow-2xl shadow-primary/30 hover:shadow-primary/50 transition-all duration-300 min-w-[280px]"
-                    >
-                        Commencer maintenant ⚡
-                    </motion.button>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 28 }}
+        >
+          {/* Badge */}
+          <span style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            background: 'rgba(0,135,81,0.12)',
+            border: '1px solid rgba(0,135,81,0.25)',
+            color: '#34D399',
+            padding: '5px 14px', borderRadius: 100,
+            fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
+          }}>
+            <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#34D399', animation: 'pulse-dot 2s ease-in-out infinite' }} />
+            Diagnostic gratuit — Sans engagement
+          </span>
 
-                    <motion.a
-                        href="mailto:hello@ozirus.com"
-                        whileHover={{
-                            scale: 1.05,
-                            backgroundColor: "rgba(255, 255, 255, 0.1)"
-                        }}
-                        whileTap={{ scale: 0.95 }}
-                        className="border-2 border-white/20 text-text backdrop-blur-sm px-8 py-4 rounded-full text-lg font-semibold hover:border-primary/50 transition-all duration-300 min-w-[280px]"
-                    >
-                        Nous contacter
-                    </motion.a>
-                </motion.div>
+          {/* Heading */}
+          <h2 style={{
+            fontFamily: 'Clash Display, sans-serif',
+            fontSize: 'clamp(2rem, 5vw, 3.8rem)',
+            fontWeight: 700,
+            lineHeight: 1.08,
+            letterSpacing: '-0.03em',
+            color: '#FFFFFF',
+          }}>
+            Prêt à transformer votre entreprise{' '}
+            <span style={{
+              background: 'linear-gradient(135deg, #34D399 0%, #059669 50%, #008751 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}>
+              avec l&apos;IA ?
+            </span>
+          </h2>
 
-                {/* Trust Indicators */}
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.6 }}
-                    className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16"
-                >
-                    <div className="bg-surface/30 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-primary/30 transition-all duration-300">
-                        <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                        </div>
-                        <h3 className="font-semibold text-text mb-2">Garantie 90 jours</h3>
-                        <p className="text-text-muted text-sm">Votre produit livré en temps et en heure, ou remboursé</p>
-                    </div>
+          {/* Body */}
+          <p style={{
+            fontSize: '1.0625rem', lineHeight: 1.65,
+            color: 'rgba(255,255,255,0.55)',
+            maxWidth: 520,
+          }}>
+            Rejoignez les 35 PME camerounaises qui ont transformé leur business grâce à l&apos;IA. Obtenez votre diagnostic gratuit dès aujourd&apos;hui.
+          </p>
 
-                    <div className="bg-surface/30 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-primary/30 transition-all duration-300">
-                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                            </svg>
-                        </div>
-                        <h3 className="font-semibold text-text mb-2">Technologies de pointe</h3>
-                        <p className="text-text-muted text-sm">Stack moderne et évolutif pour un avantage concurrentiel</p>
-                    </div>
+          {/* CTAs */}
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', justifyContent: 'center', marginTop: 4 }}>
+            <button
+              onClick={() => scrollTo('contact')}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                background: '#FFFFFF',
+                color: '#0F172A',
+                fontFamily: 'DM Sans, sans-serif',
+                fontWeight: 700,
+                fontSize: '0.9375rem',
+                padding: '14px 28px',
+                borderRadius: 10,
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'transform 0.15s, box-shadow 0.2s',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                e.currentTarget.style.boxShadow = '0 8px 28px rgba(255,255,255,0.15)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              Obtenir mon diagnostic IA gratuit →
+            </button>
+            <button
+              onClick={() => scrollTo('realizations')}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                background: 'rgba(255,255,255,0.06)',
+                color: 'rgba(255,255,255,0.75)',
+                fontFamily: 'DM Sans, sans-serif',
+                fontWeight: 500,
+                fontSize: '0.9375rem',
+                padding: '14px 28px',
+                borderRadius: 10,
+                border: '1.5px solid rgba(255,255,255,0.12)',
+                cursor: 'pointer',
+                transition: 'background 0.2s, border-color 0.2s, color 0.2s',
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)';
+                e.currentTarget.style.color = '#fff';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'rgba(255,255,255,0.06)';
+                e.currentTarget.style.borderColor = 'rgba(255,255,255,0.12)';
+                e.currentTarget.style.color = 'rgba(255,255,255,0.75)';
+              }}
+            >
+              Voir nos réalisations
+            </button>
+          </div>
 
-                    <div className="bg-surface/30 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-primary/30 transition-all duration-300">
-                        <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
-                        </div>
-                        <h3 className="font-semibold text-text mb-2">Support dédié</h3>
-                        <p className="text-text-muted text-sm">Équipe disponible 24/7 pendant et après le développement</p>
-                    </div>
-                </motion.div>
-
-                {/* Contact Options */}
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.8 }}
-                    className="bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 backdrop-blur-xl rounded-3xl p-8"
-                >
-                    <h3 className="font-bricolage text-2xl font-bold mb-6 text-text">
-                        Comment démarrer ?
-                    </h3>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="text-left">
-                            <h4 className="font-semibold text-text mb-3 flex items-center gap-2">
-                                <span className="w-6 h-6 bg-primary rounded-full text-white text-sm flex items-center justify-center font-bold">1</span>
-                                Appel découverte gratuit
-                            </h4>
-                            <p className="text-text-muted text-sm mb-4">
-                                30 minutes pour comprendre votre vision, vos défis et valider la faisabilité technique.
-                            </p>
-                            <div className="text-sm text-text-muted">
-                                <div className="flex items-center gap-2 mb-1">
-                                    <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    Analyse de faisabilité
-                                </div>
-                                <div className="flex items-center gap-2 mb-1">
-                                    <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    Estimation budgétaire
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                    </svg>
-                                    Roadmap personnalisée
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="text-left">
-                            <h4 className="font-semibold text-text mb-3 flex items-center gap-2">
-                                <span className="w-6 h-6 bg-secondary rounded-full text-white text-sm flex items-center justify-center font-bold">2</span>
-                                Proposition détaillée
-                            </h4>
-                            <p className="text-text-muted text-sm mb-4">
-                                Document complet avec architecture, planning et conditions pour démarrer sereinement.
-                            </p>
-                            <div className="text-sm text-text-muted">
-                                <div className="flex items-center gap-2 mb-1">
-                                    <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                    Cahier des charges détaillé
-                                </div>
-                                <div className="flex items-center gap-2 mb-1">
-                                    <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    Planning milestones
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                    </svg>
-                                    Garanties contractuelles
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </motion.div>
-            </div>
-        </section>
-    );
+          {/* Trust */}
+          <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap', justifyContent: 'center', marginTop: 12 }}>
+            {[
+              '✓ Réponse sous 24h',
+              '✓ Sans engagement',
+              '✓ Livraison en 90j',
+            ].map((item, i) => (
+              <span key={i} style={{ fontSize: '0.8125rem', color: 'rgba(255,255,255,0.35)', fontWeight: 500 }}>{item}</span>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
 }

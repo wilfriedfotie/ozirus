@@ -2,160 +2,137 @@
 
 import { motion } from 'framer-motion';
 
+const footerLinks = [
+  {
+    title: 'Solutions',
+    links: ['SaaS sur mesure', 'Applications Mobiles', 'IA & Automatisation', 'Design & UI/UX'],
+  },
+  {
+    title: 'Secteurs',
+    links: ['Commerce & Retail', 'Agroalimentaire', 'Pharmacies', 'Hôtellerie'],
+  },
+  {
+    title: 'Entreprise',
+    links: ['À propos', 'Cas clients', 'Contact', 'Blog'],
+  },
+];
+
 export default function Footer() {
-    const currentYear = new Date().getFullYear();
+  const scrollTo = (id: string) =>
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 
-    return (
-        <footer id="contact" className="bg-surface border-t border-white/10 pt-16 pb-8 relative overflow-hidden">
-            {/* Background Effects */}
-            <div className="absolute inset-0 opacity-30">
-                <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
-                <div className="absolute bottom-0 right-0 w-96 h-96 bg-secondary/20 rounded-full blur-3xl" />
-            </div>
+  return (
+    <footer style={{ background: '#FFFFFF', borderTop: '1.5px solid #E4E8EF', paddingTop: 64, paddingBottom: 32 }}>
+      <div style={{ maxWidth: 1160, margin: '0 auto', padding: '0 24px' }}>
 
-            <div className="max-w-7xl mx-auto px-6 relative z-10">
-                {/* Main Footer Content */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 mb-12">
-                    {/* Company Info */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6 }}
-                        className="lg:col-span-1"
-                    >
-                        <div className="mb-6">
-                            <h3 className="font-bricolage text-3xl font-bold mb-4">
-                                <img src="/logo.png" alt="Logo Ozirus" className='h-10' />
+        {/* Top row */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1.2fr 2fr',
+          gap: 64,
+          marginBottom: 56,
+        }} className="footer-grid">
 
-                            </h3>
-                            <p className="text-text-muted leading-relaxed mb-6">
-                                Votre partenaire pour l'innovation digitale rapide.
-                                Nous transformons vos idées en produits exceptionnels en 90 jours.
-                            </p>
-                        </div>
-
-                        {/* Social Links */}
-                        <div className="flex space-x-4">
-                            {[
-                                { name: 'LinkedIn', icon: 'M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z' },
-                                { name: 'Twitter', icon: 'M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z' },
-                                { name: 'GitHub', icon: 'M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z' }
-                            ].map((social) => (
-                                <motion.a
-                                    key={social.name}
-                                    href="#"
-                                    whileHover={{ scale: 1.1, y: -2 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    className="w-10 h-10 bg-white/5 hover:bg-primary/20 border border-white/10 hover:border-primary/30 rounded-lg flex items-center justify-center transition-all duration-300"
-                                >
-                                    <svg className="w-5 h-5 text-text-muted hover:text-primary transition-colors duration-300" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d={social.icon} />
-                                    </svg>
-                                </motion.a>
-                            ))}
-                        </div>
-                    </motion.div>
-
-                    {/* Contact Form */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                        className="lg:col-span-2"
-                    >
-                        <h3 className="font-bricolage text-2xl font-bold mb-6 text-text">
-                            Démarrons votre projet
-                        </h3>
-
-                        <form className="space-y-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <input
-                                        type="text"
-                                        placeholder="Votre nom"
-                                        className="w-full px-4 py-3 bg-background/50 border border-white/10 rounded-xl text-text placeholder-text-muted focus:border-primary/50 focus:outline-none transition-colors duration-300"
-                                    />
-                                </div>
-                                <div>
-                                    <input
-                                        type="email"
-                                        placeholder="Votre email"
-                                        className="w-full px-4 py-3 bg-background/50 border border-white/10 rounded-xl text-text placeholder-text-muted focus:border-primary/50 focus:outline-none transition-colors duration-300"
-                                    />
-                                </div>
-                            </div>
-
-                            <div>
-                                <input
-                                    type="text"
-                                    placeholder="Nom de votre projet"
-                                    className="w-full px-4 py-3 bg-background/50 border border-white/10 rounded-xl text-text placeholder-text-muted focus:border-primary/50 focus:outline-none transition-colors duration-300"
-                                />
-                            </div>
-
-                            <div>
-                                <textarea
-                                    rows={4}
-                                    placeholder="Décrivez votre vision en quelques mots..."
-                                    className="w-full px-4 py-3 bg-background/50 border border-white/10 rounded-xl text-text placeholder-text-muted focus:border-primary/50 focus:outline-none transition-colors duration-300 resize-none"
-                                />
-                            </div>
-
-                            <motion.button
-                                type="submit"
-                                whileHover={{ scale: 1.02, boxShadow: "0 10px 25px rgba(99, 102, 241, 0.4)" }}
-                                whileTap={{ scale: 0.98 }}
-                                className="w-full bg-gradient-to-r from-primary to-secondary text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all duration-300"
-                            >
-                                Envoyer ma demande →
-                            </motion.button>
-                        </form>
-
-                        {/* Contact Info */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 pt-8 border-t border-white/10">
-                            <div className="text-center md:text-left">
-                                <h4 className="font-semibold text-text mb-2">Email</h4>
-                                <a href="mailto:hello@ozirus.com" className="text-text-muted hover:text-primary transition-colors duration-300">
-                                    contact@ozirus.agency
-                                </a>
-                            </div>
-
-                            <div className="text-center md:text-left">
-                                <h4 className="font-semibold text-text mb-2">Téléphone</h4>
-                                <a href="tel:+33123456789" className="text-text-muted hover:text-primary transition-colors duration-300">
-                                    +237 6 78 61 56 77
-                                </a>
-                            </div>
-
-                            <div className="text-center md:text-left">
-                                <h4 className="font-semibold text-text mb-2">Localisation</h4>
-                                <p className="text-text-muted">Yaoundé, Cameroun</p>
-                            </div>
-                        </div>
-                    </motion.div>
-                </div>
-
-                {/* Bottom Bar */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
-                    className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center text-text-muted text-sm"
+          {/* Brand */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            style={{ display: 'flex', flexDirection: 'column', gap: 20, maxWidth: 320 }}
+          >
+            <img src="/logo.png" alt="Ozirus Agency" style={{ height: 30 }} />
+            <p style={{ fontSize: '0.875rem', color: '#64748B', lineHeight: 1.7 }}>
+              Votre partenaire digital au Cameroun. Nous concevons des solutions SaaS, applications mobiles et outils IA pour les PME qui veulent grandir.
+            </p>
+            <div style={{ display: 'flex', gap: 8 }}>
+              {[
+                { name: 'LinkedIn', path: 'M16.338 16.338H13.67V12.16c0-.995-.017-2.277-1.387-2.277-1.853 0-2.136 1.445-2.136 2.939v5.667H7.575V9h2.559v1.174h.037c.356-.675 1.227-1.387 2.526-1.387 2.703 0 3.203 1.778 3.203 4.092v4.711zM5.005 6.575a1.548 1.548 0 110-3.096 1.548 1.548 0 010 3.096zm-1.337 9.763H6.34V9H3.667v7.338zM17.668 1H2.328C1.595 1 1 1.581 1 2.298v15.403C1 18.418 1.595 19 2.328 19h15.34C18.402 19 19 18.418 19 17.701V2.298C19 1.581 18.402 1 17.668 1z', viewBox: '0 0 20 20' },
+                { name: 'Instagram', path: 'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z', viewBox: '0 0 24 24' },
+              ].map((s) => (
+                <a
+                  key={s.name}
+                  href="#"
+                  aria-label={s.name}
+                  style={{
+                    width: 36, height: 36, borderRadius: 9,
+                    background: '#F1F4F9',
+                    border: '1.5px solid #E4E8EF',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    transition: 'background 0.2s, border-color 0.2s',
+                  }}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLAnchorElement).style.background = '#EEF2FF';
+                    (e.currentTarget as HTMLAnchorElement).style.borderColor = '#C7D2FE';
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLAnchorElement).style.background = '#F1F4F9';
+                    (e.currentTarget as HTMLAnchorElement).style.borderColor = '#E4E8EF';
+                  }}
                 >
-                    <p>
-                        © {currentYear} Ozirus. Tous droits réservés. Fait avec ❤️ pour les entrepreneurs ambitieux.
-                    </p>
-
-                    <div className="flex space-x-6 mt-4 md:mt-0">
-                        <a href="#" className="hover:text-primary transition-colors duration-300">Mentions légales</a>
-                        <a href="#" className="hover:text-primary transition-colors duration-300">Politique de confidentialité</a>
-                        <a href="#" className="hover:text-primary transition-colors duration-300">CGV</a>
-                    </div>
-                </motion.div>
+                  <svg viewBox={s.viewBox} fill="#64748B" style={{ width: 14, height: 14 }}>
+                    <path d={s.path} />
+                  </svg>
+                </a>
+              ))}
             </div>
-        </footer>
-    );
+          </motion.div>
+
+          {/* Links */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 32 }}
+          >
+            {footerLinks.map((group) => (
+              <div key={group.title} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <p style={{
+                  fontFamily: 'Clash Display, sans-serif',
+                  fontSize: '0.6875rem', fontWeight: 700,
+                  color: '#94A3B8', letterSpacing: '0.1em',
+                  textTransform: 'uppercase', marginBottom: 4,
+                }}>{group.title}</p>
+                {group.links.map((link) => (
+                  <a
+                    key={link}
+                    href="#"
+                    style={{ fontSize: '0.875rem', color: '#475569', textDecoration: 'none', fontWeight: 500, transition: 'color 0.2s' }}
+                    onMouseEnter={e => (e.currentTarget.style.color = '#1A56DB')}
+                    onMouseLeave={e => (e.currentTarget.style.color = '#475569')}
+                  >
+                    {link}
+                  </a>
+                ))}
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* Bottom */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          paddingTop: 24, borderTop: '1px solid #E4E8EF',
+          flexWrap: 'wrap', gap: 12,
+        }}>
+          <p style={{ fontSize: '0.8125rem', color: '#94A3B8' }}>
+            © {new Date().getFullYear()} Ozirus Agency. Tous droits réservés.
+          </p>
+          <p style={{ fontSize: '0.8125rem', color: '#94A3B8' }}>
+            Conçu avec ❤️ à Yaoundé, Cameroun 🇨🇲
+          </p>
+        </div>
+      </div>
+
+      <style>{`
+        @media (max-width: 768px) {
+          .footer-grid {
+            grid-template-columns: 1fr !important;
+            gap: 40px !important;
+          }
+        }
+      `}</style>
+    </footer>
+  );
 }

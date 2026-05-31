@@ -76,7 +76,7 @@ const values = [
     {
         icon: '⚡',
         title: 'Livraison rapide',
-        description: 'Nous livrons vos projets en 90 jours maximum, sans compromis sur la qualité.'
+        description: 'Nous livrons vos projets en 21 jours maximum, sans compromis sur la qualité.'
     },
     {
         icon: '🚀',
@@ -115,7 +115,7 @@ export default function Team() {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-20"
                 >
-                    <h2 className="font-bricolage text-4xl md:text-6xl font-bold mb-6">
+                    <h2 className="font-heading text-4xl md:text-6xl font-bold mb-6">
                         <span className="bg-gradient-to-b from-white to-white/80 bg-clip-text text-transparent">
                             Une équipe d'
                         </span>
@@ -209,7 +209,7 @@ export default function Team() {
                                 {/* Content */}
                                 <div className="p-6">
                                     {/* Name & Role */}
-                                    <h3 className="font-bricolage text-xl font-bold text-text mb-1">
+                                    <h3 className="font-heading text-xl font-bold text-text mb-1">
                                         {member.name}
                                     </h3>
                                     <p className="text-primary font-semibold mb-1">{member.role}</p>
@@ -273,7 +273,7 @@ export default function Team() {
                     transition={{ duration: 0.6 }}
                     className="mb-16"
                 >
-                    <h3 className="font-bricolage text-3xl font-bold text-center mb-12">
+                    <h3 className="font-heading text-3xl font-bold text-center mb-12">
                         <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                             Nos valeurs
                         </span>
@@ -290,7 +290,7 @@ export default function Team() {
                                 className="text-center p-6 bg-surface/30 backdrop-blur-xl border border-white/10 rounded-2xl hover:border-primary/30 transition-all duration-300"
                             >
                                 <div className="text-4xl mb-4">{value.icon}</div>
-                                <h4 className="font-bricolage text-lg font-bold text-text mb-2">
+                                <h4 className="font-heading text-lg font-bold text-text mb-2">
                                     {value.title}
                                 </h4>
                                 <p className="text-text-muted text-sm leading-relaxed">
@@ -310,7 +310,7 @@ export default function Team() {
                     className="text-center"
                 >
                     <div className="bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 backdrop-blur-xl rounded-3xl p-8 max-w-3xl mx-auto">
-                        <h3 className="font-bricolage text-2xl font-bold mb-4 text-text">
+                        <h3 className="font-heading text-2xl font-bold mb-4 text-text">
                             Prêt à travailler avec notre équipe ?
                         </h3>
                         <p className="text-text-muted mb-6 leading-relaxed">

@@ -1,181 +1,159 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { Smartphone, Globe, Brain, Palette, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 const services = [
-    {
-        icon: '⚡',
-        title: 'Plateformes SaaS',
-        description: 'Nous concevons des logiciels robustes et évolutifs, du cloud au frontend, capables de soutenir votre croissance et vos premiers milliers d’utilisateurs.',
-        features: ['Architecture robuste', 'CI/CD automatisé', 'Observabilité & monitoring', 'Sécurité de niveau entreprise'],
-        gradient: 'from-blue-500 to-purple-600'
-    },
-    {
-        icon: '📲',
-        title: 'Applications Mobiles',
-        description: 'Nous développons des applications iOS & Android fluides, performantes et prêtes à séduire vos utilisateurs dès leur lancement.',
-        features: ['Flutter', 'Design system unifié', 'Performance optimisée', 'Publication App Store & Play Store'],
-        gradient: 'from-green-500 to-teal-600'
-    },
-    {
-        icon: '🧩',
-        title: 'IA & Automatisation',
-        description: 'Nous créons des agents intelligents et des workflows automatisés (n8n, APIs, modèles IA) pour accélérer vos opérations et éliminer les tâches répétitives.',
-        features: ['Agents AI sur-mesure', 'Workflows n8n & intégrations API', 'NLP & analyse de données', 'Automatisation de processus métiers'],
-        gradient: 'from-purple-500 to-pink-600'
-    },
-    {
-        icon: '✦',
-        title: 'Expériences Créatives',
-        description: 'Nous allions technologie et esthétique pour concevoir des expériences numériques immersives qui laissent une empreinte durable.',
-        features: ['WebGL & Three.js', 'Animations fluides', 'Design immersif', 'Performance haute'],
-        gradient: 'from-orange-500 to-red-600'
-    }
+  {
+    icon: Globe,
+    color: '#1A56DB',
+    bgColor: '#EEF2FF',
+    borderColor: '#C7D2FE',
+    label: 'Solutions SaaS',
+    desc: 'Des logiciels métier sur mesure accessibles partout, tout le temps. Gestion, facturation, CRM — adaptés à votre secteur.',
+    items: ['CRM & gestion commerciale', 'Plateformes B2B & marketplace', 'Tableaux de bord & reporting', 'Intégration Mobile Money'],
+    link: '/dev',
+  },
+  {
+    icon: Smartphone,
+    color: '#008751',
+    bgColor: '#E6F4EE',
+    borderColor: '#A7D7BC',
+    label: 'Applications Mobiles',
+    desc: 'iOS & Android performants, optimisés pour les réseaux africains. Vos clients vous ont dans la poche.',
+    items: ['Apps e-commerce & livraison', 'Réservation en ligne', 'Notifications push & fidélité', 'UX pensée pour le marché local'],
+    link: '/dev',
+  },
+  {
+    icon: Brain,
+    color: '#7C3AED',
+    bgColor: '#F5F3FF',
+    borderColor: '#DDD6FE',
+    label: 'Intelligence Artificielle',
+    desc: 'Chatbots, automatisation, analyse prédictive. L\'IA au service de vos opérations quotidiennes pour un vrai ROI.',
+    items: ['Chatbots WhatsApp & web', 'Automatisation des processus', 'Prévision des ventes', 'Analyse comportementale'],
+    link: '/#contact',
+  },
+
 ];
 
+const containerVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.1 } },
+};
+const itemVariants = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: [0.21, 1.02, 0.73, 0.99] } },
+};
 
 export default function Services() {
-    const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  return (
+    <section id="services" style={{ padding: '104px 0', background: '#F8F9FC', position: 'relative', overflow: 'hidden' }}>
 
-    return (
-        <section id="services" className="py-24 bg-background relative overflow-hidden">
-            {/* Background Effects */}
-            <div className="absolute inset-0 bg-gradient-to-b from-background via-surface/20 to-background" />
+      {/* Background grid */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        backgroundImage: 'radial-gradient(#E2E8F0 1px, transparent 1px)',
+        backgroundSize: '28px 28px',
+        pointerEvents: 'none', opacity: 0.6,
+      }} />
 
-            <div className="max-w-7xl mx-auto px-6 relative z-10">
-                {/* Header */}
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                    className="text-center mb-16"
-                >
-                    <h2 className="font-bricolage text-4xl md:text-6xl font-bold mb-6">
-                        <span className="bg-gradient-to-b from-white to-white/80 bg-clip-text text-transparent">
-                            Nos domaines d'
-                        </span>
-                        <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                            expertise
-                        </span>
-                    </h2>
-                    <p className="text-xl text-text-muted max-w-3xl mx-auto leading-relaxed">
-                        Des technologies de pointe pour transformer vos idées en
-                        <span className="text-accent font-semibold"> produits révolutionnaires</span>
-                    </p>
-                </motion.div>
+      <div style={{ maxWidth: 1160, margin: '0 auto', padding: '0 24px', position: 'relative', zIndex: 1 }}>
 
-                {/* Services Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    {services.map((service, index) => (
-                        <motion.div
-                            key={index}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6, delay: index * 0.1 }}
-                            onMouseEnter={() => setHoveredIndex(index)}
-                            onMouseLeave={() => setHoveredIndex(null)}
-                            className="group relative"
-                        >
-                            <div className="relative bg-surface/50 backdrop-blur-xl border border-white/10 rounded-3xl p-8 h-full transition-all duration-500 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
-                                {/* Gradient Background on Hover */}
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: hoveredIndex === index ? 0.1 : 0 }}
-                                    transition={{ duration: 0.3 }}
-                                    className={`absolute inset-0 bg-gradient-to-br ${service.gradient} rounded-3xl`}
-                                />
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          style={{ textAlign: 'center', marginBottom: 64 }}
+        >
+          <p className="section-label">Nos Expertises</p>
+          <h2 className="heading-lg" style={{ marginBottom: 16 }}>
+            Quatre expertises.<br />
+            <span className="text-gradient">Une seule ambition : votre croissance.</span>
+          </h2>
+          <p className="body-lg" style={{ maxWidth: 520, margin: '0 auto' }}>
+            Que vous partiez de zéro ou que vous cherchiez à moderniser l&apos;existant, nous avons les compétences pour vous accompagner.
+          </p>
+        </motion.div>
 
-                                {/* Content */}
-                                <div className="relative z-10">
-                                    {/* Icon */}
-                                    <motion.div
-                                        whileHover={{ scale: 1.1, rotate: 5 }}
-                                        className="text-6xl mb-6 inline-block"
-                                    >
-                                        {service.icon}
-                                    </motion.div>
-
-                                    {/* Title */}
-                                    <h3 className="font-bricolage text-2xl font-bold mb-4 text-text group-hover:text-white transition-colors duration-300">
-                                        {service.title}
-                                    </h3>
-
-                                    {/* Description */}
-                                    <p className="text-text-muted mb-6 leading-relaxed group-hover:text-white/80 transition-colors duration-300">
-                                        {service.description}
-                                    </p>
-
-                                    {/* Features */}
-                                    <div className="grid grid-cols-2 gap-3">
-                                        {service.features.map((feature, featureIndex) => (
-                                            <motion.div
-                                                key={featureIndex}
-                                                initial={{ opacity: 0, x: -20 }}
-                                                whileInView={{ opacity: 1, x: 0 }}
-                                                viewport={{ once: true }}
-                                                transition={{ duration: 0.4, delay: (index * 0.1) + (featureIndex * 0.05) }}
-                                                className="flex items-center gap-2 text-sm"
-                                            >
-                                                <div className="w-1.5 h-1.5 bg-primary rounded-full" />
-                                                <span className="text-text-muted group-hover:text-white/70 transition-colors duration-300">
-                                                    {feature}
-                                                </span>
-                                            </motion.div>
-                                        ))}
-                                    </div>
-
-                                    {/* CTA */}
-                                    <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        className="mt-8 bg-gradient-to-r from-primary to-secondary text-white px-6 py-3 rounded-full font-semibold text-sm shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all duration-300 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0"
-                                    >
-                                        Découvrir ce service →
-                                    </motion.button>
-                                </div>
-
-                                {/* Floating Elements */}
-                                <motion.div
-                                    animate={{
-                                        rotate: hoveredIndex === index ? 360 : 0,
-                                        scale: hoveredIndex === index ? 1.1 : 1
-                                    }}
-                                    transition={{ duration: 2, ease: "easeInOut" }}
-                                    className="absolute top-4 right-4 w-16 h-16 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full blur-xl"
-                                />
-                            </div>
-                        </motion.div>
-                    ))}
+        {/* Grid */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: '-60px' }}
+          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 20 }}
+        >
+          {services.map((service, i) => {
+            const Icon = service.icon;
+            return (
+              <motion.div
+                key={i}
+                variants={itemVariants}
+                className="card"
+                style={{
+                  padding: 28,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 20,
+                  cursor: 'default',
+                  background: '#FFFFFF',
+                }}
+              >
+                {/* Icon */}
+                <div style={{
+                  width: 46, height: 46, borderRadius: 12,
+                  background: service.bgColor,
+                  border: `1.5px solid ${service.borderColor}`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <Icon size={20} color={service.color} />
                 </div>
 
-                {/* Bottom CTA */}
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
-                    className="text-center mt-16"
-                >
-                    <div className="bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 backdrop-blur-xl rounded-2xl p-8 max-w-2xl mx-auto">
-                        <h3 className="font-bricolage text-2xl font-bold mb-4 text-text">
-                            Un projet en tête ?
-                        </h3>
-                        <p className="text-text-muted mb-6">
-                            Discutons de votre vision et découvrons comment nous pouvons la transformer en réalité en 90 jours.
-                        </p>
-                        <motion.button
-                            whileHover={{ scale: 1.05, boxShadow: "0 10px 25px rgba(99, 102, 241, 0.4)" }}
-                            whileTap={{ scale: 0.95 }}
-                            className="bg-gradient-to-r from-primary to-secondary text-white px-8 py-3 rounded-full font-semibold shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all duration-300"
-                        >
-                            Planifier un appel découverte
-                        </motion.button>
+                {/* Label + Desc */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <h3 className="heading-sm">{service.label}</h3>
+                  <p className="body-sm" style={{ lineHeight: 1.75 }}>{service.desc}</p>
+                </div>
+
+                {/* Items */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {service.items.map((item, j) => (
+                    <div key={j} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <div style={{
+                        width: 5, height: 5, borderRadius: '50%',
+                        background: service.color, flexShrink: 0,
+                      }} />
+                      <span style={{ fontSize: '0.8125rem', color: '#475569', fontWeight: 500 }}>{item}</span>
                     </div>
-                </motion.div>
-            </div>
-        </section>
-    );
+                  ))}
+                </div>
+
+                {/* Link */}
+                <div style={{ marginTop: 'auto', paddingTop: 16, borderTop: '1px solid #E4E8EF' }}>
+                  <Link
+                    href={service.link || '/'}
+                    style={{
+                      background: 'none', border: 'none', cursor: 'pointer',
+                      fontSize: '0.8125rem', fontWeight: 700,
+                      color: service.color, fontFamily: 'DM Sans, sans-serif',
+                      display: 'flex', alignItems: 'center', gap: 4, padding: 0,
+                      transition: 'gap 0.2s', textDecoration: 'none'
+                    }}
+                    onMouseEnter={e => (e.currentTarget.style.gap = '8px')}
+                    onMouseLeave={e => (e.currentTarget.style.gap = '4px')}
+                  >
+                    En savoir plus <ArrowRight size={13} />
+                  </Link>
+                </div>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      </div>
+    </section>
+  );
 }

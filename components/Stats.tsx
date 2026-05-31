@@ -2,159 +2,167 @@
 
 import { motion, useInView } from 'framer-motion';
 import { useRef, useEffect, useState } from 'react';
-import { Zap, CheckCircle2, Rocket, Shield } from "lucide-react";
+import { Rocket, Zap, CheckCircle2, Shield } from 'lucide-react';
 
 const stats = [
-    { number: 90, suffix: '', label: 'Jours maximum', icon: <Zap className="w-8 h-8 text-primary" /> },
-    { number: 100, suffix: '%', label: 'Produits fonctionnels', icon: <CheckCircle2 className="w-8 h-8 text-green-500" /> },
-    { number: 15, suffix: '+', label: 'Projets livrés', icon: <Rocket className="w-8 h-8 text-purple-500" /> },
-    { number: 24, suffix: '/7', label: 'Support dédié', icon: <Shield className="w-8 h-8 text-blue-500" /> },
+  { number: 35, suffix: '+', label: 'PME accompagnées', desc: 'au Cameroun et en Afrique centrale', color: '#1A56DB', bg: '#EEF2FF', icon: <Rocket className="w-8 h-8 text-purple-500" /> },
+  { number: 280, suffix: '%', label: 'ROI moyen sur 6 mois', desc: 'sur l\'ensemble de nos projets', color: '#F97316', bg: '#FFF4ED', icon: <Zap className="w-8 h-8 text-primary" /> },
+  { number: 92, suffix: '%', label: 'de clients renouvellent', desc: 'notre collaboration chaque année', color: '#008751', bg: '#E6F4EE', icon: <CheckCircle2 className="w-8 h-8 text-green-500" /> },
+  { number: 90, suffix: 'j', label: 'Livraison max garantie', desc: 'de l\'idée au lancement produit', color: '#7C3AED', bg: '#F5F3FF', icon: <Shield className="w-8 h-8 text-blue-500" /> },
 ];
 
-function Counter({ end, suffix, duration = 2000 }: { end: number; suffix: string; duration?: number }) {
-    const [count, setCount] = useState(0);
-    const ref = useRef(null);
-    const isInView = useInView(ref);
+const pillars = [
+  { icon: '⚡', title: 'Rapidité d\'exécution', desc: 'Vos premières fonctionnalités livrées en moins de 30 jours.', color: '#F97316', bg: '#FFF4ED' },
+  { icon: '🌍', title: 'Expertise locale', desc: 'Nous connaissons le Cameroun, ses contraintes et ses opportunités.', color: '#008751', bg: '#E6F4EE' },
+  { icon: '🤖', title: 'IA au cœur de tout', desc: 'Chaque solution intègre l\'IA pour un impact maximal sur votre ROI.', color: '#7C3AED', bg: '#F5F3FF' },
+];
 
-    useEffect(() => {
-        if (!isInView) return;
+function Counter({ end, suffix, color }: { end: number; suffix: string; color: string }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
 
-        let startTime: number;
-        const animate = (currentTime: number) => {
-            if (!startTime) startTime = currentTime;
-            const progress = Math.min((currentTime - startTime) / duration, 1);
+  useEffect(() => {
+    if (!isInView) return;
+    const duration = 1800;
+    let startTime: number;
+    const isDecimal = end % 1 !== 0;
+    const animate = (currentTime: number) => {
+      if (!startTime) startTime = currentTime;
+      const progress = Math.min((currentTime - startTime) / duration, 1);
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      setCount(isDecimal ? Math.round(easeOut * end * 10) / 10 : Math.floor(easeOut * end));
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+    requestAnimationFrame(animate);
+  }, [isInView, end]);
 
-            const easeOutCubic = 1 - Math.pow(1 - progress, 3);
-            setCount(Math.floor(easeOutCubic * end));
-
-            if (progress < 1) {
-                requestAnimationFrame(animate);
-            }
-        };
-
-        requestAnimationFrame(animate);
-    }, [isInView, end, duration]);
-
-    return (
-        <span ref={ref} className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-            {count}{suffix}
-        </span>
-    );
+  return (
+    <span ref={ref} style={{
+      fontFamily: 'Clash Display, sans-serif',
+      fontSize: '3rem',
+      fontWeight: 700,
+      lineHeight: 1,
+      color,
+      letterSpacing: '-0.04em',
+    }}>
+      {count}{suffix}
+    </span>
+  );
 }
 
 export default function Stats() {
-    return (
-        <section className="py-20 bg-gradient-to-b from-background via-surface/10 to-background relative overflow-hidden">
-            {/* Background Pattern */}
-            <div className="absolute inset-0 opacity-5">
-                <div className="absolute inset-0 bg-[linear-gradient(rgba(99,102,241,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(99,102,241,0.1)_1px,transparent_1px)] bg-[size:50px_50px]" />
-            </div>
+  return (
+    <section style={{ padding: '104px 0', background: '#F8F9FC' }}>
+      <div style={{ maxWidth: 1160, margin: '0 auto', padding: '0 24px' }}>
 
-            <div className="max-w-7xl mx-auto px-6 relative z-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {stats.map((stat, index) => (
-                        <motion.div
-                            key={index}
-                            initial={{ opacity: 0, y: 30 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.6, delay: index * 0.1 }}
-                            whileHover={{
-                                scale: 1.05,
-                                transition: { duration: 0.2 }
-                            }}
-                            className="group relative"
-                        >
-                            <div className="text-center p-8 bg-surface/30 backdrop-blur-xl border border-white/10 rounded-3xl hover:border-primary/30 transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10">
-                                {/* Icon */}
-                                <motion.div
-                                    whileHover={{ scale: 1.2, rotate: 10 }}
-                                    className="text-4xl mb-4 inline-block"
-                                >
-                                    {stat.icon}
-                                </motion.div>
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          style={{ textAlign: 'center', marginBottom: 64 }}
+        >
+          <p className="section-label">Nos résultats</p>
+          <h2 className="heading-lg" style={{ marginBottom: 16 }}>
+            Les chiffres{' '}
+            <span className="text-gradient">parlent d&apos;eux-mêmes.</span>
+          </h2>
+          <p className="body-lg" style={{ maxWidth: 480, margin: '0 auto' }}>
+            Pas de promesses vagues. Des résultats concrets, mesurables, obtenus avec nos clients camerounais.
+          </p>
+        </motion.div>
 
-                                {/* Number */}
-                                <div className="mb-3">
-                                    <Counter end={stat.number} suffix={stat.suffix} />
-                                </div>
+        {/* Stats grid */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))',
+          gap: 16,
+          marginBottom: 80,
+        }}>
+          {stats.map((stat, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              style={{
+                background: '#FFFFFF',
+                border: '1.5px solid #E4E8EF',
+                borderRadius: 16,
+                padding: '32px 28px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 8,
+              }}
+            >
+              <Counter end={stat.number} suffix={stat.suffix} color={stat.color} />
+              <p style={{
+                fontFamily: 'Clash Display, sans-serif',
+                fontSize: '0.9375rem',
+                fontWeight: 600,
+                color: '#0F172A',
+                marginTop: 4,
+              }}>{stat.label}</p>
+              <p className="body-sm">{stat.desc}</p>
+            </motion.div>
+          ))}
+        </div>
 
-                                {/* Label */}
-                                <p className="text-text-muted font-medium text-lg group-hover:text-text transition-colors duration-300">
-                                    {stat.label}
-                                </p>
+        {/* Pillars */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          style={{ textAlign: 'center', marginBottom: 40 }}
+        >
+          <h2 className="heading-md">Pourquoi choisir Ozirus ?</h2>
+        </motion.div>
 
-                                {/* Hover Effect */}
-                                <motion.div
-                                    initial={{ scale: 0 }}
-                                    whileHover={{ scale: 1 }}
-                                    className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-3xl -z-10"
-                                />
-
-                                {/* Floating Orb */}
-                                <motion.div
-                                    animate={{
-                                        y: [0, -10, 0],
-                                        opacity: [0.3, 0.6, 0.3]
-                                    }}
-                                    transition={{
-                                        duration: 3,
-                                        repeat: Infinity,
-                                        delay: index * 0.5
-                                    }}
-                                    className="absolute -top-2 -right-2 w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-full blur-lg opacity-30"
-                                />
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
-
-                {/* Additional Info */}
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
-                    className="text-center mt-16"
-                >
-                    <div className="max-w-3xl mx-auto">
-                        <h3 className="font-bricolage text-2xl md:text-3xl font-bold mb-6 text-text">
-                            Pourquoi choisir Ozirus ?
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-text-muted">
-                            <div className="flex flex-col items-center p-6">
-                                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mb-4">
-                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                                    </svg>
-                                </div>
-                                <h4 className="font-semibold text-text mb-2">Vitesse d'exécution</h4>
-                                <p className="text-sm">Méthodologie agile optimisée pour livrer rapidement sans compromettre la qualité.</p>
-                            </div>
-
-                            <div className="flex flex-col items-center p-6">
-                                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-full flex items-center justify-center mb-4">
-                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                </div>
-                                <h4 className="font-semibold text-text mb-2">Qualité garantie</h4>
-                                <p className="text-sm">Code clean, tests automatisés, documentation complète pour un produit prêt à évoluer.</p>
-                            </div>
-
-                            <div className="flex flex-col items-center p-6">
-                                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center mb-4">
-                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                    </svg>
-                                </div>
-                                <h4 className="font-semibold text-text mb-2">Équipe dédiée</h4>
-                                <p className="text-sm">Des experts passionnés qui accompagnent votre projet de A à Z avec transparence.</p>
-                            </div>
-                        </div>
-                    </div>
-                </motion.div>
-            </div>
-        </section>
-    );
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: 16,
+        }}>
+          {pillars.map((p, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              style={{
+                background: '#FFFFFF',
+                border: '1.5px solid #E4E8EF',
+                borderRadius: 16,
+                padding: '28px 24px',
+                display: 'flex',
+                gap: 16,
+                alignItems: 'flex-start',
+              }}
+            >
+              <div style={{
+                width: 48, height: 48, borderRadius: 12, flexShrink: 0,
+                background: p.bg,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 22,
+              }}>
+                {p.icon}
+              </div>
+              <div>
+                <h3 style={{
+                  fontFamily: 'Clash Display, sans-serif',
+                  fontSize: '1rem', fontWeight: 600, color: '#0F172A', marginBottom: 6,
+                }}>{p.title}</h3>
+                <p className="body-sm" style={{ lineHeight: 1.7 }}>{p.desc}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }
