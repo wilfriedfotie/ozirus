@@ -19,6 +19,15 @@ const ADMIN_SECRET_KEY = 'ozirus_admin_2026';
 const ADMIN_ALLOWED_EMAIL = 'contact.fotie@gmail.com';
 const PRIMARY_COLOR = '#7967FF';
 const PRIMARY_LOGO_FALLBACK_FILTER = 'brightness(0) saturate(100%) invert(43%) sepia(91%) saturate(2126%) hue-rotate(224deg) brightness(101%) contrast(101%)';
+const COMPANY_INFO = {
+  name: 'Ozirus Agency SARL',
+  taxId: 'M03211568940J',
+  registryId: 'RC/YAO/2021/B/145',
+  address: 'Bastos, Yaoundé, Cameroun',
+  email: 'contact@ozirus.agency',
+  phone: '+237 694 08 65 71',
+  website: 'ozirus.agency',
+};
 
 /* ─── CATALOG DATA ────────────────────────────────── */
 const CATALOG = [
@@ -77,9 +86,12 @@ function AdminContent() {
   const [clientCompany, setClientCompany] = useState('');
   const [clientEmail, setClientEmail] = useState('');
   const [clientAddress, setClientAddress] = useState('');
+  const [clientTaxId, setClientTaxId] = useState('');
 
   const [projectContext, setProjectContext] = useState('À la suite de nos échanges, nous avons identifié une opportunité majeure de transformation digitale pour votre structure, visant à automatiser vos opérations et maximiser votre impact sur le marché.');
   const [projectGoals, setProjectGoals] = useState('<ul><li>Optimisation des processus opérationnels</li><li>Amélioration de l\'expérience utilisateur client</li><li>Scalabilité de l\'infrastructure technique</li><li>Sécurisation des données critiques</li></ul>');
+  const [projectExclusions, setProjectExclusions] = useState('<ul><li>Frais d\'hébergement cloud, noms de domaine, licences logicielles et APIs tierces non inclus sauf mention contraire.</li><li>Budget publicitaire, coûts SMS/WhatsApp, frais Apple/Google Store et passerelles de paiement à la charge du client.</li><li>Maintenance évolutive, nouvelles fonctionnalités et changements hors périmètre facturés séparément.</li></ul>');
+  const [supportTerms, setSupportTerms] = useState('Support correctif inclus pendant 90 jours après livraison pour les anomalies bloquantes liées au périmètre validé. La maintenance évolutive et les SLA étendus font l\'objet d\'un contrat séparé.');
 
   const [items, setItems] = useState<LineItem[]>([]);
 
@@ -203,6 +215,11 @@ function AdminContent() {
     return currency === 'FCFA' ? `${formatted} FCFA` : `${currency} ${formatted}`;
   };
 
+  const formatDate = (value: string) => {
+    if (!value) return 'Non renseignée';
+    return new Intl.DateTimeFormat('fr-FR').format(new Date(value));
+  };
+
   const exportToPDF = async () => {
     setIsGenerating(true);
     try {
@@ -278,6 +295,7 @@ function AdminContent() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   <input type="text" placeholder="Nom du contact" value={clientName} onChange={e => setClientName(e.target.value)} style={inputStyle} />
                   <input type="text" placeholder="Entreprise" value={clientCompany} onChange={e => setClientCompany(e.target.value)} style={inputStyle} />
+                  <input type="text" placeholder="NIU / Identifiant fiscal client" value={clientTaxId} onChange={e => setClientTaxId(e.target.value)} style={inputStyle} />
                   <input type="email" placeholder="Email" value={clientEmail} onChange={e => setClientEmail(e.target.value)} style={inputStyle} />
                   <textarea placeholder="Adresse complète" value={clientAddress} onChange={e => setClientAddress(e.target.value)} style={{ ...inputStyle, minHeight: 80 }} />
                 </div>
@@ -287,6 +305,10 @@ function AdminContent() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                   <input type="text" value={docNumber} onChange={e => setDocNumber(e.target.value)} style={inputStyle} />
                   <input type="date" value={date} onChange={e => setDate(e.target.value)} style={inputStyle} />
+                  <div>
+                    <label style={labelStyle}>{docType === 'FACTURE' ? 'Échéance paiement' : 'Offre valable jusqu’au'}</label>
+                    <input type="date" value={validUntil} onChange={e => setValidUntil(e.target.value)} style={inputStyle} />
+                  </div>
                 </div>
               </div>
             </div>
@@ -303,6 +325,10 @@ function AdminContent() {
                 <div>
                    <label style={labelStyle}>Objectifs de performance</label>
                    <RichEditor value={projectGoals} onChange={setProjectGoals} />
+                </div>
+                <div style={{ marginTop: 12 }}>
+                   <label style={labelStyle}>Périmètre non inclus</label>
+                   <RichEditor value={projectExclusions} onChange={setProjectExclusions} />
                 </div>
               </div>
               <div>
@@ -402,11 +428,15 @@ function AdminContent() {
             <div style={{ fontSize: 12, color: '#64748B', lineHeight: 1.6 }}>
               <p style={{ fontWeight: 700, color: '#0F172A', marginBottom: 10 }}>Cadre Juridique Standardisé :</p>
               <ul style={{ paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <li><b>Retards :</b> Pénalités automatiques de 10% / mois + frais de recouvrement.</li>
-                <li><b>IP :</b> Cession totale des droits après apurement du solde.</li>
+                <li><b>Retards :</b> Pénalités applicables après échéance + frais de recouvrement.</li>
+                <li><b>IP :</b> Cession du code spécifique après apurement du solde.</li>
                 <li><b>Démarrage :</b> Versement de l'acompte (50%) requis pour planification.</li>
-                <li><b>Service Level :</b> Support prioritaire 90 jours post-déploiement.</li>
+                <li><b>Support :</b> Correctifs inclus 90 jours post-déploiement selon périmètre validé.</li>
               </ul>
+              <div style={{ marginTop: 18 }}>
+                <label style={labelStyle}>Conditions de support</label>
+                <textarea value={supportTerms} onChange={e => setSupportTerms(e.target.value)} style={{ ...inputStyle, minHeight: 110 }} />
+              </div>
             </div>
           )}
 
@@ -443,10 +473,12 @@ function AdminContent() {
                 <p style={{ fontSize: 12, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 15 }}>À l'attention de</p>
                 <p style={{ fontSize: 26, fontWeight: 900, color: '#0F172A', fontFamily: 'var(--font-display, "Clash Display"), sans-serif' }}>{clientCompany || '(Client Corporate)'}</p>
                 <p style={{ fontSize: 16, color: '#7967FF', fontWeight: 600, marginTop: 4 }}>{clientName}</p>
+                {clientTaxId && <p style={{ fontSize: 11, color: '#64748B', fontWeight: 700, marginTop: 8 }}>NIU / ID FISCAL : {clientTaxId}</p>}
              </div>
 
              <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', marginTop: 100, borderTop: '1px solid #E2E8F0', paddingTop: 20 }}>
                 <p style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>RÉFÉRENCE : {docNumber}</p>
+                <p style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>{docType === 'FACTURE' ? `ÉCHÉANCE : ${formatDate(validUntil)}` : `VALIDITÉ : ${formatDate(validUntil)}`}</p>
                 <p style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>{new Date().getFullYear()} — CONFIDENTIEL</p>
              </div>
           </div>
@@ -484,17 +516,17 @@ function AdminContent() {
                  <div style={guaranteeCard}>
                     <p style={guaranteeTitle}><Shield size={12} style={{marginRight:6}}/> GARANTIES TECHNIQUES</p>
                     <ul style={guaranteeList}>
-                       <li><b>Sécurité :</b> Chiffrement de bout-en-bout et conformité RGPD/Data Privacy.</li>
-                       <li><b>Disponibilité :</b> SLA de 99.9% sur les infrastructures cloud gérées.</li>
-                       <li><b>Transfert :</b> Cession intégrale de la propriété intellectuelle (Code & Assets).</li>
+                       <li><b>Sécurité :</b> Bonnes pratiques de protection des accès, données et secrets applicatifs.</li>
+                       <li><b>Disponibilité :</b> Déploiement sur infrastructures cloud reconnues, selon garanties des fournisseurs.</li>
+                       <li><b>Transfert :</b> Livraison du code spécifique, documentation et accès nécessaires après règlement.</li>
                     </ul>
                  </div>
                  <div style={guaranteeCard}>
                     <p style={guaranteeTitle}><Zap size={12} style={{marginRight:6}}/> PERFORMANCE & SUIVI</p>
                     <ul style={guaranteeList}>
-                       <li><b>Real-time Tracking :</b> Accès dédié à votre dashboard de projet (Jira/Linear).</li>
-                       <li><b>Direct Channel :</b> Groupe de support dédié (Slack/WhatsApp Corporate).</li>
-                       <li><b>Audit :</b> Revue de code et tests d'intrusion avant chaque mise en production.</li>
+                       <li><b>Suivi projet :</b> Points d'avancement réguliers et backlog de livraison partagé.</li>
+                       <li><b>Canal direct :</b> Groupe de coordination dédié pendant la phase projet.</li>
+                       <li><b>Contrôles :</b> Revue qualité, tests fonctionnels et vérifications sécurité adaptées au périmètre.</li>
                     </ul>
                  </div>
               </div>
@@ -511,6 +543,10 @@ function AdminContent() {
               <div style={{ background: '#F1F5F966', padding: 25, borderRadius: 15, borderLeft: '4px solid #7967FF' }}>
                  <p style={{ fontSize: 10, fontWeight: 900, color: '#7967FF', marginBottom: 12, letterSpacing: '0.1em' }}>OBJECTIFS DE PERFORMANCE :</p>
                  <div style={{ fontSize: 11, lineHeight: 1.8, color: '#0F172A' }} dangerouslySetInnerHTML={{ __html: projectGoals }} />
+              </div>
+              <div style={{ marginTop: 20, background: '#FFF7ED', padding: 22, borderRadius: 15, border: '1px solid #FED7AA' }}>
+                 <p style={{ fontSize: 10, fontWeight: 900, color: '#F97316', marginBottom: 12, letterSpacing: '0.1em' }}>PÉRIMÈTRE NON INCLUS :</p>
+                 <div style={{ fontSize: 10, lineHeight: 1.7, color: '#7C2D12' }} dangerouslySetInnerHTML={{ __html: projectExclusions }} />
               </div>
            </div>
 
@@ -546,6 +582,28 @@ function AdminContent() {
 
            <div style={{ marginTop: 40 }}>
               <SectionTitle title="3. CADRE FINANCIER" />
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 28 }}>
+                <InfoBox
+                  title="ÉMETTEUR"
+                  lines={[
+                    COMPANY_INFO.name,
+                    `NUI : ${COMPANY_INFO.taxId}`,
+                    `RCCM : ${COMPANY_INFO.registryId}`,
+                    COMPANY_INFO.address,
+                    `${COMPANY_INFO.email} | ${COMPANY_INFO.phone}`,
+                  ]}
+                />
+                <InfoBox
+                  title={docType === 'FACTURE' ? 'FACTURÉ À' : 'CLIENT'}
+                  lines={[
+                    clientCompany || '(Entreprise cliente)',
+                    clientName || '(Contact)',
+                    clientTaxId ? `NIU / ID fiscal : ${clientTaxId}` : 'NIU / ID fiscal : non renseigné',
+                    clientEmail || 'Email : non renseigné',
+                    clientAddress || 'Adresse : non renseignée',
+                  ]}
+                />
+              </div>
               <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 30 }}>
                 <thead>
                   <tr style={{ borderBottom: '2px solid #7967FF' }}>
@@ -573,6 +631,7 @@ function AdminContent() {
                    {discount > 0 && <SummaryLine label="Remise commerciale" value={`-${formatPrice(discount)}`} color="#EF4444" />}
                    <SummaryLine label="Total HT" value={formatPrice(totalHT)} weight={700} />
                    {applyTVA && <SummaryLine label="TVA (19.25%)" value={formatPrice(tvaAmount)} />}
+                   {!applyTVA && <SummaryLine label="TVA" value="Non appliquée" />}
                    <div style={{ height: 1, background: '#E2E8F0', margin: '5px 0' }} />
                    <SummaryLine label="TOTAL TTC" value={formatPrice(totalTTC)} weight={900} color="#7967FF" size={18} />
                    {acompte > 0 && <SummaryLine label="Acompte versé" value={`-${formatPrice(acompte)}`} color="#22C55E" />}
@@ -587,6 +646,7 @@ function AdminContent() {
            <div style={{ marginTop: 60, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60 }}>
               <div>
                  <p style={{ fontSize: 10, fontWeight: 900, color: '#94A3B8', marginBottom: 15, letterSpacing: '0.1em' }}>ÉCHÉANCIER DE PAIEMENT :</p>
+                 <p style={{ fontSize: 10, color: '#64748B', marginBottom: 12, lineHeight: 1.6 }}>{docType === 'FACTURE' ? `Paiement attendu au plus tard le ${formatDate(validUntil)}.` : `Offre valable jusqu’au ${formatDate(validUntil)}.`}</p>
                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                     <PaymentStep step="01" label="Signature & Engagement" percent="50%" />
                     <PaymentStep step="02" label="Validation Prototype / MVP" percent="30%" />
@@ -594,7 +654,8 @@ function AdminContent() {
                  </div>
               </div>
               <div style={{ textAlign: 'right' }}>
-                 <p style={{ fontSize: 11, fontWeight: 900, color: '#0F172A', marginBottom: 60 }}>POUR ACCORD (Cachet et Signature)</p>
+                 <p style={{ fontSize: 11, fontWeight: 900, color: '#0F172A', marginBottom: 12 }}>POUR ACCORD (Cachet et Signature)</p>
+                 <p style={{ fontSize: 9, color: '#64748B', marginBottom: 38 }}>Nom, fonction, date et mention manuscrite « bon pour accord »</p>
                  <div style={{ width: 180, height: 100, border: '1px dashed #CBD5E1', borderRadius: 12, marginLeft: 'auto', display:'flex', alignItems:'center', justifyContent:'center' }}>
                     <span style={{fontSize:9, color:'#CBD5E1'}}>Signature Client</span>
                  </div>
@@ -610,8 +671,10 @@ function AdminContent() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30 }}>
                  <CGVItem title="DÉLAIS ET LIVRAISON" text={`La durée estimée du projet est de ${timeline}. Tout retard imputable au client (validation tardive, absence de données) entraînera un décalage équivalent du planning de livraison.`} />
                  <CGVItem title="GESTION DES IMPAYÉS" text="Conformément aux usages commerciaux internationaux, tout retard de paiement entraîne l'application de plein droit de pénalités au taux annuel de 10%, majorées d'une indemnité forfaitaire pour frais de recouvrement de 26 250 FCFA (40€)." />
-                 <CGVItem title="PROPRIÉTÉ INTELLECTUELLE" text="La pleine propriété du code source, des designs et de l'architecture est transférée au client uniquement après le règlement intégral du solde facturé. Ozirus Agency conserve le droit d'usage des références à des fins promotionnelles." />
-                 <CGVItem title="OBLIGATIONS DES PARTIES" text="Ozirus Agency s'engage à une obligation de moyens. Le client s'engage à collaborer activement et à fournir les accès nécessaires à la réalisation technique du projet." />
+                 <CGVItem title="PROPRIÉTÉ INTELLECTUELLE" text="La propriété du code spécifique, des écrans livrés et de l'architecture dédiée est transférée après règlement intégral. Les frameworks, bibliothèques tierces, composants génériques, outils internes et savoir-faire préexistants restent exclus de cette cession." />
+                 <CGVItem title="SUPPORT ET MAINTENANCE" text={supportTerms} />
+                 <CGVItem title="OBLIGATIONS DES PARTIES" text="Ozirus Agency s'engage à une obligation de moyens. Le client s'engage à collaborer activement, fournir les contenus, accès, validations et interlocuteurs nécessaires à la réalisation du projet." />
+                 <CGVItem title="TVA ET CONFORMITÉ" text={applyTVA ? "Les montants incluent la TVA au taux de 19,25% lorsque celle-ci est applicable. Les informations fiscales client doivent être exactes pour permettre le traitement comptable." : "La TVA n'est pas appliquée sur ce document selon le régime ou la configuration sélectionnée. La mention fiscale définitive doit être confirmée par le conseil comptable de l'entreprise."} />
               </div>
               
               <div style={{ marginTop: 50, padding: 25, background: '#0F172A', borderRadius: 15, color: '#FFF' }}>
@@ -619,11 +682,11 @@ function AdminContent() {
                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30 }}>
                     <div>
                        <p style={{ fontSize: 11, fontWeight: 800, marginBottom: 8 }}>{currency === 'FCFA' ? 'MOBILE MONEY (CAMEROUN)' : 'TRANSFERT INTERNATIONAL'}</p>
-                       <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6 }}>{currency === 'FCFA' ? 'MTN & Orange Money : +237 694 08 65 71\nFrais à la charge du donneur d\'ordre.' : 'Ozirus Agency Worldwide Account\nIBAN : [DEMANDER LE RIB INTERNATIONAL]\nBIC/SWIFT : [SWIFT CODE]'}</p>
+                       <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, whiteSpace: 'pre-line' }}>{currency === 'FCFA' ? 'MTN & Orange Money : +237 694 08 65 71\nFrais à la charge du donneur d\'ordre.' : 'Ozirus Agency Worldwide Account\nIBAN : [DEMANDER LE RIB INTERNATIONAL]\nBIC/SWIFT : [SWIFT CODE]'}</p>
                     </div>
                     <div>
                        <p style={{ fontSize: 11, fontWeight: 800, marginBottom: 8 }}>IDENTITÉ FISCALE</p>
-                       <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6 }}>Ozirus Agency SARL<br/>NUI : M03211568940J<br/>RCCM : RC/YAO/2021/B/145<br/>Siège : Bastos, Yaoundé</p>
+                       <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6 }}>{COMPANY_INFO.name}<br/>NUI : {COMPANY_INFO.taxId}<br/>RCCM : {COMPANY_INFO.registryId}<br/>Siège : {COMPANY_INFO.address}<br/>{COMPANY_INFO.email} | {COMPANY_INFO.website}</p>
                     </div>
                  </div>
               </div>
@@ -707,6 +770,21 @@ function StackItem({ icon, label, tech }: any) {
        <div style={{ color: '#7967FF', marginBottom: '6px', display: 'flex', justifyContent: 'center' }}>{icon}</div>
        <p style={{ fontSize: '8px', fontWeight: 800, color: '#94A3B8', textTransform: 'uppercase', marginBottom: '3px' }}>{label}</p>
        <p style={{ fontSize: '9px', fontWeight: 800, color: '#0F172A' }}>{tech}</p>
+    </div>
+  );
+}
+
+function InfoBox({ title, lines }: { title: string; lines: string[] }) {
+  return (
+    <div style={{ background: '#F8FAFC', border: '1px solid #F1F5F9', borderRadius: 14, padding: 18 }}>
+      <p style={{ fontSize: 9, fontWeight: 900, color: '#7967FF', marginBottom: 10, letterSpacing: '0.1em' }}>{title}</p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+        {lines.map((line, idx) => (
+          <p key={idx} style={{ fontSize: idx === 0 ? 11 : 9, fontWeight: idx === 0 ? 900 : 600, color: idx === 0 ? '#0F172A' : '#64748B', lineHeight: 1.45, margin: 0 }}>
+            {line}
+          </p>
+        ))}
+      </div>
     </div>
   );
 }
