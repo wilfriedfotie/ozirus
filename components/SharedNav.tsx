@@ -104,14 +104,14 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  if (pathname.startsWith('/admin')) return null;
-
   /* lock body scroll when mobile menu is open */
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
     if (menuOpen) setAnchorsOpen(false);
     return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
+
+  if (pathname.startsWith('/admin')) return null;
 
   /* ── theme tokens ── */
   const textColor     = dark ? 'rgba(255,255,255,0.6)' : '#555';

@@ -16,6 +16,9 @@ import {
 
 /* ─── AUTH CONFIG ─────────────────────────────────── */
 const ADMIN_SECRET_KEY = 'ozirus_admin_2026';
+const ADMIN_ALLOWED_EMAIL = 'contact.fotie@gmail.com';
+const PRIMARY_COLOR = '#7967FF';
+const PRIMARY_LOGO_FALLBACK_FILTER = 'brightness(0) saturate(100%) invert(43%) sepia(91%) saturate(2126%) hue-rotate(224deg) brightness(101%) contrast(101%)';
 
 /* ─── CATALOG DATA ────────────────────────────────── */
 const CATALOG = [
@@ -63,6 +66,7 @@ function AdminContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
+  const [primaryLogoSrc, setPrimaryLogoSrc] = useState('/logo.png');
 
   const [docType, setDocType] = useState<DocType>('PROPOSITION COMMERCIALE');
   const [docNumber, setDocNumber] = useState('');
@@ -78,6 +82,34 @@ function AdminContent() {
   const [projectGoals, setProjectGoals] = useState('<ul><li>Optimisation des processus opérationnels</li><li>Amélioration de l\'expérience utilisateur client</li><li>Scalabilité de l\'infrastructure technique</li><li>Sécurisation des données critiques</li></ul>');
 
   const [items, setItems] = useState<LineItem[]>([]);
+
+  useEffect(() => {
+    let isCancelled = false;
+    const logo = new Image();
+    logo.crossOrigin = 'anonymous';
+    logo.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = logo.naturalWidth;
+      canvas.height = logo.naturalHeight;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      ctx.drawImage(logo, 0, 0);
+      ctx.globalCompositeOperation = 'source-in';
+      ctx.fillStyle = PRIMARY_COLOR;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      if (!isCancelled) {
+        setPrimaryLogoSrc(canvas.toDataURL('image/png'));
+      }
+    };
+    logo.src = '/logo.png';
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
   const [applyTVA, setApplyTVA] = useState(false);
   const [discount, setDiscount] = useState(0);
   const [acompte, setAcompte] = useState(0);
@@ -89,6 +121,7 @@ function AdminContent() {
 
   // Authorization check
   useEffect(() => {
+    let isCancelled = false;
     const key = searchParams.get('key');
     const storedAuth = localStorage.getItem('ozirus_admin_auth');
 
@@ -96,12 +129,40 @@ function AdminContent() {
       localStorage.setItem('ozirus_admin_auth', 'true');
       setIsAuthorized(true);
       router.replace('/admin');
-    } else if (storedAuth === 'true') {
-      setIsAuthorized(true);
-    } else {
-      setIsAuthorized(false);
-      router.push('/');
+      return;
     }
+
+    const verifySession = async () => {
+      if (storedAuth === 'true') {
+        setIsAuthorized(true);
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/auth/session', { credentials: 'include' });
+        const session = await response.json();
+        const email = session?.user?.email;
+
+        if (!isCancelled && email === ADMIN_ALLOWED_EMAIL) {
+          localStorage.setItem('ozirus_admin_auth', 'true');
+          setIsAuthorized(true);
+          return;
+        }
+      } catch (err) {
+        console.error('Admin session check error:', err);
+      }
+
+      if (!isCancelled) {
+        setIsAuthorized(false);
+        router.replace('/login');
+      }
+    };
+
+    verifySession();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [searchParams, router]);
 
   // Defaults
@@ -373,10 +434,10 @@ function AdminContent() {
         {/* PAGE 1: COVER */}
         <div className="a4-page">
           <div style={{ height: '100%', border: '1px solid #7967FF', padding: '40mm 20mm', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
-             <img src="/logo.png" style={{ height: 60, filter: 'brightness(0) saturate(100%) invert(43%) sepia(91%) saturate(2126%) hue-rotate(224deg) brightness(101%) contrast(101%)', marginBottom: 60 }} />
+             <img src={primaryLogoSrc} alt="Ozirus" style={{ height: 60, filter: primaryLogoSrc === '/logo.png' ? PRIMARY_LOGO_FALLBACK_FILTER : 'none', marginBottom: 60 }} />
              <div style={{ width: 80, height: 4, background: '#7967FF', marginBottom: 40 }} />
              <h2 style={{ fontSize: 32, fontWeight: 900, color: '#0F172A', textAlign: 'center', letterSpacing: '-0.03em', lineHeight: 1.1, fontFamily: 'var(--font-display, "Clash Display"), sans-serif' }}>{docType}</h2>
-             <p style={{ fontSize: 18, color: '#7967FF', fontWeight: 600, marginTop: 10, fontFamily: 'var(--font-display, "Clash Display"), sans-serif', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Digital Excellence & Intelligent Systems</p>
+             <p style={{ width: '100%', fontSize: 18, color: '#7967FF', fontWeight: 600, marginTop: 10, fontFamily: 'var(--font-display, "Clash Display"), sans-serif', textTransform: 'uppercase', letterSpacing: '0.1em', textAlign: 'center' }}>Digital Excellence & Intelligent Systems</p>
              
              <div style={{ marginTop: 'auto', textAlign: 'center' }}>
                 <p style={{ fontSize: 12, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 15 }}>À l'attention de</p>
@@ -393,7 +454,7 @@ function AdminContent() {
 
         {/* PAGE 2: METHODOLOGY */}
         <div className="a4-page">
-           <Header docType={docType} docNumber={docNumber} date={date} currency={currency} />
+           <Header docType={docType} docNumber={docNumber} date={date} currency={currency} logoSrc={primaryLogoSrc} />
            <div style={{ marginTop: 40 }}>
               <SectionTitle title="NOTRE MÉTHODOLOGIE : L'APPROCHE OZIRUS" />
               <p style={{ fontSize: 13, lineHeight: 1.7, color: '#475569', marginBottom: 30 }}>
@@ -442,7 +503,7 @@ function AdminContent() {
 
         {/* PAGE 3: CONTEXT & SOLUTIONS */}
         <div className="a4-page">
-           <Header docType={docType} docNumber={docNumber} date={date} currency={currency} />
+           <Header docType={docType} docNumber={docNumber} date={date} currency={currency} logoSrc={primaryLogoSrc} />
            
            <div style={{ marginTop: 40 }}>
               <SectionTitle title="1. CONTEXTE STRATÉGIQUE" />
@@ -481,7 +542,7 @@ function AdminContent() {
 
         {/* PAGE 4: FINANCE */}
         <div className="a4-page">
-           <Header docType={docType} docNumber={docNumber} date={date} currency={currency} />
+           <Header docType={docType} docNumber={docNumber} date={date} currency={currency} logoSrc={primaryLogoSrc} />
 
            <div style={{ marginTop: 40 }}>
               <SectionTitle title="3. CADRE FINANCIER" />
@@ -543,7 +604,7 @@ function AdminContent() {
 
         {/* PAGE 5: CGV */}
         <div className="a4-page">
-           <Header docType={docType} docNumber={docNumber} date={date} currency={currency} />
+           <Header docType={docType} docNumber={docNumber} date={date} currency={currency} logoSrc={primaryLogoSrc} />
            <div style={{ marginTop: 40 }}>
               <SectionTitle title="4. CONDITIONS GÉNÉRALES & CADRE LÉGAL" />
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30 }}>
@@ -678,11 +739,11 @@ function CGVItem({ title, text }: any) {
   );
 }
 
-function Header({ docType, docNumber, date, currency }: any) {
+function Header({ docType, docNumber, date, currency, logoSrc }: any) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: 25, borderBottom: '1px solid #F1F5F9' }}>
       <div>
-        <img src="/logo.png" style={{ height: 35, filter: 'brightness(0) saturate(100%) invert(43%) sepia(91%) saturate(2126%) hue-rotate(224deg) brightness(101%) contrast(101%)', marginBottom: 12 }} />
+        <img src={logoSrc} alt="Ozirus" style={{ height: 35, filter: logoSrc === '/logo.png' ? PRIMARY_LOGO_FALLBACK_FILTER : 'none', marginBottom: 12 }} />
         <p style={{ fontSize: 9, color: '#94A3B8', fontWeight: 800, fontFamily: 'var(--font-display, "Clash Display"), sans-serif', letterSpacing: '0.05em' }}>OZIRUS AGENCY — SOLUTIONS IA & DIGITAL</p>
       </div>
       <div style={{ textAlign: 'right' }}>
@@ -713,6 +774,6 @@ const methodoStyle = { display: 'flex', gap: 20, alignItems: 'flex-start', paddi
 const methodoIconStyle = { width: '40px', height: '40px', background: '#7967FF', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFF', fontSize: '14px', fontWeight: 900, flexShrink: 0 };
 const methodoTitleStyle = { fontSize: '11px', fontWeight: 900, color: '#0F172A', marginBottom: '5px', letterSpacing: '0.05em' };
 const methodoTextStyle = { fontSize: '11px', color: '#64748B', lineHeight: '1.6' };
-const guaranteeCard = { padding: '20px', border: '1px solid #7967FF22', borderRadius: '15px', background: '#F8FAFC' };
-const guaranteeTitle = { fontSize: 10, fontWeight: 900, color: '#7967FF', marginBottom: 12, letterSpacing: '0.1em', display: 'flex', alignItems: 'center' };
-const guaranteeList = { paddingLeft: '18px', margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '10px', color: '#475569', lineHeight: 1.5 };
+const guaranteeCard: React.CSSProperties = { padding: '20px', border: '1px solid #7967FF22', borderRadius: '15px', background: '#F8FAFC' };
+const guaranteeTitle: React.CSSProperties = { fontSize: 10, fontWeight: 900, color: '#7967FF', marginBottom: 12, letterSpacing: '0.1em', display: 'flex', alignItems: 'center' };
+const guaranteeList: React.CSSProperties = { paddingLeft: '18px', margin: 0, display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '10px', color: '#475569', lineHeight: 1.5 };
