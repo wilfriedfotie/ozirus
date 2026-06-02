@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { DM_Sans } from 'next/font/google';
+import { Analytics } from "@vercel/analytics/next"
 import GlobalLoader from '@/components/GlobalLoader';
 import SharedNav from '@/components/SharedNav';
 import './globals.css';
