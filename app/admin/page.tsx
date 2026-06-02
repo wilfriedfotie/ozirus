@@ -316,10 +316,11 @@ function AdminContent() {
             </h1>
             <p style={{ fontSize: 11, color: '#94A3B8', marginTop: 2 }}>Digital Excellence Framework</p>
           </div>
-          <div style={{ display: 'flex', background: '#F1F5F9', padding: 4, borderRadius: 10, gap: 2 }}>
-            <button onClick={() => setDocType('PROPOSITION COMMERCIALE')} style={{ ...tabBtn, padding: '6px 10px', background: isDoc ? '#FFF' : 'transparent', color: isDoc ? '#7967FF' : '#64748B' }}>DOCS</button>
-            <button onClick={() => setDocType('BADGE')} style={{ ...tabBtn, padding: '6px 10px', background: docType === 'BADGE' ? '#FFF' : 'transparent', color: docType === 'BADGE' ? '#7967FF' : '#64748B' }}>BADGE</button>
-            <button onClick={() => setDocType('SOCIAL')} style={{ ...tabBtn, padding: '6px 10px', background: docType === 'SOCIAL' ? '#FFF' : 'transparent', color: docType === 'SOCIAL' ? '#7967FF' : '#64748B' }}>SOCIAL</button>
+          <div style={{ display: 'flex', background: '#F1F5F9', padding: 4, borderRadius: 10, gap: 1 }}>
+            <button onClick={() => setDocType('PROPOSITION COMMERCIALE')} style={{ ...tabBtn, padding: '6px 8px', background: isDoc ? '#FFF' : 'transparent', color: isDoc ? '#7967FF' : '#64748B' }}>DOCS</button>
+            <button onClick={() => setDocType('BADGE')} style={{ ...tabBtn, padding: '6px 8px', background: docType === 'BADGE' ? '#FFF' : 'transparent', color: docType === 'BADGE' ? '#7967FF' : '#64748B' }}>BADGE</button>
+            <button onClick={() => setDocType('SOCIAL')} style={{ ...tabBtn, padding: '6px 8px', background: docType === 'SOCIAL' ? '#FFF' : 'transparent', color: docType === 'SOCIAL' ? '#7967FF' : '#64748B' }}>SOCIAL</button>
+            <button onClick={() => setDocType('CARTE DE VISITE')} style={{ ...tabBtn, padding: '6px 8px', background: docType === 'CARTE DE VISITE' ? '#FFF' : 'transparent', color: docType === 'CARTE DE VISITE' ? '#7967FF' : '#64748B' }}>CARTE</button>
           </div>
         </div>
 
