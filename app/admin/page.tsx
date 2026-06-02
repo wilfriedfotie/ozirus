@@ -325,14 +325,23 @@ function AdminContent() {
       {/* ─── LEFT PANEL: CONFIG ─── */}
       <div style={{ width: 480, background: '#FFF', borderRight: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column', height: '100%', boxShadow: '10px 0 30px rgba(0,0,0,0.02)', zIndex: 10 }}>
         
-        <div style={{ padding: '24px', borderBottom: '1px solid #F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div>
-            <h1 style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <Settings size={20} color="#7967FF" />
-              Ozirus Admin
-            </h1>
-            <p style={{ fontSize: 11, color: '#94A3B8', marginTop: 2 }}>Digital Excellence Framework</p>
+        <div style={{ padding: '24px', borderBottom: '1px solid #F1F5F9', display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <h1 style={{ fontSize: 18, fontWeight: 800, color: '#0F172A', display: 'flex', alignItems: 'center', gap: 10 }}>
+                <Settings size={20} color="#7967FF" />
+                Ozirus Admin
+              </h1>
+              <p style={{ fontSize: 11, color: '#94A3B8', marginTop: 2 }}>Digital Excellence Framework</p>
+            </div>
+            <button 
+              onClick={() => router.push('/admin/marketing')}
+              style={{ display: 'flex', alignItems: 'center', gap: 6, background: '#10B98115', color: '#10B981', border: '1px solid #10B98133', padding: '6px 12px', borderRadius: 8, fontSize: 11, fontWeight: 800, cursor: 'pointer' }}
+            >
+              <Target size={14} /> Plan d'action
+            </button>
           </div>
+          
           <div style={{ display: 'flex', background: '#F1F5F9', padding: 4, borderRadius: 10, gap: 1 }}>
             <button onClick={() => setDocType('PROPOSITION COMMERCIALE')} style={{ ...tabBtn, padding: '6px 8px', background: isDoc ? '#FFF' : 'transparent', color: isDoc ? '#7967FF' : '#64748B' }}>DOCS</button>
             <button onClick={() => setDocType('BADGE')} style={{ ...tabBtn, padding: '6px 8px', background: docType === 'BADGE' ? '#FFF' : 'transparent', color: docType === 'BADGE' ? '#7967FF' : '#64748B' }}>BADGE</button>
@@ -445,7 +454,7 @@ function AdminContent() {
                   </div>
                   <div>
                     <label style={labelStyle}>Appel à l'action</label>
-                    <input type="text" value={socialSubtitle} onChange={e => setSocialSubtitle(e.target.value)} style={inputStyle} placeholder="Ex: Obtenez votre diagnostic gratuit" />
+                    <RichEditor value={socialSubtitle} onChange={setSocialSubtitle} />
                   </div>
                 </div>
               ) : (
@@ -465,7 +474,9 @@ function AdminContent() {
                             <button onClick={() => setCarouselSlides(carouselSlides.filter((_, i) => i !== idx))} style={{ width: 28, height: 28, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#EF4444', background: '#FEF2F2', border: 'none' }}><Trash2 size={14} /></button>
                         </div>
                         <input type="text" value={slide.title} onChange={e => setCarouselSlides(carouselSlides.map((s, i) => i === idx ? { ...s, title: e.target.value } : s))} style={{ ...inputStyle, padding: '8px 12px', fontSize: 12, fontWeight: 700 }} placeholder="Titre percutant" />
-                        <textarea value={slide.text} onChange={e => setCarouselSlides(carouselSlides.map((s, i) => i === idx ? { ...s, text: e.target.value } : s))} style={{ ...inputStyle, fontSize: 12, minHeight: 60, padding: '8px 12px' }} placeholder="Texte explicatif court" />
+                        <div style={{ marginTop: 4 }}>
+                          <RichEditor value={slide.text} onChange={(val) => setCarouselSlides(carouselSlides.map((s, i) => i === idx ? { ...s, text: val } : s))} />
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -761,14 +772,14 @@ function AdminContent() {
                     letterSpacing: '-0.03em'
                   }}>{socialTitle}</h2>
                   
-                  <p style={{ 
+                  <div style={{ 
                     fontSize: socialFontSize * 0.42, 
                     color: socialTheme === 'DARK' ? '#94A3B8' : '#475569', 
                     fontWeight: 500, 
                     lineHeight: 1.5, 
                     marginBottom: socialFontSize * 0.8,
                     maxWidth: '95%'
-                  }}>{socialSubtitle}</p>
+                  }} dangerouslySetInnerHTML={{ __html: socialSubtitle }} />
                   
                   <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: socialTheme === 'DARK' ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.05)', paddingTop: 25 }}>
                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -875,7 +886,7 @@ function AdminContent() {
                             zIndex: 1
                           }}>{slide.title}</h3>
                           
-                          <p style={{ 
+                          <div style={{ 
                             fontSize: idx === carouselSlides.length - 1 ? socialFontSize * 0.4 : socialFontSize * 0.38, 
                             color: textSecondary, 
                             fontWeight: 500, 
@@ -883,7 +894,7 @@ function AdminContent() {
                             marginBottom: idx === carouselSlides.length - 1 ? socialFontSize * 0.5 : 0,
                             position: 'relative',
                             zIndex: 1
-                          }}>{slide.text}</p>
+                          }} dangerouslySetInnerHTML={{ __html: slide.text }} />
                           
                           {idx === carouselSlides.length - 1 && (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 20, width: '100%', position: 'relative', zIndex: 1 }}>
