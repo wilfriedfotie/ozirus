@@ -7,10 +7,35 @@ import { useState } from 'react';
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', company: '', message: '' });
   const [sent, setSent] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handle = (e: React.FormEvent) => {
+  const handle = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSent(true);
+    setLoading(true);
+
+    try {
+      const FORMSPREE_ID = 'YOUR_FORMSPREE_ID'; 
+
+      if (FORMSPREE_ID === 'YOUR_FORMSPREE_ID') {
+         await new Promise(resolve => setTimeout(resolve, 1500));
+         console.log('Simulation: Email via Formspree', form);
+      } else {
+         const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+               ...form,
+               _subject: `Audit IA gratuit : Demande de ${form.name}`
+            })
+         });
+         if (!response.ok) throw new Error('Erreur');
+      }
+      setSent(true);
+    } catch (err) {
+      alert('Une erreur est survenue lors de l\'envoi. Veuillez réessayer.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -164,8 +189,13 @@ export default function Contact() {
                       />
                     </div>
 
-                    <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '13px 22px', fontSize: '0.9375rem', marginTop: 6 }}>
-                      Envoyer ma demande →
+                    <button 
+                      type="submit" 
+                      disabled={loading}
+                      className="btn-primary" 
+                      style={{ width: '100%', justifyContent: 'center', padding: '13px 22px', fontSize: '0.9375rem', marginTop: 6, opacity: loading ? 0.7 : 1 }}
+                    >
+                      {loading ? 'Envoi en cours...' : 'Envoyer ma demande →'}
                     </button>
                     <p style={{ textAlign: 'center', fontSize: '0.75rem', color: '#94A3B8' }}>
                       🔒 Vos données sont protégées et ne seront jamais partagées.

@@ -31,29 +31,28 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     setStatus('sending');
 
     try {
-      // Note: You'll need to configure these in EmailJS dashboard
-      // Service ID: 'service_ozirus'
-      // Template ID: 'template_contact'
-      // Public Key: 'your_public_key'
-      
-      // For now, we'll simulate the send if credentials aren't provided
-      // If you want actual sending, replace these strings with your EmailJS credentials
-      const serviceId = 'service_ozirus'; 
-      const templateId = 'template_contact';
-      const publicKey = 'your_public_key';
+      // Pour activer l'envoi réel, remplace 'YOUR_FORMSPREE_ID' par ton ID Formspree
+      // Crée un compte sur https://formspree.io/ pour obtenir ton ID gratuitement
+      const FORMSPREE_ID = 'YOUR_FORMSPREE_ID'; 
 
-      if (publicKey === 'your_public_key') {
-         // Fallback to simulation for dev if not configured
+      if (FORMSPREE_ID === 'YOUR_FORMSPREE_ID') {
+         // Simulation si l'ID n'est pas renseigné
          await new Promise(resolve => setTimeout(resolve, 1500));
-         console.log('Simulation: Email sent to info.ozirus@gmail.com', form);
+         console.log('Simulation: Email prêt à être envoyé via Formspree', form);
       } else {
-         await emailjs.send(serviceId, templateId, {
-            from_name: form.name,
-            from_email: form.email,
-            company: form.company,
-            message: form.message,
-            to_email: 'info.ozirus@gmail.com'
-         }, publicKey);
+         const response = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+               name: form.name,
+               email: form.email,
+               company: form.company,
+               message: form.message,
+               _subject: `Nouveau message de ${form.name} (Ozirus Agency)`
+            })
+         });
+
+         if (!response.ok) throw new Error('Erreur lors de l\'envoi');
       }
 
       setStatus('success');
