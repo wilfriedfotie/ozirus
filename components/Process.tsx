@@ -9,7 +9,7 @@ const steps = [
     icon: Search,
     color: '#1A56DB',
     bgColor: '#EEF2FF',
-    title: 'Diagnostic gratuit',
+    title: 'Obtenir mon diagnostic gratuit',
     duration: '1 semaine',
     desc: 'On analyse vos processus actuels, identifie les tâches chronophages et évalue le potentiel d\'automatisation IA pour votre PME — sans engagement.',
     deliverables: ['Rapport d\'analyse complet', 'Cas d\'usage prioritaires', 'Estimation du ROI potentiel'],

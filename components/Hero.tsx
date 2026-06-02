@@ -123,7 +123,7 @@ export default function Hero() {
             className="btn-primary"
             style={{ padding: '14px 28px', fontSize: '0.9375rem' }}
           >
-            Diagnostic gratuit →
+            Obtenir mon diagnostic gratuit →
           </button>
           <button
             onClick={() => scrollTo('realizations')}

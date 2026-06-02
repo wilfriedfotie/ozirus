@@ -33,7 +33,7 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
   /* ── auto-config based on route ── */
   const config = {
     anchors: propAnchors,
-    ctaLabel: propCtaLabel || 'Diagnostic gratuit',
+    ctaLabel: propCtaLabel || 'Obtenir mon diagnostic gratuit',
     ctaHref: propCtaHref || '#contact',
     dark: propDark,
   };

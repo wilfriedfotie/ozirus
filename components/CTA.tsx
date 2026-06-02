@@ -42,7 +42,7 @@ export default function CTA() {
             fontSize: '11px', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase',
           }}>
             <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#34D399', animation: 'pulse-dot 2s ease-in-out infinite' }} />
-            Diagnostic gratuit — Sans engagement
+            Obtenir mon diagnostic gratuit — Sans engagement
           </span>
 
           {/* Heading */}

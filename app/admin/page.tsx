@@ -593,22 +593,32 @@ function AdminContent() {
                   <div style={{ width: 60, height: 4, background: '#7967FF', marginBottom: 30 }} />
                   
                   <h2 style={{ fontSize: 42, fontWeight: 900, color: '#FFF', lineHeight: 1.1, fontFamily: 'var(--font-display, "Clash Display"), sans-serif', marginBottom: 20 }}>{socialTitle}</h2>
-                  <p style={{ fontSize: 20, color: '#94A3B8', fontWeight: 600, lineHeight: 1.5 }}>{socialSubtitle}</p>
+                  <p style={{ fontSize: 20, color: '#94A3B8', fontWeight: 600, lineHeight: 1.5, marginBottom: 40 }}>{socialSubtitle}</p>
                   
+                  <div style={{ display: 'inline-flex', alignSelf: 'flex-start', background: '#7967FF', color: '#FFF', padding: '16px 32px', borderRadius: 12, fontSize: 18, fontWeight: 800, boxShadow: '0 10px 20px rgba(121,103,255,0.3)' }}>
+                    Obtenir mon diagnostic gratuit →
+                  </div>
+
                   <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 20 }}>
                      <p style={{ fontSize: 14, color: '#7967FF', fontWeight: 800, letterSpacing: '0.1em' }}>OZIRUS.AGENCY</p>
                      <p style={{ fontSize: 12, color: '#475569', fontWeight: 600 }}>#DigitalExcellence #IA</p>
                   </div>
                </div>
             ) : (
-               <div style={{ display: 'flex', gap: 20, overflowX: 'auto', maxWidth: '100%', padding: '20px 0' }}>
+               <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', justifyContent: 'center', padding: '20px 0' }}>
                   {carouselSlides.map((slide, idx) => (
                     <div key={idx} className="print-target" style={{ flexShrink: 0, width: 400, height: 500, background: idx % 2 === 0 ? '#0F172A' : '#7967FF', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 40, borderRadius: 16, boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }}>
                         <div style={{ position: 'absolute', top: 20, right: 30, fontSize: 40, fontWeight: 900, color: 'rgba(255,255,255,0.05)' }}>{idx + 1}</div>
                         <img src={primaryLogoSrc} alt="Ozirus" style={{ height: 25, filter: 'brightness(0) invert(1)', marginBottom: 30, opacity: 0.8 }} />
                         <h3 style={{ fontSize: 28, fontWeight: 900, color: '#FFF', lineHeight: 1.2, fontFamily: 'var(--font-display, "Clash Display"), sans-serif', marginBottom: 15 }}>{slide.title}</h3>
-                        <p style={{ fontSize: 16, color: idx % 2 === 0 ? '#94A3B8' : 'rgba(255,255,255,0.9)', fontWeight: 500, lineHeight: 1.6 }}>{slide.text}</p>
+                        <p style={{ fontSize: 16, color: idx % 2 === 0 ? '#94A3B8' : 'rgba(255,255,255,0.9)', fontWeight: 500, lineHeight: 1.6, marginBottom: idx === carouselSlides.length - 1 ? 30 : 0 }}>{slide.text}</p>
                         
+                        {idx === carouselSlides.length - 1 && (
+                          <div style={{ background: idx % 2 === 0 ? '#7967FF' : '#FFF', color: idx % 2 === 0 ? '#FFF' : '#7967FF', padding: '12px 24px', borderRadius: 10, fontSize: 14, fontWeight: 800, textAlign: 'center', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}>
+                            Obtenir mon diagnostic gratuit →
+                          </div>
+                        )}
+
                         <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                            <p style={{ fontSize: 10, color: idx % 2 === 0 ? '#7967FF' : '#FFF', fontWeight: 800 }}>OZIRUS.AGENCY</p>
                            <div style={{ display: 'flex', gap: 4 }}>

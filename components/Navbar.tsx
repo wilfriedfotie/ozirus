@@ -106,7 +106,7 @@ export default function Navbar() {
                 className="btn-primary"
                 style={{ padding: '9px 20px', fontSize: '0.8125rem' }}
               >
-                Diagnostic gratuit →
+                Obtenir mon diagnostic gratuit →
               </button>
 
               {/* Mobile burger */}
@@ -180,7 +180,7 @@ export default function Navbar() {
               ))}
               <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
                 <button onClick={() => scrollTo('contact')} className="btn-secondary" style={{ justifyContent: 'center' }}>Nous contacter</button>
-                <button onClick={() => scrollTo('contact')} className="btn-primary" style={{ justifyContent: 'center' }}>Diagnostic gratuit →</button>
+                <button onClick={() => scrollTo('contact')} className="btn-primary" style={{ justifyContent: 'center' }}>Obtenir mon diagnostic gratuit →</button>
               </div>
             </div>
           </motion.div>

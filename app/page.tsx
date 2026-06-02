@@ -412,7 +412,7 @@ const SECTORS = [
 ];
 
 const PROCESS = [
-  { n: '01', week: 'Semaine 1', title: 'Diagnostic gratuit', price: 'Gratuit', body: 'On analyse votre activité, vos problèmes réels et vos opportunités IA. Vous repartez avec un plan clair et un chiffrage précis — sans engagement.' },
+  { n: '01', week: 'Semaine 1', title: 'Obtenir mon diagnostic gratuit', price: 'Gratuit', body: 'On analyse votre activité, vos problèmes réels et vos opportunités IA. Vous repartez avec un plan clair et un chiffrage précis — sans engagement.' },
   { n: '02', week: 'Semaines 2–6', title: 'Pilote IA', price: '75 000 – 150 000', body: 'On développe une première version de la solution sur votre cas concret. Vous voyez les résultats réels avant de tout déployer.' },
   { n: '03', week: 'Semaines 7–12', title: 'Déploiement complet', price: '150 000 – 400 000', body: 'Mise en production complète, intégration avec vos outils existants (Mobile Money, WhatsApp, caisse, etc.).' },
   { n: '04', week: 'En continu', title: 'Formation & suivi', price: '15 000 – 30 000 / mois', body: 'Votre équipe est formée et autonome. On reste disponibles pour les ajustements, nouvelles fonctionnalités et suivi des KPIs.' },
@@ -447,6 +447,10 @@ const REALIZATIONS = [
     body: 'Système de prédiction des prix du marché et d\'optimisation de la production. L\'entreprise sait maintenant exactement combien produire chaque semaine et à quel moment vendre.',
   },
 ];
+
+const openContactModal = () => {
+  window.dispatchEvent(new CustomEvent('ozirus:open-contact-modal'));
+};
 
 /* ─── SectorsPanel ───────────────────────────────────── */
 /* ─── SectorsPanel ───────────────────────────────────── */
@@ -628,20 +632,21 @@ function SectorsPanel() {
                 ))}
               </div>
 
-              <a
-                href="#contact"
+              <button
+                type="button"
+                onClick={openContactModal}
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: 7,
                   background: '#7967FF', color: '#fff',
                   padding: '12px 22px', borderRadius: 8,
                   fontSize: 13, fontWeight: 600, textDecoration: 'none',
-                  transition: 'background 0.15s',
+                  transition: 'background 0.15s', border: 'none', cursor: 'pointer',
                 }}
                 onMouseEnter={e => (e.currentTarget.style.background = '#6654F0')}
                 onMouseLeave={e => (e.currentTarget.style.background = '#7967FF')}
               >
                 Obtenir un diagnostic gratuit <ArrowRight size={13} />
-              </a>
+              </button>
             </motion.div>
           </AnimatePresence>
         </div>
@@ -707,8 +712,9 @@ export default function HomePage() {
             {...up(0.15)}
             style={{ display: 'flex', gap: 12, marginTop: 40, flexWrap: 'wrap', justifyContent: 'center' }}
           >
-            <a
-              href="#contact"
+            <button
+              type="button"
+              onClick={openContactModal}
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
                 background: '#7967FF', color: '#fff',
@@ -716,12 +722,13 @@ export default function HomePage() {
                 fontSize: 15, fontWeight: 600,
                 boxShadow: '0 4px 20px rgba(121,103,255,0.3)',
                 textDecoration: 'none', transition: 'background 0.2s',
+                border: 'none', cursor: 'pointer',
               }}
               onMouseEnter={e => (e.currentTarget.style.background = '#6654F0')}
               onMouseLeave={e => (e.currentTarget.style.background = '#7967FF')}
             >
               Obtenir un diagnostic IA gratuit <ArrowRight size={16} />
-            </a>
+            </button>
             <a
               href="#secteurs"
               style={{
@@ -928,7 +935,7 @@ export default function HomePage() {
               </span>
             </h2>
             <p style={{ fontSize: 16, color: '#666', lineHeight: 1.7, marginTop: 16 }}>
-              Diagnostic gratuit, pilote rapide, déploiement complet et formation de votre équipe. Vous repartez autonome et propriétaire de tout.
+              Obtenir mon diagnostic gratuit, pilote rapide, déploiement complet et formation de votre équipe. Vous repartez autonome et propriétaire de tout.
             </p>
           </div>
 
@@ -1007,21 +1014,22 @@ export default function HomePage() {
             {...upView(0.15)}
             style={{ marginTop: 32, textAlign: 'center' }}
           >
-            <a
-              href="#contact"
+            <button
+              type="button"
+              onClick={openContactModal}
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
                 background: '#7967FF', color: '#fff',
                 padding: '14px 28px', borderRadius: 8,
                 fontSize: 14, fontWeight: 600, textDecoration: 'none',
                 boxShadow: '0 4px 20px rgba(121,103,255,0.25)',
-                transition: 'background 0.2s',
+                transition: 'background 0.2s', border: 'none', cursor: 'pointer',
               }}
               onMouseEnter={e => (e.currentTarget.style.background = '#6654F0')}
               onMouseLeave={e => (e.currentTarget.style.background = '#7967FF')}
             >
               Obtenir mon chiffrage précis — gratuit <ArrowRight size={14} />
-            </a>
+            </button>
           </motion.div>
         </div>
       </section>
@@ -1077,8 +1085,9 @@ export default function HomePage() {
           </p>
 
           <div style={{ display: 'flex', gap: 12, marginTop: 40, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a
-              href="mailto:info.ozirus@gmail.com"
+            <button
+              type="button"
+              onClick={openContactModal}
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
                 background: '#7967FF', color: '#fff',
@@ -1086,12 +1095,13 @@ export default function HomePage() {
                 fontSize: 15, fontWeight: 600,
                 boxShadow: '0 4px 20px rgba(121,103,255,0.25)',
                 textDecoration: 'none', transition: 'background 0.2s',
+                border: 'none', cursor: 'pointer',
               }}
               onMouseEnter={e => (e.currentTarget.style.background = '#6654F0')}
               onMouseLeave={e => (e.currentTarget.style.background = '#7967FF')}
             >
               Obtenir mon diagnostic gratuit <ArrowRight size={16} />
-            </a>
+            </button>
             <a
               href="https://wa.me/237694086571?text=Bonjour%20Ozirus%2C%20je%20souhaiterais%20discuter%20d%27un%20projet%20digital%20pour%20mon%20entreprise."
               style={{

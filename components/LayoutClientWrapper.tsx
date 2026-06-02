@@ -9,6 +9,13 @@ import ContactModal from '@/components/ContactModal';
 export default function LayoutClientWrapper({ children }: { children: React.ReactNode }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  React.useEffect(() => {
+    const openContactModal = () => setIsModalOpen(true);
+
+    window.addEventListener('ozirus:open-contact-modal', openContactModal);
+    return () => window.removeEventListener('ozirus:open-contact-modal', openContactModal);
+  }, []);
+
   return (
     <>
       <GlobalLoader />
