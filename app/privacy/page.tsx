@@ -50,7 +50,7 @@ export default function PrivacyPage() {
         <section style={{ marginBottom: 40 }}>
           <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 16 }}>5. Vos Droits</h2>
           <p style={{ lineHeight: 1.7, color: '#444' }}>
-            Conformément aux lois en vigueur, vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles. Pour exercer ce droit, contactez-nous à contact.fotie@gmail.com.
+            Conformément aux lois en vigueur, vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles. Pour exercer ce droit, contactez-nous à info.ozirus@gmail.com.
           </p>
         </section>
 

@@ -122,7 +122,7 @@ Ou répondez simplement à cet email avec vos disponibilités.
 
 [Votre nom]
 Fondateur - Ozirus
-📧 contact.fotie@gmail.com
+📧 info.ozirus@gmail.com
 📞 +33 1 23 45 67 89
 
 ---

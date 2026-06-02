@@ -60,7 +60,7 @@ export default function Contact() {
             {/* Contact info */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14, paddingTop: 24, borderTop: '1px solid #E4E8EF' }}>
               {[
-                { icon: Mail, label: 'contact.fotie@gmail.com', href: 'mailto:contact.fotie@gmail.com' },
+                { icon: Mail, label: 'info.ozirus@gmail.com', href: 'mailto:info.ozirus@gmail.com' },
                 { icon: Phone, label: '+237 678 61 56 77', href: 'tel:+237678615677' },
                 { icon: MapPin, label: 'Yaoundé, Cameroun', href: null },
               ].map((item, i) => {

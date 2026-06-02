@@ -1078,7 +1078,7 @@ export default function HomePage() {
 
           <div style={{ display: 'flex', gap: 12, marginTop: 40, justifyContent: 'center', flexWrap: 'wrap' }}>
             <a
-              href="mailto:contact.fotie@gmail.com"
+              href="mailto:info.ozirus@gmail.com"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
                 background: '#7967FF', color: '#fff',
@@ -1132,10 +1132,10 @@ export default function HomePage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
             <Link href="/terms" style={{ fontSize: 13, color: '#aaa', textDecoration: 'none' }}>Conditions</Link>
             <Link href="/privacy" style={{ fontSize: 13, color: '#aaa', textDecoration: 'none' }}>Confidentialité</Link>
-            <a href="mailto:contact.fotie@gmail.com" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: '#aaa', textDecoration: 'none', transition: 'color 0.15s' }}
+            <a href="mailto:info.ozirus@gmail.com" style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: '#aaa', textDecoration: 'none', transition: 'color 0.15s' }}
               onMouseEnter={e => (e.currentTarget.style.color = '#7967FF')}
               onMouseLeave={e => (e.currentTarget.style.color = '#aaa')}>
-              <Phone size={13} /> contact.fotie@gmail.com
+              <Phone size={13} /> info.ozirus@gmail.com
             </a>
           </div>
         </div>

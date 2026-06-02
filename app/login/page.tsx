@@ -14,7 +14,7 @@ export default function LoginPage() {
       >
         <img src="/logo.png" style={{ height: 40, marginBottom: 32 }} alt="Ozirus" />
         <h1 style={{ fontSize: 24, fontWeight: 700, color: '#fff', marginBottom: 12 }}>Accès Admin</h1>
-        <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, marginBottom: 32 }}>Seule l'adresse <strong>contact.fotie@gmail.com</strong> est autorisée.</p>
+        <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, marginBottom: 32 }}>Seule l'adresse <strong>info.ozirus@gmail.com</strong> est autorisée.</p>
         
         <button 
           onClick={() => signIn("google", { callbackUrl: "/admin" })}

@@ -1833,7 +1833,7 @@ export default function DevPage() {
             Décrivez votre idée, votre contexte et vos utilisateurs cibles. On revient avec une estimation et une approche claire — sans engagement.
           </p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 28 }}>
-            <a href="mailto:contact.fotie@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#7967FF', color: '#fff', padding: '14px 28px', borderRadius: 8, fontSize: 15, fontWeight: 600, textDecoration: 'none', boxShadow: '0 4px 20px rgba(121,103,255,0.25)', transition: 'background 0.15s' }}
+            <a href="mailto:info.ozirus@gmail.com" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#7967FF', color: '#fff', padding: '14px 28px', borderRadius: 8, fontSize: 15, fontWeight: 600, textDecoration: 'none', boxShadow: '0 4px 20px rgba(121,103,255,0.25)', transition: 'background 0.15s' }}
               onMouseEnter={e => (e.currentTarget.style.background = '#6654F0')}
               onMouseLeave={e => (e.currentTarget.style.background = '#7967FF')}>
               Démarrer un projet <ArrowRight size={16} />
