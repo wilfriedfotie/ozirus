@@ -16,7 +16,7 @@ import {
 
 /* ─── AUTH CONFIG ─────────────────────────────────── */
 const ADMIN_SECRET_KEY = 'ozirus_admin_2026';
-const ADMIN_ALLOWED_EMAIL = 'contact.fotie@gmail.com';
+const ADMIN_ALLOWED_EMAIL = 'info.ozirus@gmail.com';
 const PRIMARY_COLOR = '#7967FF';
 const PRIMARY_LOGO_FALLBACK_FILTER = 'brightness(0) saturate(100%) invert(43%) sepia(91%) saturate(2126%) hue-rotate(224deg) brightness(101%) contrast(101%)';
 const COMPANY_INFO = {
@@ -24,7 +24,7 @@ const COMPANY_INFO = {
   taxId: 'M03211568940J',
   registryId: 'RC/YAO/2021/B/145',
   address: 'Bastos, Yaoundé, Cameroun',
-  email: 'contact@ozirus.agency',
+  email: 'info.ozirus@gmail.com',
   phone: '+237 694 08 65 71',
   website: 'ozirus.agency',
 };
@@ -53,7 +53,7 @@ const CATALOG = [
 ];
 
 /* ─── TYPES ───────────────────────────────────────── */
-type DocType = 'PROPOSITION COMMERCIALE' | 'FACTURE';
+type DocType = 'PROPOSITION COMMERCIALE' | 'FACTURE' | 'BADGE' | 'CARTE DE VISITE';
 interface LineItem {
   id: string;
   description: string;
@@ -87,6 +87,24 @@ function AdminContent() {
   const [clientEmail, setClientEmail] = useState('');
   const [clientAddress, setClientAddress] = useState('');
   const [clientTaxId, setClientTaxId] = useState('');
+
+  // Badge & Card Specific State
+  const [personName, setPersonName] = useState('Wilfried Fotie');
+  const [personRole, setPersonRole] = useState('CEO & Solutions Architect');
+  const [personPhone, setPersonPhone] = useState('+237 694 08 65 71');
+  const [personEmail, setPersonEmail] = useState('info.ozirus@gmail.com');
+  const [personPhoto, setPersonPhoto] = useState('');
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPersonPhoto(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const [projectContext, setProjectContext] = useState('À la suite de nos échanges, nous avons identifié une opportunité majeure de transformation digitale pour votre structure, visant à automatiser vos opérations et maximiser votre impact sur le marché.');
   const [projectGoals, setProjectGoals] = useState('<ul><li>Optimisation des processus opérationnels</li><li>Amélioration de l\'expérience utilisateur client</li><li>Scalabilité de l\'infrastructure technique</li><li>Sécurisation des données critiques</li></ul>');
@@ -127,7 +145,7 @@ function AdminContent() {
   const [acompte, setAcompte] = useState(0);
 
   const [timeline, setTimeline] = useState('6 à 12 semaines');
-  const [activeTab, setActiveTab] = useState<'CLIENT' | 'PROJET' | 'FINANCE' | 'LEGAL'>('CLIENT');
+  const [activeTab, setActiveTab] = useState<'CLIENT' | 'PROJET' | 'FINANCE' | 'LEGAL' | 'IDENTITE'>('CLIENT');
   const [currency, setCurrency] = useState<'FCFA' | '€' | '$'>('FCFA');
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -183,6 +201,12 @@ function AdminContent() {
     setDocNumber(`${prefix}-${new Date().getFullYear()}-${Math.floor(Math.random()*1000).toString().padStart(3,'0')}`);
     const d = new Date(); d.setDate(d.getDate() + 30);
     setValidUntil(d.toISOString().split('T')[0]);
+
+    if (docType === 'BADGE' || docType === 'CARTE DE VISITE') {
+      setActiveTab('IDENTITE');
+    } else {
+      if (activeTab === 'IDENTITE') setActiveTab('CLIENT');
+    }
   }, [docType]);
 
   const addItem = (catalogId: string) => {
@@ -223,29 +247,35 @@ function AdminContent() {
   const exportToPDF = async () => {
     setIsGenerating(true);
     try {
-      const pages = document.querySelectorAll('.a4-page');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const isCustomSize = docType === 'BADGE' || docType === 'CARTE DE VISITE';
+      const pages = document.querySelectorAll(isCustomSize ? '.print-target' : '.a4-page');
+      
+      const pdf = new jsPDF(
+        docType === 'CARTE DE VISITE' ? 'l' : 'p', 
+        'mm', 
+        !isCustomSize ? 'a4' : (docType === 'BADGE' ? [54, 86] : [85, 55])
+      );
 
       for (let i = 0; i < pages.length; i++) {
         const page = pages[i] as HTMLElement;
         
         const canvas = await html2canvas(page, {
-          scale: 2,
+          scale: 3,
           useCORS: true,
           logging: false,
           backgroundColor: '#FFFFFF',
-          windowWidth: 794, 
         });
 
         const imgData = canvas.toDataURL('image/jpeg', 1.0);
         
         if (i > 0) pdf.addPage();
+        
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
         pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
       }
 
-      const fileName = `${docType.split(' ')[0]}_${clientCompany || 'OZIRUS'}_${docNumber}.pdf`.replace(/\s+/g, '_');
+      const fileName = `${docType.split(' ')[0]}_${isCustomSize ? personName : clientCompany || 'OZIRUS'}_${docNumber}.pdf`.replace(/\s+/g, '_');
       pdf.save(fileName);
     } catch (err) {
       console.error("PDF Generation error:", err);
@@ -257,6 +287,8 @@ function AdminContent() {
 
   if (isAuthorized === null) return null;
   if (isAuthorized === false) return null;
+
+  const isDoc = docType === 'PROPOSITION COMMERCIALE' || docType === 'FACTURE';
 
   return (
     <div style={{ display: 'flex', height: '100vh', background: '#F1F5F9', overflow: 'hidden' }}>
@@ -272,22 +304,55 @@ function AdminContent() {
             </h1>
             <p style={{ fontSize: 11, color: '#94A3B8', marginTop: 2 }}>Digital Excellence Framework</p>
           </div>
-          <div style={{ display: 'flex', background: '#F1F5F9', padding: 4, borderRadius: 10 }}>
-            <button onClick={() => setDocType('PROPOSITION COMMERCIALE')} style={{ ...tabBtn, background: docType.includes('PROP') ? '#FFF' : 'transparent', color: docType.includes('PROP') ? '#7967FF' : '#64748B' }}>PROP</button>
-            <button onClick={() => setDocType('FACTURE')} style={{ ...tabBtn, background: docType === 'FACTURE' ? '#FFF' : 'transparent', color: docType === 'FACTURE' ? '#7967FF' : '#64748B' }}>FACT</button>
+          <div style={{ display: 'flex', background: '#F1F5F9', padding: 4, borderRadius: 10, gap: 2 }}>
+            <button onClick={() => setDocType('PROPOSITION COMMERCIALE')} style={{ ...tabBtn, padding: '6px 10px', background: isDoc ? '#FFF' : 'transparent', color: isDoc ? '#7967FF' : '#64748B' }}>DOCS</button>
+            <button onClick={() => setDocType('BADGE')} style={{ ...tabBtn, padding: '6px 10px', background: docType === 'BADGE' ? '#FFF' : 'transparent', color: docType === 'BADGE' ? '#7967FF' : '#64748B' }}>BADGE</button>
+            <button onClick={() => setDocType('CARTE DE VISITE')} style={{ ...tabBtn, padding: '6px 10px', background: docType === 'CARTE DE VISITE' ? '#FFF' : 'transparent', color: docType === 'CARTE DE VISITE' ? '#7967FF' : '#64748B' }}>CARTE</button>
           </div>
         </div>
 
         {/* Local Nav */}
         <div style={{ display: 'flex', padding: '0 24px', borderBottom: '1px solid #F1F5F9', gap: 16 }}>
-          <button onClick={() => setActiveTab('CLIENT')} style={{ ...subTab, color: activeTab === 'CLIENT' ? '#7967FF' : '#94A3B8', borderBottomColor: activeTab === 'CLIENT' ? '#7967FF' : 'transparent' }}><User size={14} /></button>
-          <button onClick={() => setActiveTab('PROJET')} style={{ ...subTab, color: activeTab === 'PROJET' ? '#7967FF' : '#94A3B8', borderBottomColor: activeTab === 'PROJET' ? '#7967FF' : 'transparent' }}><Layout size={14} /></button>
-          <button onClick={() => setActiveTab('FINANCE')} style={{ ...subTab, color: activeTab === 'FINANCE' ? '#7967FF' : '#94A3B8', borderBottomColor: activeTab === 'FINANCE' ? '#7967FF' : 'transparent' }}><Briefcase size={14} /></button>
-          <button onClick={() => setActiveTab('LEGAL')} style={{ ...subTab, color: activeTab === 'LEGAL' ? '#7967FF' : '#94A3B8', borderBottomColor: activeTab === 'LEGAL' ? '#7967FF' : 'transparent' }}><ShieldCheck size={14} /></button>
+          {isDoc ? (
+            <>
+              <button onClick={() => setActiveTab('CLIENT')} style={{ ...subTab, color: activeTab === 'CLIENT' ? '#7967FF' : '#94A3B8', borderBottomColor: activeTab === 'CLIENT' ? '#7967FF' : 'transparent' }}><User size={14} /></button>
+              <button onClick={() => setActiveTab('PROJET')} style={{ ...subTab, color: activeTab === 'PROJET' ? '#7967FF' : '#94A3B8', borderBottomColor: activeTab === 'PROJET' ? '#7967FF' : 'transparent' }}><Layout size={14} /></button>
+              <button onClick={() => setActiveTab('FINANCE')} style={{ ...subTab, color: activeTab === 'FINANCE' ? '#7967FF' : '#94A3B8', borderBottomColor: activeTab === 'FINANCE' ? '#7967FF' : 'transparent' }}><Briefcase size={14} /></button>
+              <button onClick={() => setActiveTab('LEGAL')} style={{ ...subTab, color: activeTab === 'LEGAL' ? '#7967FF' : '#94A3B8', borderBottomColor: activeTab === 'LEGAL' ? '#7967FF' : 'transparent' }}><ShieldCheck size={14} /></button>
+            </>
+          ) : (
+            <button onClick={() => setActiveTab('IDENTITE')} style={{ ...subTab, color: activeTab === 'IDENTITE' ? '#7967FF' : '#94A3B8', borderBottomColor: activeTab === 'IDENTITE' ? '#7967FF' : 'transparent' }}><User size={14} /></button>
+          )}
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto', padding: 24, display: 'flex', flexDirection: 'column', gap: 28 }}>
           
+          {isDoc && (
+            <div style={{ display: 'flex', background: '#F8FAFC', padding: 8, borderRadius: 12, marginBottom: -10 }}>
+              <button onClick={() => setDocType('PROPOSITION COMMERCIALE')} style={{ flex: 1, padding: 8, borderRadius: 8, fontSize: 11, fontWeight: 700, border: 'none', background: docType === 'PROPOSITION COMMERCIALE' ? '#FFF' : 'transparent', color: docType === 'PROPOSITION COMMERCIALE' ? '#7967FF' : '#64748B', boxShadow: docType === 'PROPOSITION COMMERCIALE' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none' }}>PROPOSITION</button>
+              <button onClick={() => setDocType('FACTURE')} style={{ flex: 1, padding: 8, borderRadius: 8, fontSize: 11, fontWeight: 700, border: 'none', background: docType === 'FACTURE' ? '#FFF' : 'transparent', color: docType === 'FACTURE' ? '#7967FF' : '#64748B', boxShadow: docType === 'FACTURE' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none' }}>FACTURE</button>
+            </div>
+          )}
+
+          {activeTab === 'IDENTITE' && (
+             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                <div>
+                  <p style={sectionTitle}>Informations Personnel</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    <input type="text" placeholder="Nom Complet" value={personName} onChange={e => setPersonName(e.target.value)} style={inputStyle} />
+                    <input type="text" placeholder="Poste / Titre" value={personRole} onChange={e => setPersonRole(e.target.value)} style={inputStyle} />
+                    <input type="text" placeholder="Téléphone" value={personPhone} onChange={e => setPersonPhone(e.target.value)} style={inputStyle} />
+                    <input type="email" placeholder="Email" value={personEmail} onChange={e => setPersonEmail(e.target.value)} style={inputStyle} />
+                    <div>
+                      <label style={labelStyle}>Photo du Badge (Upload)</label>
+                      <input type="file" accept="image/*" onChange={handlePhotoChange} style={{ ...inputStyle, padding: '8px' }} />
+                      {personPhoto && <p style={{ fontSize: 10, color: '#22C55E', marginTop: 4, fontWeight: 700 }}>✓ Image chargée</p>}
+                    </div>
+                  </div>
+                </div>
+             </div>
+          )}
+
           {activeTab === 'CLIENT' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               <div>
@@ -444,8 +509,8 @@ function AdminContent() {
 
         <div style={{ padding: '24px', borderTop: '1px solid #F1F5F9', display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 14 }}>
-            <span style={{ color: '#64748B', fontWeight: 600 }}>Total à régler</span>
-            <span style={{ fontWeight: 900, color: '#0F172A', fontSize: 18 }}>{formatPrice(netAPayer)}</span>
+            <span style={{ color: '#64748B', fontWeight: 600 }}>{isDoc ? 'Total à régler' : 'Prêt pour impression'}</span>
+            <span style={{ fontWeight: 900, color: '#0F172A', fontSize: 18 }}>{isDoc ? formatPrice(netAPayer) : 'Gratuit'}</span>
           </div>
           <button 
             onClick={exportToPDF} 
@@ -453,7 +518,7 @@ function AdminContent() {
             style={{ width: '100%', background: '#7967FF', color: '#FFF', border: 'none', borderRadius: 12, padding: '14px', fontSize: 14, fontWeight: 800, cursor: isGenerating ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, boxShadow: '0 4px 12px rgba(121,103,255,0.3)', opacity: isGenerating ? 0.7 : 1 }}
           >
             {isGenerating ? <Clock size={18} className="animate-spin" /> : <Rocket size={18} />}
-            {isGenerating ? 'GÉNÉRATION...' : 'GÉNÉRER LE PDF PRO'}
+            {isGenerating ? 'GÉNÉRATION...' : `GÉNÉRER LE ${docType.includes('CARTE') ? 'CARTE' : docType}`}
           </button>
         </div>
       </div>
@@ -461,237 +526,333 @@ function AdminContent() {
       {/* ─── RIGHT PANEL: PREVIEW ─── */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '60px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 40 }} className="no-print">
         
-        {/* PAGE 1: COVER */}
-        <div className="a4-page">
-          <div style={{ height: '100%', border: '1px solid #7967FF', padding: '40mm 20mm', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
-             <img src={primaryLogoSrc} alt="Ozirus" style={{ height: 60, filter: primaryLogoSrc === '/logo.png' ? PRIMARY_LOGO_FALLBACK_FILTER : 'none', marginBottom: 60 }} />
-             <div style={{ width: 80, height: 4, background: '#7967FF', marginBottom: 40 }} />
-             <h2 style={{ fontSize: 32, fontWeight: 900, color: '#0F172A', textAlign: 'center', letterSpacing: '-0.03em', lineHeight: 1.1, fontFamily: 'var(--font-display, "Clash Display"), sans-serif' }}>{docType}</h2>
-             <p style={{ width: '100%', fontSize: 18, color: '#7967FF', fontWeight: 600, marginTop: 10, fontFamily: 'var(--font-display, "Clash Display"), sans-serif', textTransform: 'uppercase', letterSpacing: '0.1em', textAlign: 'center' }}>Digital Excellence & Intelligent Systems</p>
-             
-             <div style={{ marginTop: 'auto', textAlign: 'center' }}>
-                <p style={{ fontSize: 12, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 15 }}>À l'attention de</p>
-                <p style={{ fontSize: 26, fontWeight: 900, color: '#0F172A', fontFamily: 'var(--font-display, "Clash Display"), sans-serif' }}>{clientCompany || '(Client Corporate)'}</p>
-                <p style={{ fontSize: 16, color: '#7967FF', fontWeight: 600, marginTop: 4 }}>{clientName}</p>
-                {clientTaxId && <p style={{ fontSize: 11, color: '#64748B', fontWeight: 700, marginTop: 8 }}>NIU / ID FISCAL : {clientTaxId}</p>}
-             </div>
+        {docType === 'BADGE' && (
+          <div className="print-target" style={{ width: '54mm', height: '86mm', background: '#F8FAFC', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 20px 50px rgba(0,0,0,0.1)', position: 'relative', display: 'flex', flexDirection: 'column', border: '1px solid #E2E8F0' }}>
+            <div style={{ height: '28%', background: 'linear-gradient(135deg, #7967FF 0%, #4F46E5 100%)', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: 20 }}>
+              <img src={primaryLogoSrc} alt="Ozirus" style={{ height: 22, filter: 'brightness(0) invert(1)' }} />
+            </div>
+            
+            <div style={{ flex: 1, padding: '0 10px 10px 10px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: -45 }}>
+              <div style={{ width: 70, height: 70, borderRadius: '50%', border: '4px solid #FFF', background: '#F1F5F9', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 20px rgba(0,0,0,0.1)', marginBottom: 8, zIndex: 5 }}>
+                {personPhoto ? (
+                  <img src={personPhoto} alt={personName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <User size={30} color="#7967FF" />
+                )}
+              </div>
 
-             <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', marginTop: 100, borderTop: '1px solid #E2E8F0', paddingTop: 20 }}>
-                <p style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>RÉFÉRENCE : {docNumber}</p>
-                <p style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>{docType === 'FACTURE' ? `ÉCHÉANCE : ${formatDate(validUntil)}` : `VALIDITÉ : ${formatDate(validUntil)}`}</p>
-                <p style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>{new Date().getFullYear()} — CONFIDENTIEL</p>
-             </div>
+              <div style={{ marginBottom: 6 }}>
+                <h2 style={{ fontSize: 14, fontWeight: 900, color: '#0F172A', margin: '0 0 1px 0', fontFamily: 'var(--font-display, "Clash Display"), sans-serif', lineHeight: 1.1 }}>{personName}</h2>
+                <p style={{ fontSize: 8.5, fontWeight: 800, color: '#7967FF', margin: 0, textTransform: 'uppercase', letterSpacing: '0.04em' }}>{personRole}</p>
+              </div>
+
+              <div style={{ marginTop: 'auto', width: '100%', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <div style={{ background: '#FFF', padding: '8px 10px', borderRadius: 10, boxShadow: '0 2px 6px rgba(121,103,255,0.05)', border: '1px solid #7967FF11' }}>
+                  <p style={{ fontSize: 6.5, fontStyle: 'italic', color: '#64748B', lineHeight: 1.3, margin: '0 0 5px 0', fontWeight: 600 }}>"On crée les outils de demain pour faire grandir votre projet dès aujourd'hui."</p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'center' }}>
+                    {[
+                      { icon: '✦', text: 'Gagnez du temps chaque jour' },
+                      { icon: '✦', text: 'Boostez vos résultats avec l\'IA' },
+                      { icon: '✦', text: 'Vos outils sur le web & mobile' }
+                    ].map((item, i) => (
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                        <span style={{ fontSize: 5, color: '#7967FF' }}>{item.icon}</span>
+                        <span style={{ fontSize: 5.5, fontWeight: 800, color: '#0F172A' }}>{item.text}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', justifyContent: 'center', padding: '6px 10px', background: '#0F172A', borderRadius: 10 }}>
+                  <div style={{ background: '#FFF', padding: '2px', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <img 
+                      src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`BEGIN:VCARD\nVERSION:3.0\nFN:${personName}\nORG:Ozirus Agency\nTITLE:${personRole}\nTEL:${personPhone}\nEMAIL:${personEmail}\nEND:VCARD`)}`} 
+                      alt="QR Code" 
+                      style={{ width: 26, height: 26 }} 
+                    />
+                  </div>
+                  <div style={{ textAlign: 'left' }}>
+                    <p style={{ fontSize: 6, color: '#7967FF', fontWeight: 900, margin: 0, letterSpacing: '0.02em' }}>Ozirus Agency</p>
+                    <p style={{ fontSize: 5, color: 'rgba(255,255,255,0.6)', fontWeight: 700, margin: 0 }}>https://ozirus.agency</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* PAGE 2: METHODOLOGY */}
-        <div className="a4-page">
-           <Header docType={docType} docNumber={docNumber} date={date} currency={currency} logoSrc={primaryLogoSrc} />
-           <div style={{ marginTop: 40 }}>
-              <SectionTitle title="NOTRE MÉTHODOLOGIE : L'APPROCHE OZIRUS" />
-              <p style={{ fontSize: 13, lineHeight: 1.7, color: '#475569', marginBottom: 30 }}>
-                Ozirus Agency déploie des solutions digitales fondées sur des <b>standards technologiques internationaux</b>. Notre approche est conçue pour garantir la pérennité de vos investissements.
-              </p>
+        {docType === 'CARTE DE VISITE' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
+            {/* FRONT */}
+            <div className="print-target" style={{ width: '85mm', height: '55mm', background: '#0F172A', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 20px 50px rgba(0,0,0,0.1)', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ position: 'absolute', top: 0, right: 0, width: '40%', height: '100%', background: '#7967FF', clipPath: 'polygon(20% 0, 100% 0, 100% 100%, 0% 100%)', opacity: 0.1 }}></div>
+              <img src={primaryLogoSrc} alt="Ozirus" style={{ height: 35, filter: 'brightness(0) invert(1)' }} />
+            </div>
+            {/* BACK */}
+            <div className="print-target" style={{ width: '85mm', height: '55mm', background: '#FFF', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 20px 50px rgba(0,0,0,0.1)', display: 'flex', border: '1px solid #E2E8F0' }}>
+               <div style={{ width: 8, background: '#7967FF' }} />
+               <div style={{ flex: 1, padding: 25, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  <h2 style={{ fontSize: 18, fontWeight: 900, color: '#0F172A', margin: '0 0 2px 0', fontFamily: 'var(--font-display, "Clash Display"), sans-serif' }}>{personName}</h2>
+                  <p style={{ fontSize: 10, fontWeight: 700, color: '#7967FF', margin: '0 0 20px 0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{personRole}</p>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 9, color: '#475569', fontWeight: 600 }}>
+                      <Smartphone size={10} color="#7967FF" /> {personPhone}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 9, color: '#475569', fontWeight: 600 }}>
+                      <User size={10} color="#7967FF" /> {personEmail}
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 9, color: '#475569', fontWeight: 600 }}>
+                      <Globe size={10} color="#7967FF" /> {COMPANY_INFO.website}
+                    </div>
+                  </div>
+               </div>
+               <div style={{ width: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#F8FAFC', borderLeft: '1px solid #F1F5F9' }}>
+                  <img 
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`BEGIN:VCARD\nVERSION:3.0\nFN:${personName}\nORG:Ozirus Agency\nTITLE:${personRole}\nTEL:${personPhone}\nEMAIL:${personEmail}\nEND:VCARD`)}`} 
+                    alt="QR Code" 
+                    style={{ width: 50, height: 50 }} 
+                  />
+               </div>
+            </div>
+          </div>
+        )}
+
+        {isDoc && (
+          <>
+            {/* PAGE 1: COVER */}
+            <div className="a4-page">
+              <div style={{ height: '100%', border: '1px solid #7967FF', padding: '40mm 20mm', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
+                <img src={primaryLogoSrc} alt="Ozirus" style={{ height: 60, filter: primaryLogoSrc === '/logo.png' ? PRIMARY_LOGO_FALLBACK_FILTER : 'none', marginBottom: 60 }} />
+                <div style={{ width: 80, height: 4, background: '#7967FF', marginBottom: 40 }} />
+                <h2 style={{ fontSize: 32, fontWeight: 900, color: '#0F172A', textAlign: 'center', letterSpacing: '-0.03em', lineHeight: 1.1, fontFamily: 'var(--font-display, "Clash Display"), sans-serif' }}>{docType}</h2>
+                <p style={{ width: '100%', fontSize: 18, color: '#7967FF', fontWeight: 600, marginTop: 10, fontFamily: 'var(--font-display, "Clash Display"), sans-serif', textTransform: 'uppercase', letterSpacing: '0.1em', textAlign: 'center' }}>Digital Excellence & Intelligent Systems</p>
+                
+                <div style={{ marginTop: 'auto', textAlign: 'center' }}>
+                    <p style={{ fontSize: 12, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: 15 }}>À l'attention de</p>
+                    <p style={{ fontSize: 26, fontWeight: 900, color: '#0F172A', fontFamily: 'var(--font-display, "Clash Display"), sans-serif' }}>{clientCompany || '(Client Corporate)'}</p>
+                    <p style={{ fontSize: 16, color: '#7967FF', fontWeight: 600, marginTop: 4 }}>{clientName}</p>
+                    {clientTaxId && <p style={{ fontSize: 11, color: '#64748B', fontWeight: 700, marginTop: 8 }}>NIU / ID FISCAL : {clientTaxId}</p>}
+                </div>
+
+                <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', marginTop: 100, borderTop: '1px solid #E2E8F0', paddingTop: 20 }}>
+                    <p style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>RÉFÉRENCE : {docNumber}</p>
+                    <p style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>{docType === 'FACTURE' ? `ÉCHÉANCE : ${formatDate(validUntil)}` : `VALIDITÉ : ${formatDate(validUntil)}`}</p>
+                    <p style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>{new Date().getFullYear()} — CONFIDENTIEL</p>
+                </div>
+              </div>
+            </div>
+
+            {/* PAGE 2: METHODOLOGY */}
+            <div className="a4-page">
+              <Header docType={docType} docNumber={docNumber} date={date} currency={currency} logoSrc={primaryLogoSrc} />
+              <div style={{ marginTop: 40 }}>
+                  <SectionTitle title="NOTRE MÉTHODOLOGIE : L'APPROCHE OZIRUS" />
+                  <p style={{ fontSize: 13, lineHeight: 1.7, color: '#475569', marginBottom: 30 }}>
+                    Ozirus Agency déploie des solutions digitales fondées sur des <b>standards technologiques internationaux</b>. Notre approche est conçue pour garantir la pérennité de vos investissements.
+                  </p>
+                  
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 20 }}>
+                    <MethodoBox step="01" title="DISCOVERY & ARCHITECTURE" text="Analyse approfondie de vos processus métiers et conception d'une architecture technique évolutive (Scalable). Nous ne construisons pas seulement des outils, nous bâtissons votre patrimoine digital." />
+                    <MethodoBox step="02" title="AGILE BUILD & CONTINUOUS DELIVERY" text="Développement itératif par cycles de 2 semaines. Vous disposez d'un accès permanent à l'environnement de staging pour valider chaque fonctionnalité en temps réel." />
+                    <MethodoBox step="03" title="DEPLOYMENT & SCALE" text="Optimisation des performances et déploiement sur des infrastructures cloud élastiques. Nous assurons l'accompagnement au changement pour garantir l'adoption par vos utilisateurs." />
+                  </div>
+
+                  <div style={{ marginTop: 40 }}>
+                    <SectionTitle title="TECH STACK & SCALABILITÉ" />
+                    <p style={{ fontSize: 11, color: '#64748B', lineHeight: 1.6, marginBottom: 20 }}>
+                      Nous utilisons des technologies de pointe permettant une <b>scalabilité horizontale</b> sans limite, assurant ainsi la stabilité de votre solution lors des pics de charge.
+                    </p>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 15 }}>
+                      <StackItem icon={<Globe size={14}/>} label="Web Engine" tech="Next.js / React" />
+                      <StackItem icon={<Smartphone size={14}/>} label="Native App" tech="Flutter / Swift" />
+                      <StackItem icon={<Database size={14}/>} label="Data Core" tech="PostgreSQL / Supabase" />
+                      <StackItem icon={<Server size={14}/>} label="Infrastructure" tech="Vercel / AWS" />
+                    </div>
+                  </div>
+
+                  <div style={{ gridTemplateColumns: '1fr 1fr', gap: 20, marginTop: 40, display: 'grid' }}>
+                    <div style={guaranteeCard}>
+                        <p style={guaranteeTitle}><Shield size={12} style={{marginRight:6}}/> GARANTIES TECHNIQUES</p>
+                        <ul style={guaranteeList}>
+                          <li><b>Sécurité :</b> Bonnes pratiques de protection des accès, données et secrets applicatifs.</li>
+                          <li><b>Disponibilité :</b> Déploiement sur infrastructures cloud reconnues, selon garanties des fournisseurs.</li>
+                          <li><b>Transfert :</b> Livraison du code spécifique, documentation et accès nécessaires après règlement.</li>
+                        </ul>
+                    </div>
+                    <div style={guaranteeCard}>
+                        <p style={guaranteeTitle}><Zap size={12} style={{marginRight:6}}/> PERFORMANCE & SUIVI</p>
+                        <ul style={guaranteeList}>
+                          <li><b>Suivi projet :</b> Points d'avancement réguliers et backlog de livraison partagé.</li>
+                          <li><b>Canal direct :</b> Groupe de coordination dédié pendant la phase projet.</li>
+                          <li><b>Contrôles :</b> Revue qualité, tests fonctionnels et vérifications sécurité adaptées au périmètre.</li>
+                        </ul>
+                    </div>
+                  </div>
+              </div>
+            </div>
+
+            {/* PAGE 3: CONTEXT & SOLUTIONS */}
+            <div className="a4-page">
+              <Header docType={docType} docNumber={docNumber} date={date} currency={currency} logoSrc={primaryLogoSrc} />
               
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 20 }}>
-                 <MethodoBox step="01" title="DISCOVERY & ARCHITECTURE" text="Analyse approfondie de vos processus métiers et conception d'une architecture technique évolutive (Scalable). Nous ne construisons pas seulement des outils, nous bâtissons votre patrimoine digital." />
-                 <MethodoBox step="02" title="AGILE BUILD & CONTINUOUS DELIVERY" text="Développement itératif par cycles de 2 semaines. Vous disposez d'un accès permanent à l'environnement de staging pour valider chaque fonctionnalité en temps réel." />
-                 <MethodoBox step="03" title="DEPLOYMENT & SCALE" text="Optimisation des performances et déploiement sur des infrastructures cloud élastiques. Nous assurons l'accompagnement au changement pour garantir l'adoption par vos utilisateurs." />
+              <div style={{ marginTop: 40 }}>
+                  <SectionTitle title="1. CONTEXTE STRATÉGIQUE" />
+                  <div style={{ fontSize: 12, lineHeight: 1.7, color: '#475569', marginBottom: 20 }} dangerouslySetInnerHTML={{ __html: projectContext }} />
+                  <div style={{ background: '#F1F5F966', padding: 25, borderRadius: 15, borderLeft: '4px solid #7967FF' }}>
+                    <p style={{ fontSize: 10, fontWeight: 900, color: '#7967FF', marginBottom: 12, letterSpacing: '0.1em' }}>OBJECTIFS DE PERFORMANCE :</p>
+                    <div style={{ fontSize: 11, lineHeight: 1.8, color: '#0F172A' }} dangerouslySetInnerHTML={{ __html: projectGoals }} />
+                  </div>
+                  <div style={{ marginTop: 20, background: '#FFF7ED', padding: 22, borderRadius: 15, border: '1px solid #FED7AA' }}>
+                    <p style={{ fontSize: 10, fontWeight: 900, color: '#F97316', marginBottom: 12, letterSpacing: '0.1em' }}>PÉRIMÈTRE NON INCLUS :</p>
+                    <div style={{ fontSize: 10, lineHeight: 1.7, color: '#7C2D12' }} dangerouslySetInnerHTML={{ __html: projectExclusions }} />
+                  </div>
               </div>
 
               <div style={{ marginTop: 40 }}>
-                <SectionTitle title="TECH STACK & SCALABILITÉ" />
-                <p style={{ fontSize: 11, color: '#64748B', lineHeight: 1.6, marginBottom: 20 }}>
-                   Nous utilisons des technologies de pointe permettant une <b>scalabilité horizontale</b> sans limite, assurant ainsi la stabilité de votre solution lors des pics de charge.
-                </p>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 15 }}>
-                   <StackItem icon={<Globe size={14}/>} label="Web Engine" tech="Next.js / React" />
-                   <StackItem icon={<Smartphone size={14}/>} label="Native App" tech="Flutter / Swift" />
-                   <StackItem icon={<Database size={14}/>} label="Data Core" tech="PostgreSQL / Supabase" />
-                   <StackItem icon={<Server size={14}/>} label="Infrastructure" tech="Vercel / AWS" />
-                </div>
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginTop: 40 }}>
-                 <div style={guaranteeCard}>
-                    <p style={guaranteeTitle}><Shield size={12} style={{marginRight:6}}/> GARANTIES TECHNIQUES</p>
-                    <ul style={guaranteeList}>
-                       <li><b>Sécurité :</b> Bonnes pratiques de protection des accès, données et secrets applicatifs.</li>
-                       <li><b>Disponibilité :</b> Déploiement sur infrastructures cloud reconnues, selon garanties des fournisseurs.</li>
-                       <li><b>Transfert :</b> Livraison du code spécifique, documentation et accès nécessaires après règlement.</li>
-                    </ul>
-                 </div>
-                 <div style={guaranteeCard}>
-                    <p style={guaranteeTitle}><Zap size={12} style={{marginRight:6}}/> PERFORMANCE & SUIVI</p>
-                    <ul style={guaranteeList}>
-                       <li><b>Suivi projet :</b> Points d'avancement réguliers et backlog de livraison partagé.</li>
-                       <li><b>Canal direct :</b> Groupe de coordination dédié pendant la phase projet.</li>
-                       <li><b>Contrôles :</b> Revue qualité, tests fonctionnels et vérifications sécurité adaptées au périmètre.</li>
-                    </ul>
-                 </div>
-              </div>
-           </div>
-        </div>
-
-        {/* PAGE 3: CONTEXT & SOLUTIONS */}
-        <div className="a4-page">
-           <Header docType={docType} docNumber={docNumber} date={date} currency={currency} logoSrc={primaryLogoSrc} />
-           
-           <div style={{ marginTop: 40 }}>
-              <SectionTitle title="1. CONTEXTE STRATÉGIQUE" />
-              <div style={{ fontSize: 12, lineHeight: 1.7, color: '#475569', marginBottom: 20 }} dangerouslySetInnerHTML={{ __html: projectContext }} />
-              <div style={{ background: '#F1F5F966', padding: 25, borderRadius: 15, borderLeft: '4px solid #7967FF' }}>
-                 <p style={{ fontSize: 10, fontWeight: 900, color: '#7967FF', marginBottom: 12, letterSpacing: '0.1em' }}>OBJECTIFS DE PERFORMANCE :</p>
-                 <div style={{ fontSize: 11, lineHeight: 1.8, color: '#0F172A' }} dangerouslySetInnerHTML={{ __html: projectGoals }} />
-              </div>
-              <div style={{ marginTop: 20, background: '#FFF7ED', padding: 22, borderRadius: 15, border: '1px solid #FED7AA' }}>
-                 <p style={{ fontSize: 10, fontWeight: 900, color: '#F97316', marginBottom: 12, letterSpacing: '0.1em' }}>PÉRIMÈTRE NON INCLUS :</p>
-                 <div style={{ fontSize: 10, lineHeight: 1.7, color: '#7C2D12' }} dangerouslySetInnerHTML={{ __html: projectExclusions }} />
-              </div>
-           </div>
-
-           <div style={{ marginTop: 40 }}>
-              <SectionTitle title="2. INGÉNIERIE DE LA SOLUTION" />
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 30 }}>
-                 {items.map((item, idx) => (
-                   <div key={idx} style={{ paddingBottom: 20, borderBottom: '1px solid #F1F5F9' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 }}>
-                         <p style={{ fontSize: 14, fontWeight: 900, color: '#0F172A' }}>{idx+1}. {item.description}</p>
-                         <p style={{ fontSize: 10, fontWeight: 700, color: '#94A3B8' }}>MODULE {idx+1}</p>
+                  <SectionTitle title="2. INGÉNIERIE DE LA SOLUTION" />
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 30 }}>
+                    {items.map((item, idx) => (
+                      <div key={idx} style={{ paddingBottom: 20, borderBottom: '1px solid #F1F5F9' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 }}>
+                            <p style={{ fontSize: 14, fontWeight: 900, color: '#0F172A' }}>{idx+1}. {item.description}</p>
+                            <p style={{ fontSize: 10, fontWeight: 700, color: '#94A3B8' }}>MODULE {idx+1}</p>
+                          </div>
+                          <div style={{ fontSize: 11, color: '#64748B', lineHeight: 1.6, marginBottom: 15 }} dangerouslySetInnerHTML={{ __html: item.longDescription }} />
+                          {item.subItems.length > 0 && (
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, padding: '15px', background: '#F8FAFC', borderRadius: '10px' }}>
+                              {item.subItems.map((s, si) => (
+                                <div key={si} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                    <div style={{width:4, height:4, borderRadius:'50%', background:'#7967FF'}}/>
+                                    <span style={{ fontSize: 10, color: '#334155', fontWeight: 600 }}>{s}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
                       </div>
-                      <div style={{ fontSize: 11, color: '#64748B', lineHeight: 1.6, marginBottom: 15 }} dangerouslySetInnerHTML={{ __html: item.longDescription }} />
-                      {item.subItems.length > 0 && (
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 10, padding: '15px', background: '#F8FAFC', borderRadius: '10px' }}>
-                           {item.subItems.map((s, si) => (
-                             <div key={si} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                <div style={{width:4, height:4, borderRadius:'50%', background:'#7967FF'}}/>
-                                <span style={{ fontSize: 10, color: '#334155', fontWeight: 600 }}>{s}</span>
-                             </div>
-                           ))}
+                    ))}
+                  </div>
+              </div>
+            </div>
+
+            {/* PAGE 4: FINANCE */}
+            <div className="a4-page">
+              <Header docType={docType} docNumber={docNumber} date={date} currency={currency} logoSrc={primaryLogoSrc} />
+
+              <div style={{ marginTop: 40 }}>
+                  <SectionTitle title="3. CADRE FINANCIER" />
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 28 }}>
+                    <InfoBox
+                      title="ÉMETTEUR"
+                      lines={[
+                        COMPANY_INFO.name,
+                        `NUI : ${COMPANY_INFO.taxId}`,
+                        `RCCM : ${COMPANY_INFO.registryId}`,
+                        COMPANY_INFO.address,
+                        `${COMPANY_INFO.email} | ${COMPANY_INFO.phone}`,
+                      ]}
+                    />
+                    <InfoBox
+                      title={docType === 'FACTURE' ? 'FACTURÉ À' : 'CLIENT'}
+                      lines={[
+                        clientCompany || '(Entreprise cliente)',
+                        clientName || '(Contact)',
+                        clientTaxId ? `NIU / ID fiscal : ${clientTaxId}` : 'NIU / ID fiscal : non renseigné',
+                        clientEmail || 'Email : non renseigné',
+                        clientAddress || 'Adresse : non renseignée',
+                      ]}
+                    />
+                  </div>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 30 }}>
+                    <thead>
+                      <tr style={{ borderBottom: '2px solid #7967FF' }}>
+                        <th style={{ textAlign: 'left', padding: '15px 0', fontSize: 10, color: '#94A3B8', letterSpacing: '0.1em' }}>DESCRIPTION</th>
+                        <th style={{ textAlign: 'center', padding: '15px 0', fontSize: 10, color: '#94A3B8', width: 60 }}>QTÉ</th>
+                        <th style={{ textAlign: 'right', padding: '15px 0', fontSize: 10, color: '#94A3B8', width: 120 }}>UNITÉ ({currency})</th>
+                        <th style={{ textAlign: 'right', padding: '15px 0', fontSize: 10, color: '#94A3B8', width: 120 }}>TOTAL ({currency})</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {items.map((item, idx) => (
+                        <tr key={idx} style={{ borderBottom: '1px solid #F1F5F9' }}>
+                          <td style={{ padding: '18px 0', fontSize: 12, fontWeight: 700 }}>{item.description}</td>
+                          <td style={{ padding: '18px 0', fontSize: 12, textAlign: 'center' }}>{item.quantity}</td>
+                          <td style={{ padding: '18px 0', fontSize: 12, textAlign: 'right' }}>{formatPrice(item.unitPrice).replace(currency, '').replace('FCFA','').trim()}</td>
+                          <td style={{ padding: '18px 0', fontSize: 12, fontWeight: 800, textAlign: 'right' }}>{formatPrice(item.unitPrice * item.quantity)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+
+                  <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <div style={{ width: 280, background: '#F8FAFC', padding: 25, borderRadius: 15, border: '1px solid #F1F5F9', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                      <SummaryLine label="Sous-total Brut" value={formatPrice(subtotal)} />
+                      {discount > 0 && <SummaryLine label="Remise commerciale" value={`-${formatPrice(discount)}`} color="#EF4444" />}
+                      <SummaryLine label="Total HT" value={formatPrice(totalHT)} weight={700} />
+                      {applyTVA && <SummaryLine label="TVA (19.25%)" value={formatPrice(tvaAmount)} />}
+                      {!applyTVA && <SummaryLine label="TVA" value="Non appliquée" />}
+                      <div style={{ height: 1, background: '#E2E8F0', margin: '5px 0' }} />
+                      <SummaryLine label="TOTAL TTC" value={formatPrice(totalTTC)} weight={900} color="#7967FF" size={18} />
+                      {acompte > 0 && <SummaryLine label="Acompte versé" value={`-${formatPrice(acompte)}`} color="#22C55E" />}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 16, fontWeight: 900, borderTop: '2px solid #7967FF', paddingTop: 12, marginTop: 5 }}>
+                          <span>NET À PAYER</span>
+                          <span>{formatPrice(netAPayer)}</span>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+
+              <div style={{ marginTop: 60, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60 }}>
+                  <div>
+                    <p style={{ fontSize: 10, fontWeight: 900, color: '#94A3B8', marginBottom: 15, letterSpacing: '0.1em' }}>ÉCHÉANCIER DE PAIEMENT :</p>
+                    <p style={{ fontSize: 10, color: '#64748B', marginBottom: 12, lineHeight: 1.6 }}>{docType === 'FACTURE' ? `Paiement attendu au plus tard le ${formatDate(validUntil)}.` : `Offre valable jusqu’au ${formatDate(validUntil)}.`}</p>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                        <PaymentStep step="01" label="Signature & Engagement" percent="50%" />
+                        <PaymentStep step="02" label="Validation Prototype / MVP" percent="30%" />
+                        <PaymentStep step="03" label="Livraison & Mise en service" percent="20%" />
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <p style={{ fontSize: 11, fontWeight: 900, color: '#0F172A', marginBottom: 12 }}>POUR ACCORD (Cachet et Signature)</p>
+                    <p style={{ fontSize: 9, color: '#64748B', marginBottom: 38 }}>Nom, fonction, date and mention manuscrite « bon pour accord »</p>
+                    <div style={{ width: 180, height: 100, border: '1px dashed #CBD5E1', borderRadius: 12, marginLeft: 'auto', display:'flex', alignItems:'center', justifyContent:'center' }}>
+                        <span style={{fontSize:9, color:'#CBD5E1'}}>Signature Client</span>
+                    </div>
+                  </div>
+              </div>
+            </div>
+
+            {/* PAGE 5: CGV */}
+            <div className="a4-page">
+              <Header docType={docType} docNumber={docNumber} date={date} currency={currency} logoSrc={primaryLogoSrc} />
+              <div style={{ marginTop: 40 }}>
+                  <SectionTitle title="4. CONDITIONS GÉNÉRALES & CADRE LÉGAL" />
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30 }}>
+                    <CGVItem title="DÉLAIS ET LIVRAISON" text={`La durée estimée du projet est de ${timeline}. Tout retard imputable au client (validation tardive, absence de données) entraînera un décalage équivalent du planning de livraison.`} />
+                    <CGVItem title="GESTION DES IMPAYÉS" text="Conformément aux usages commerciaux internationaux, tout retard de paiement entraîne l'application de plein droit de pénalités au taux annuel de 10%, majorées d'une échantillon forfaitaire pour frais de recouvrement de 26 250 FCFA (40€)." />
+                    <CGVItem title="PROPRIÉTÉ INTELLECTUELLE" text="La propriété du code spécifique, des écrans livrés and de l'architecture dédiée est transférée après règlement intégral. Les frameworks, bibliothèques tierces, composants génériques, outils internes and savoir-faire préexistants restent exclus de cette cession." />
+                    <CGVItem title="SUPPORT ET MAINTENANCE" text={supportTerms} />
+                    <CGVItem title="OBLIGATIONS DES PARTIES" text="Ozirus Agency s'engage à une obligation de moyens. Le client s'engage à collaborer activement, fournir les contenus, accès, validations and interlocuteurs nécessaires à la réalisation du projet." />
+                    <CGVItem title="TVA ET CONFORMITÉ" text={applyTVA ? "Les montants incluent la TVA au taux de 19,25% lorsque celle-ci est applicable. Les informations fiscales client doivent être exactes pour permettre le traitement comptable." : "La TVA n'est pas appliquée sur ce document selon le régime ou la configuration sélectionnée. La mention fiscale définitive doit être confirmée par le conseil comptable de l'entreprise."} />
+                  </div>
+                  
+                  <div style={{ marginTop: 50, padding: 25, background: '#0F172A', borderRadius: 15, color: '#FFF' }}>
+                    <p style={{ fontSize: 10, fontWeight: 900, color: '#7967FF', marginBottom: 15, letterSpacing: '0.1em' }}>MODALITÉS DE RÈGLEMENT :</p>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30 }}>
+                        <div>
+                          <p style={{ fontSize: 11, fontWeight: 800, marginBottom: 8 }}>{currency === 'FCFA' ? 'MOBILE MONEY (CAMEROUN)' : 'TRANSFERT INTERNATIONAL'}</p>
+                          <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, whiteSpace: 'pre-line' }}>{currency === 'FCFA' ? 'MTN & Orange Money : +237 694 08 65 71\nFrais à la charge du donneur d\'ordre.' : 'Ozirus Agency Worldwide Account\nIBAN : [DEMANDER LE RIB INTERNATIONAL]\nBIC/SWIFT : [SWIFT CODE]'}</p>
                         </div>
-                      )}
-                   </div>
-                 ))}
-              </div>
-           </div>
-        </div>
-
-        {/* PAGE 4: FINANCE */}
-        <div className="a4-page">
-           <Header docType={docType} docNumber={docNumber} date={date} currency={currency} logoSrc={primaryLogoSrc} />
-
-           <div style={{ marginTop: 40 }}>
-              <SectionTitle title="3. CADRE FINANCIER" />
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 28 }}>
-                <InfoBox
-                  title="ÉMETTEUR"
-                  lines={[
-                    COMPANY_INFO.name,
-                    `NUI : ${COMPANY_INFO.taxId}`,
-                    `RCCM : ${COMPANY_INFO.registryId}`,
-                    COMPANY_INFO.address,
-                    `${COMPANY_INFO.email} | ${COMPANY_INFO.phone}`,
-                  ]}
-                />
-                <InfoBox
-                  title={docType === 'FACTURE' ? 'FACTURÉ À' : 'CLIENT'}
-                  lines={[
-                    clientCompany || '(Entreprise cliente)',
-                    clientName || '(Contact)',
-                    clientTaxId ? `NIU / ID fiscal : ${clientTaxId}` : 'NIU / ID fiscal : non renseigné',
-                    clientEmail || 'Email : non renseigné',
-                    clientAddress || 'Adresse : non renseignée',
-                  ]}
-                />
-              </div>
-              <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 30 }}>
-                <thead>
-                  <tr style={{ borderBottom: '2px solid #7967FF' }}>
-                    <th style={{ textAlign: 'left', padding: '15px 0', fontSize: 10, color: '#94A3B8', letterSpacing: '0.1em' }}>DESCRIPTION</th>
-                    <th style={{ textAlign: 'center', padding: '15px 0', fontSize: 10, color: '#94A3B8', width: 60 }}>QTÉ</th>
-                    <th style={{ textAlign: 'right', padding: '15px 0', fontSize: 10, color: '#94A3B8', width: 120 }}>UNITÉ ({currency})</th>
-                    <th style={{ textAlign: 'right', padding: '15px 0', fontSize: 10, color: '#94A3B8', width: 120 }}>TOTAL ({currency})</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map((item, idx) => (
-                    <tr key={idx} style={{ borderBottom: '1px solid #F1F5F9' }}>
-                      <td style={{ padding: '18px 0', fontSize: 12, fontWeight: 700 }}>{item.description}</td>
-                      <td style={{ padding: '18px 0', fontSize: 12, textAlign: 'center' }}>{item.quantity}</td>
-                      <td style={{ padding: '18px 0', fontSize: 12, textAlign: 'right' }}>{formatPrice(item.unitPrice).replace(currency, '').replace('FCFA','').trim()}</td>
-                      <td style={{ padding: '18px 0', fontSize: 12, fontWeight: 800, textAlign: 'right' }}>{formatPrice(item.unitPrice * item.quantity)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <div style={{ width: 280, background: '#F8FAFC', padding: 25, borderRadius: 15, border: '1px solid #F1F5F9', display: 'flex', flexDirection: 'column', gap: 12 }}>
-                   <SummaryLine label="Sous-total Brut" value={formatPrice(subtotal)} />
-                   {discount > 0 && <SummaryLine label="Remise commerciale" value={`-${formatPrice(discount)}`} color="#EF4444" />}
-                   <SummaryLine label="Total HT" value={formatPrice(totalHT)} weight={700} />
-                   {applyTVA && <SummaryLine label="TVA (19.25%)" value={formatPrice(tvaAmount)} />}
-                   {!applyTVA && <SummaryLine label="TVA" value="Non appliquée" />}
-                   <div style={{ height: 1, background: '#E2E8F0', margin: '5px 0' }} />
-                   <SummaryLine label="TOTAL TTC" value={formatPrice(totalTTC)} weight={900} color="#7967FF" size={18} />
-                   {acompte > 0 && <SummaryLine label="Acompte versé" value={`-${formatPrice(acompte)}`} color="#22C55E" />}
-                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 16, fontWeight: 900, borderTop: '2px solid #7967FF', paddingTop: 12, marginTop: 5 }}>
-                      <span>NET À PAYER</span>
-                      <span>{formatPrice(netAPayer)}</span>
-                   </div>
-                </div>
-              </div>
-           </div>
-
-           <div style={{ marginTop: 60, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 60 }}>
-              <div>
-                 <p style={{ fontSize: 10, fontWeight: 900, color: '#94A3B8', marginBottom: 15, letterSpacing: '0.1em' }}>ÉCHÉANCIER DE PAIEMENT :</p>
-                 <p style={{ fontSize: 10, color: '#64748B', marginBottom: 12, lineHeight: 1.6 }}>{docType === 'FACTURE' ? `Paiement attendu au plus tard le ${formatDate(validUntil)}.` : `Offre valable jusqu’au ${formatDate(validUntil)}.`}</p>
-                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    <PaymentStep step="01" label="Signature & Engagement" percent="50%" />
-                    <PaymentStep step="02" label="Validation Prototype / MVP" percent="30%" />
-                    <PaymentStep step="03" label="Livraison & Mise en service" percent="20%" />
-                 </div>
-              </div>
-              <div style={{ textAlign: 'right' }}>
-                 <p style={{ fontSize: 11, fontWeight: 900, color: '#0F172A', marginBottom: 12 }}>POUR ACCORD (Cachet et Signature)</p>
-                 <p style={{ fontSize: 9, color: '#64748B', marginBottom: 38 }}>Nom, fonction, date et mention manuscrite « bon pour accord »</p>
-                 <div style={{ width: 180, height: 100, border: '1px dashed #CBD5E1', borderRadius: 12, marginLeft: 'auto', display:'flex', alignItems:'center', justifyContent:'center' }}>
-                    <span style={{fontSize:9, color:'#CBD5E1'}}>Signature Client</span>
-                 </div>
-              </div>
-           </div>
-        </div>
-
-        {/* PAGE 5: CGV */}
-        <div className="a4-page">
-           <Header docType={docType} docNumber={docNumber} date={date} currency={currency} logoSrc={primaryLogoSrc} />
-           <div style={{ marginTop: 40 }}>
-              <SectionTitle title="4. CONDITIONS GÉNÉRALES & CADRE LÉGAL" />
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30 }}>
-                 <CGVItem title="DÉLAIS ET LIVRAISON" text={`La durée estimée du projet est de ${timeline}. Tout retard imputable au client (validation tardive, absence de données) entraînera un décalage équivalent du planning de livraison.`} />
-                 <CGVItem title="GESTION DES IMPAYÉS" text="Conformément aux usages commerciaux internationaux, tout retard de paiement entraîne l'application de plein droit de pénalités au taux annuel de 10%, majorées d'une indemnité forfaitaire pour frais de recouvrement de 26 250 FCFA (40€)." />
-                 <CGVItem title="PROPRIÉTÉ INTELLECTUELLE" text="La propriété du code spécifique, des écrans livrés et de l'architecture dédiée est transférée après règlement intégral. Les frameworks, bibliothèques tierces, composants génériques, outils internes et savoir-faire préexistants restent exclus de cette cession." />
-                 <CGVItem title="SUPPORT ET MAINTENANCE" text={supportTerms} />
-                 <CGVItem title="OBLIGATIONS DES PARTIES" text="Ozirus Agency s'engage à une obligation de moyens. Le client s'engage à collaborer activement, fournir les contenus, accès, validations et interlocuteurs nécessaires à la réalisation du projet." />
-                 <CGVItem title="TVA ET CONFORMITÉ" text={applyTVA ? "Les montants incluent la TVA au taux de 19,25% lorsque celle-ci est applicable. Les informations fiscales client doivent être exactes pour permettre le traitement comptable." : "La TVA n'est pas appliquée sur ce document selon le régime ou la configuration sélectionnée. La mention fiscale définitive doit être confirmée par le conseil comptable de l'entreprise."} />
-              </div>
-              
-              <div style={{ marginTop: 50, padding: 25, background: '#0F172A', borderRadius: 15, color: '#FFF' }}>
-                 <p style={{ fontSize: 10, fontWeight: 900, color: '#7967FF', marginBottom: 15, letterSpacing: '0.1em' }}>MODALITÉS DE RÈGLEMENT :</p>
-                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 30 }}>
-                    <div>
-                       <p style={{ fontSize: 11, fontWeight: 800, marginBottom: 8 }}>{currency === 'FCFA' ? 'MOBILE MONEY (CAMEROUN)' : 'TRANSFERT INTERNATIONAL'}</p>
-                       <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, whiteSpace: 'pre-line' }}>{currency === 'FCFA' ? 'MTN & Orange Money : +237 694 08 65 71\nFrais à la charge du donneur d\'ordre.' : 'Ozirus Agency Worldwide Account\nIBAN : [DEMANDER LE RIB INTERNATIONAL]\nBIC/SWIFT : [SWIFT CODE]'}</p>
+                        <div>
+                          <p style={{ fontSize: 11, fontWeight: 800, marginBottom: 8 }}>IDENTITÉ FISCALE</p>
+                          <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6 }}>{COMPANY_INFO.name}<br/>NUI : {COMPANY_INFO.taxId}<br/>RCCM : {COMPANY_INFO.registryId}<br/>Siège : {COMPANY_INFO.address}<br/>{COMPANY_INFO.email} | {COMPANY_INFO.website}</p>
+                        </div>
                     </div>
-                    <div>
-                       <p style={{ fontSize: 11, fontWeight: 800, marginBottom: 8 }}>IDENTITÉ FISCALE</p>
-                       <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6 }}>{COMPANY_INFO.name}<br/>NUI : {COMPANY_INFO.taxId}<br/>RCCM : {COMPANY_INFO.registryId}<br/>Siège : {COMPANY_INFO.address}<br/>{COMPANY_INFO.email} | {COMPANY_INFO.website}</p>
-                    </div>
-                 </div>
+                  </div>
               </div>
-           </div>
-        </div>
+            </div>
+          </>
+        )}
 
       </div>
 

@@ -28,7 +28,7 @@ export default function TermsPage() {
           </p>
           <h3 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12 }}>2.2 Garantie de Satisfaction</h3>
           <p style={{ lineHeight: 1.7, color: '#444' }}>
-            Nous offrons une garantie "Satisfait ou Remboursé" de 14 jours calendaires à compter de la date d'achat. Pour être éligible, l'étudiant ne doit pas avoir visionné plus de 20% du contenu total de la formation. Toute demande de remboursement doit être envoyée par email à contact.fotie@gmail.com.
+            Nous offrons une garantie "Satisfait ou Remboursé" de 14 jours calendaires à compter de la date d'achat. Pour être éligible, l'étudiant ne doit pas avoir visionné plus de 20% du contenu total de la formation. Toute demande de remboursement doit être envoyée par email à info.ozirus@gmail.com.
           </p>
         </section>
 

@@ -42,7 +42,7 @@
 
 ### 2. Informations de contact
 Met à jour dans `components/Contact.tsx` :
-- Email : `contact.fotie@gmail.com` (lignes 178 et 185)
+- Email : `info.ozirus@gmail.com` (lignes 178 et 185)
 - Téléphone : `+33 1 23 45 67 89` (ligne 193)
 
 ### 3. Domaine et URL

@@ -6,7 +6,7 @@ export const authConfig = {
       const isAdminPage = nextUrl.pathname.startsWith('/admin');
       
       if (isAdminPage) {
-        if (isLoggedIn) return auth.user?.email === "contact.fotie@gmail.com";
+        if (isLoggedIn) return auth.user?.email === "info.ozirus@gmail.com";
         return false;
       }
       return true;
