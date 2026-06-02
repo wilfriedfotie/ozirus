@@ -14,7 +14,7 @@ export default function Contact() {
     setLoading(true);
 
     try {
-      const FORMSPREE_ID = 'YOUR_FORMSPREE_ID'; 
+      const FORMSPREE_ID = 'mdajqpaj'; 
 
       if (FORMSPREE_ID === 'YOUR_FORMSPREE_ID') {
          await new Promise(resolve => setTimeout(resolve, 1500));

@@ -31,9 +31,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     setStatus('sending');
 
     try {
-      // Pour activer l'envoi réel, remplace 'YOUR_FORMSPREE_ID' par ton ID Formspree
-      // Crée un compte sur https://formspree.io/ pour obtenir ton ID gratuitement
-      const FORMSPREE_ID = 'YOUR_FORMSPREE_ID'; 
+      // ID Formspree réel pour Ozirus Agency
+      const FORMSPREE_ID = 'mdajqpaj'; 
 
       if (FORMSPREE_ID === 'YOUR_FORMSPREE_ID') {
          // Simulation si l'ID n'est pas renseigné
