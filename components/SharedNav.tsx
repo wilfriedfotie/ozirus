@@ -11,6 +11,7 @@ interface Props {
   ctaLabel?: string;
   ctaHref?: string;
   dark?: boolean;
+  onContactClick?: () => void;
 }
 
 const PAGES = [
@@ -20,7 +21,7 @@ const PAGES = [
   { href: '/dev',          label: 'Studio Dev' },
 ];
 
-export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel, ctaHref: propCtaHref, dark: propDark = false }: Props) {
+export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel, ctaHref: propCtaHref, dark: propDark = false, onContactClick }: Props) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [anchorsOpen, setAnchorsOpen] = useState(false);
@@ -75,6 +76,15 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
   }
 
   const { anchors, ctaLabel, ctaHref, dark } = config;
+
+  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href === '#contact' && onContactClick) {
+      e.preventDefault();
+      onContactClick();
+      setDropdownOpen(false);
+      setMenuOpen(false);
+    }
+  };
 
   /* ── responsive detection ── */
   useEffect(() => {
@@ -188,7 +198,7 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
                         <a
                           key={a.href}
                           href={a.href}
-                          onClick={() => setDropdownOpen(false)}
+                          onClick={(e) => handleAnchorClick(e, a.href)}
                           style={{
                             display: 'block', padding: '9px 18px',
                             fontSize: 13, fontWeight: 500, color: dropdownItemColor,
@@ -245,6 +255,7 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
             {!showBurger && (
               <a
                 href={ctaHref}
+                onClick={(e) => handleAnchorClick(e, ctaHref)}
                 style={{
                   background: '#7967FF', color: '#fff', padding: '10px 20px',
                   borderRadius: 8, fontSize: 14, fontWeight: 600,
@@ -341,7 +352,10 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
                       <a
                         key={a.href}
                         href={a.href}
-                        onClick={() => setMenuOpen(false)}
+                        onClick={(e) => {
+                          handleAnchorClick(e, a.href);
+                          if (a.href !== '#contact') setMenuOpen(false);
+                        }}
                         style={{
                           display: 'block', padding: '12px 14px',
                           fontSize: 15, fontWeight: 500, color: drawerLinkColor,
@@ -417,7 +431,10 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
               {/* CTA */}
               <a
                 href={ctaHref}
-                onClick={() => setMenuOpen(false)}
+                onClick={(e) => {
+                  handleAnchorClick(e, ctaHref);
+                  if (ctaHref !== '#contact') setMenuOpen(false);
+                }}
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   background: '#7967FF', color: '#fff',
