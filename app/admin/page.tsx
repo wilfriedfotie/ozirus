@@ -551,13 +551,13 @@ function AdminContent() {
                   <p style={{ fontSize: 6.5, fontStyle: 'italic', color: '#64748B', lineHeight: 1.3, margin: '0 0 5px 0', fontWeight: 600 }}>"On crée les outils de demain pour faire grandir votre projet dès aujourd'hui."</p>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 3, alignItems: 'center' }}>
                     {[
-                      { icon: '✦', text: 'Gagnez du temps chaque jour' },
-                      { icon: '✦', text: 'Boostez vos résultats avec l\'IA' },
-                      { icon: '✦', text: 'Vos outils sur le web & mobile' }
+                      { icon: '✦', text: 'Profitez de l\'IA : Réduisez vos dépenses et optimisez votre rentabilité' },
+                      { icon: '✦', text: 'Solutions Robustes : Nous réalisons vos applications de rêve performantes' },
+                      { icon: '✦', text: 'Automatisation : Libérez-vous des tâches répétitives dès aujourd\'hui' }
                     ].map((item, i) => (
                       <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
                         <span style={{ fontSize: 5, color: '#7967FF' }}>{item.icon}</span>
-                        <span style={{ fontSize: 5.5, fontWeight: 800, color: '#0F172A' }}>{item.text}</span>
+                        <span style={{ fontSize: 5.5, fontWeight: 800, color: '#0F172A', textAlign: 'left' }}>{item.text}</span>
                       </div>
                     ))}
                   </div>
