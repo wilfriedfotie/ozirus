@@ -16,7 +16,7 @@ import {
 
 /* ─── AUTH CONFIG ─────────────────────────────────── */
 const ADMIN_SECRET_KEY = 'ozirus_admin_2026';
-const ADMIN_ALLOWED_EMAIL = 'info.ozirus@gmail.com';
+const ADMIN_ALLOWED_EMAILS = ['info.ozirus@gmail.com', 'contact.fotie@gmail.com'];
 const PRIMARY_COLOR = '#7967FF';
 const PRIMARY_LOGO_FALLBACK_FILTER = 'brightness(0) saturate(100%) invert(43%) sepia(91%) saturate(2126%) hue-rotate(224deg) brightness(101%) contrast(101%)';
 const COMPANY_INFO = {
@@ -173,7 +173,7 @@ function AdminContent() {
         const session = await response.json();
         const email = session?.user?.email;
 
-        if (!isCancelled && email === ADMIN_ALLOWED_EMAIL) {
+        if (!isCancelled && email && ADMIN_ALLOWED_EMAILS.includes(email)) {
           localStorage.setItem('ozirus_admin_auth', 'true');
           setIsAuthorized(true);
           return;
