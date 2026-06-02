@@ -10,7 +10,7 @@ import {
   ChevronRight, ArrowLeft, Check, Copy,
   Info, ShieldCheck, Clock, FilePlus,
   Layout, ListChecks, Database, Zap,
-  Globe, Shield, Smartphone, Server,
+  Globe, Shield, Smartphone, Server, Mail,
   BarChart3, Target, Rocket
 } from 'lucide-react';
 
@@ -99,6 +99,10 @@ function AdminContent() {
   const [socialTitle, setSocialTitle] = useState('Ozirus transforme votre PME avec l\'IA');
   const [socialSubtitle, setSocialSubtitle] = useState('Automatisez vos processus et gagnez 10h par semaine');
   const [socialType, setSocialType] = useState<'POST' | 'CAROUSEL'>('POST');
+  const [socialTheme, setSocialTheme] = useState<'DARK' | 'LIGHT'>('DARK');
+  const [socialSize, setSocialSize] = useState<'SQUARE' | 'PORTRAIT' | 'STORY' | 'LANDSCAPE'>('SQUARE');
+  const [socialPattern, setSocialPattern] = useState<'GRID' | 'WAVES'>('GRID');
+  const [socialFontSize, setSocialFontSize] = useState<number>(48);
   const [carouselSlides, setCarouselSlides] = useState([
     { title: 'Étape 01', text: 'Audit de vos processus actuels' },
     { title: 'Étape 02', text: 'Déploiement de votre agent IA' },
@@ -155,7 +159,7 @@ function AdminContent() {
   const [acompte, setAcompte] = useState(0);
 
   const [timeline, setTimeline] = useState('6 à 12 semaines');
-  const [activeTab, setActiveTab] = useState<'CLIENT' | 'PROJET' | 'FINANCE' | 'LEGAL' | 'IDENTITE'>('CLIENT');
+  const [activeTab, setActiveTab] = useState<'CLIENT' | 'PROJET' | 'FINANCE' | 'LEGAL' | 'IDENTITE' | 'SOCIAL'>('CLIENT');
   const [currency, setCurrency] = useState<'FCFA' | '€' | '$'>('FCFA');
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -214,8 +218,10 @@ function AdminContent() {
 
     if (docType === 'BADGE' || docType === 'CARTE DE VISITE') {
       setActiveTab('IDENTITE');
+    } else if (docType === 'SOCIAL') {
+      setActiveTab('SOCIAL');
     } else {
-      if (activeTab === 'IDENTITE') setActiveTab('CLIENT');
+      if (activeTab === 'IDENTITE' || activeTab === 'SOCIAL') setActiveTab('CLIENT');
     }
   }, [docType]);
 
@@ -260,33 +266,44 @@ function AdminContent() {
       const isCustomSize = docType === 'BADGE' || docType === 'CARTE DE VISITE' || docType === 'SOCIAL';
       const pages = document.querySelectorAll(isCustomSize ? '.print-target' : '.a4-page');
       
-      if (docType === 'SOCIAL') {
-        // Export as Images (JPG) for Social Media
-        for (let i = 0; i < pages.length; i++) {
-          const canvas = await html2canvas(pages[i] as HTMLElement, { scale: 3, useCORS: true });
-          const link = document.createElement('a');
-          link.download = `Ozirus_Post_${i+1}.jpg`;
-          link.href = canvas.toDataURL('image/jpeg', 0.9);
-          link.click();
-        }
+      if (docType === 'SOCIAL' && socialType === 'POST') {
+        // Export as High-Quality Image (JPG) for Single Post
+        const page = pages[0] as HTMLElement;
+        const canvas = await html2canvas(page, { scale: 3, useCORS: true });
+        const link = document.createElement('a');
+        link.download = `Ozirus_Post_${socialSize}.jpg`;
+        link.href = canvas.toDataURL('image/jpeg', 0.9);
+        link.click();
       } else {
-        const pdf = new jsPDF(
-          docType === 'CARTE DE VISITE' ? 'l' : 'p', 
-          'mm', 
-          !isCustomSize ? 'a4' : (docType === 'BADGE' ? [54, 86] : [85, 55])
-        );
+        // Handle PDF Export for DOCS, BADGE, CARTE, and SOCIAL CAROUSEL
+        let pdfFormat: any = 'a4';
+        let pdfOrientation: 'p' | 'l' = 'p';
+
+        if (docType === 'BADGE') pdfFormat = [54, 86];
+        else if (docType === 'CARTE DE VISITE') { pdfFormat = [85, 55]; pdfOrientation = 'l'; }
+        else if (docType === 'SOCIAL' && socialType === 'CAROUSEL') {
+          // Adjust PDF dimensions based on socialSize
+          if (socialSize === 'SQUARE') pdfFormat = [200, 200];
+          else if (socialSize === 'PORTRAIT') pdfFormat = [200, 250];
+          else if (socialSize === 'STORY') pdfFormat = [200, 355];
+          else if (socialSize === 'LANDSCAPE') { pdfFormat = [200, 112]; pdfOrientation = 'l'; }
+        }
+
+        const pdf = new jsPDF(pdfOrientation, 'mm', pdfFormat);
 
         for (let i = 0; i < pages.length; i++) {
           const page = pages[i] as HTMLElement;
           const canvas = await html2canvas(page, { scale: 3, useCORS: true, backgroundColor: '#FFFFFF' });
           const imgData = canvas.toDataURL('image/jpeg', 1.0);
-          if (i > 0) pdf.addPage();
+          
+          if (i > 0) pdf.addPage(pdfFormat, pdfOrientation);
+          
           const pdfWidth = pdf.internal.pageSize.getWidth();
           const pdfHeight = pdf.internal.pageSize.getHeight();
           pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
         }
 
-        const fileName = `${docType.split(' ')[0]}_${isCustomSize ? personName : clientCompany || 'OZIRUS'}_${docNumber}.pdf`.replace(/\s+/g, '_');
+        const fileName = `${docType.split(' ')[0]}_${isCustomSize ? (docType === 'SOCIAL' ? 'Carousel' : personName) : clientCompany || 'OZIRUS'}_${docNumber}.pdf`.replace(/\s+/g, '_');
         pdf.save(fileName);
       }
     } catch (err) {
@@ -334,7 +351,7 @@ function AdminContent() {
               <button onClick={() => setActiveTab('LEGAL')} style={{ ...subTab, color: activeTab === 'LEGAL' ? '#7967FF' : '#94A3B8', borderBottomColor: activeTab === 'LEGAL' ? '#7967FF' : 'transparent' }}><ShieldCheck size={14} /></button>
             </>
           ) : docType === 'SOCIAL' ? (
-            <button onClick={() => setActiveTab('PROJET')} style={{ ...subTab, color: activeTab === 'PROJET' ? '#7967FF' : '#94A3B8', borderBottomColor: activeTab === 'PROJET' ? '#7967FF' : 'transparent' }}><Layout size={14} /></button>
+            <button onClick={() => setActiveTab('SOCIAL')} style={{ ...subTab, color: activeTab === 'SOCIAL' ? '#7967FF' : '#94A3B8', borderBottomColor: activeTab === 'SOCIAL' ? '#7967FF' : 'transparent' }}><Layout size={14} /></button>
           ) : (
             <button onClick={() => setActiveTab('IDENTITE')} style={{ ...subTab, color: activeTab === 'IDENTITE' ? '#7967FF' : '#94A3B8', borderBottomColor: activeTab === 'IDENTITE' ? '#7967FF' : 'transparent' }}><User size={14} /></button>
           )}
@@ -349,13 +366,74 @@ function AdminContent() {
             </div>
           )}
 
-          {docType === 'SOCIAL' && (
+          {docType === 'SOCIAL' && activeTab === 'SOCIAL' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-              <div>
-                <p style={sectionTitle}>Type de publication</p>
-                <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                  <button onClick={() => setSocialType('POST')} style={{ ...tabBtn, flex: 1, background: socialType === 'POST' ? '#7967FF' : '#F1F5F9', color: socialType === 'POST' ? '#FFF' : '#64748B' }}>Post Simple</button>
-                  <button onClick={() => setSocialType('CAROUSEL')} style={{ ...tabBtn, flex: 1, background: socialType === 'CAROUSEL' ? '#7967FF' : '#F1F5F9', color: socialType === 'CAROUSEL' ? '#FFF' : '#64748B' }}>Carrousel</button>
+              <div style={{ background: '#F8FAFC', padding: 16, borderRadius: 16, border: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div>
+                  <p style={sectionTitle}>Format & Style</p>
+                  <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
+                    <button onClick={() => setSocialType('POST')} style={{ ...tabBtn, flex: 1, background: socialType === 'POST' ? '#7967FF' : '#FFF', color: socialType === 'POST' ? '#FFF' : '#64748B', border: socialType === 'POST' ? 'none' : '1px solid #E2E8F0', boxShadow: socialType === 'POST' ? '0 4px 12px rgba(121,103,255,0.2)' : 'none' }}>Post Unique</button>
+                    <button onClick={() => setSocialType('CAROUSEL')} style={{ ...tabBtn, flex: 1, background: socialType === 'CAROUSEL' ? '#7967FF' : '#FFF', color: socialType === 'CAROUSEL' ? '#FFF' : '#64748B', border: socialType === 'CAROUSEL' ? 'none' : '1px solid #E2E8F0', boxShadow: socialType === 'CAROUSEL' ? '0 4px 12px rgba(121,103,255,0.2)' : 'none' }}>Carrousel IA</button>
+                  </div>
+                  <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                    <button onClick={() => setSocialTheme('DARK')} style={{ ...tabBtn, flex: 1, background: socialTheme === 'DARK' ? '#0F172A' : '#FFF', color: socialTheme === 'DARK' ? '#FFF' : '#64748B', border: socialTheme === 'DARK' ? 'none' : '1px solid #E2E8F0' }}>Dark Mode</button>
+                    <button onClick={() => setSocialTheme('LIGHT')} style={{ ...tabBtn, flex: 1, background: socialTheme === 'LIGHT' ? '#F8FAFC' : '#FFF', color: socialTheme === 'LIGHT' ? '#0F172A' : '#64748B', border: socialTheme === 'LIGHT' ? 'none' : '1px solid #E2E8F0' }}>Light Mode</button>
+                  </div>
+                  <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                    <button onClick={() => setSocialPattern('GRID')} style={{ ...tabBtn, flex: 1, background: socialPattern === 'GRID' ? '#7967FF15' : '#FFF', color: socialPattern === 'GRID' ? '#7967FF' : '#64748B', border: socialPattern === 'GRID' ? '1px solid #7967FF33' : '1px solid #E2E8F0' }}>Motif : Grille</button>
+                    <button onClick={() => setSocialPattern('WAVES')} style={{ ...tabBtn, flex: 1, background: socialPattern === 'WAVES' ? '#7967FF15' : '#FFF', color: socialPattern === 'WAVES' ? '#7967FF' : '#64748B', border: socialPattern === 'WAVES' ? '1px solid #7967FF33' : '1px solid #E2E8F0' }}>Motif : Waves</button>
+                  </div>
+                  </div>
+
+                <div>
+                  <p style={sectionTitle}>Plateforme / Dimensions</p>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, marginTop: 8 }}>
+                    {[
+                      { id: 'SQUARE', label: 'LinkedIn', desc: 'Carré 1:1' },
+                      { id: 'SQUARE', label: 'Facebook', desc: 'Carré 1:1' },
+                      { id: 'LANDSCAPE', label: 'Twitter', desc: 'Vignette 16:9' },
+                      { id: 'PORTRAIT', label: 'Instagram', desc: 'Portrait 4:5' },
+                      { id: 'STORY', label: 'Story', desc: 'Mobile 9:16' }
+                    ].map((sz, idx) => {
+                      const isActive = socialSize === sz.id && (
+                        (sz.label === 'LinkedIn' && socialSize === 'SQUARE') || 
+                        (sz.label === 'Facebook' && socialSize === 'SQUARE') ||
+                        (sz.label === 'Twitter' && socialSize === 'LANDSCAPE') ||
+                        (sz.label === 'Instagram' && socialSize === 'PORTRAIT') ||
+                        (sz.label === 'Story' && socialSize === 'STORY')
+                      );
+                      // Simplified selection for demo, we'll just use the ID but keep labels unique-ish
+                      return (
+                        <button 
+                          key={idx}
+                          onClick={() => setSocialSize(sz.id as any)}
+                          style={{ 
+                            padding: '10px 4px', borderRadius: 10, fontSize: 10, fontWeight: 800,
+                            background: socialSize === sz.id ? '#7967FF' : '#FFF',
+                            color: socialSize === sz.id ? '#FFF' : '#64748B',
+                            border: socialSize === sz.id ? 'none' : '1px solid #E2E8F0',
+                            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2
+                          }}
+                        >
+                          <span style={{ fontSize: 9 }}>{sz.label}</span>
+                          <span style={{ fontSize: 7, opacity: 0.7 }}>{sz.desc}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                    <p style={sectionTitle}>Taille Police</p>
+                    <span style={{ fontSize: 11, fontWeight: 800, color: '#7967FF' }}>{socialFontSize}px</span>
+                  </div>
+                  <input 
+                    type="range" min="24" max="80" step="2" 
+                    value={socialFontSize} 
+                    onChange={e => setSocialFontSize(parseInt(e.target.value))} 
+                    style={{ width: '100%', accentColor: '#7967FF' }} 
+                  />
                 </div>
               </div>
 
@@ -363,33 +441,46 @@ function AdminContent() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                   <div>
                     <label style={labelStyle}>Accroche principale</label>
-                    <textarea value={socialTitle} onChange={e => setSocialTitle(e.target.value)} style={{ ...inputStyle, minHeight: 80 }} />
+                    <textarea value={socialTitle} onChange={e => setSocialTitle(e.target.value)} style={{ ...inputStyle, minHeight: 100 }} placeholder="Ex: Comment l'IA transforme votre business..." />
                   </div>
                   <div>
-                    <label style={labelStyle}>Sous-titre / Appel à l'action</label>
-                    <input type="text" value={socialSubtitle} onChange={e => setSocialSubtitle(e.target.value)} style={inputStyle} />
+                    <label style={labelStyle}>Appel à l'action</label>
+                    <input type="text" value={socialSubtitle} onChange={e => setSocialSubtitle(e.target.value)} style={inputStyle} placeholder="Ex: Obtenez votre diagnostic gratuit" />
                   </div>
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                  <p style={sectionTitle}>Slides du carrousel</p>
-                  {carouselSlides.map((slide, idx) => (
-                    <div key={idx} style={{ border: '1px solid #F1F5F9', padding: 12, borderRadius: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <span style={{ fontSize: 10, fontWeight: 900, color: '#7967FF' }}>Slide {idx + 1}</span>
-                          <button onClick={() => setCarouselSlides(carouselSlides.filter((_, i) => i !== idx))} style={{ color: '#EF4444' }}><Trash2 size={14} /></button>
-                       </div>
-                       <input type="text" value={slide.title} onChange={e => setCarouselSlides(carouselSlides.map((s, i) => i === idx ? { ...s, title: e.target.value } : s))} style={inputStyle} placeholder="Titre du slide" />
-                       <textarea value={slide.text} onChange={e => setCarouselSlides(carouselSlides.map((s, i) => i === idx ? { ...s, text: e.target.value } : s))} style={{ ...inputStyle, fontSize: 12 }} placeholder="Texte descriptif" />
-                    </div>
-                  ))}
-                  <button onClick={() => setCarouselSlides([...carouselSlides, { title: 'Nouveau Titre', text: 'Nouveau texte...' }])} style={{ ...primaryBtnStyle, background: '#F8FAFC', color: '#7967FF', boxShadow: 'none', border: '1px dashed #7967FF' }}>+ Ajouter un slide</button>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <p style={sectionTitle}>Séquence de slides ({carouselSlides.length})</p>
+                    <span style={{ fontSize: 10, color: '#7967FF', fontWeight: 800 }}>DÉFILEMENT HORIZONTAL →</span>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                    {carouselSlides.map((slide, idx) => (
+                      <div key={idx} style={{ background: '#FFF', border: '1px solid #E2E8F0', padding: 16, borderRadius: 16, display: 'flex', flexDirection: 'column', gap: 10, boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <span style={{ width: 24, height: 24, background: '#7967FF15', color: '#7967FF', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, fontWeight: 900 }}>{idx + 1}</span>
+                                <span style={{ fontSize: 11, fontWeight: 800, color: '#0F172A' }}>Slide de contenu</span>
+                            </div>
+                            <button onClick={() => setCarouselSlides(carouselSlides.filter((_, i) => i !== idx))} style={{ width: 28, height: 28, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#EF4444', background: '#FEF2F2', border: 'none' }}><Trash2 size={14} /></button>
+                        </div>
+                        <input type="text" value={slide.title} onChange={e => setCarouselSlides(carouselSlides.map((s, i) => i === idx ? { ...s, title: e.target.value } : s))} style={{ ...inputStyle, padding: '8px 12px', fontSize: 12, fontWeight: 700 }} placeholder="Titre percutant" />
+                        <textarea value={slide.text} onChange={e => setCarouselSlides(carouselSlides.map((s, i) => i === idx ? { ...s, text: e.target.value } : s))} style={{ ...inputStyle, fontSize: 12, minHeight: 60, padding: '8px 12px' }} placeholder="Texte explicatif court" />
+                      </div>
+                    ))}
+                  </div>
+                  <button 
+                    onClick={() => setCarouselSlides([...carouselSlides, { title: 'Nouveau Titre', text: 'Ajoutez une explication claire et concise ici.' }])} 
+                    style={{ ...primaryBtnStyle, background: '#FFF', color: '#7967FF', border: '2px dashed #7967FF33', boxShadow: 'none', marginTop: 8 }}
+                  >
+                    <Plus size={18} /> Ajouter une étape
+                  </button>
                 </div>
               )}
             </div>
           )}
 
-          {activeTab === 'IDENTITE' && (
+          {(docType === 'BADGE' || docType === 'CARTE DE VISITE') && activeTab === 'IDENTITE' && (
              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                 <div>
                   <p style={sectionTitle}>Informations Personnel</p>
@@ -408,7 +499,7 @@ function AdminContent() {
              </div>
           )}
 
-          {activeTab === 'CLIENT' && (
+          {isDoc && activeTab === 'CLIENT' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               <div>
                 <p style={sectionTitle}>Identité Client</p>
@@ -434,7 +525,7 @@ function AdminContent() {
             </div>
           )}
 
-          {activeTab === 'PROJET' && (
+          {isDoc && activeTab === 'PROJET' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
               <div>
                 <p style={sectionTitle}>Vision du projet</p>
@@ -500,7 +591,7 @@ function AdminContent() {
             </div>
           )}
 
-          {activeTab === 'FINANCE' && (
+          {isDoc && activeTab === 'FINANCE' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               <div>
                 <p style={sectionTitle}>Réglages Financiers</p>
@@ -544,7 +635,7 @@ function AdminContent() {
             </div>
           )}
 
-          {activeTab === 'LEGAL' && (
+          {isDoc && activeTab === 'LEGAL' && (
             <div style={{ fontSize: 12, color: '#64748B', lineHeight: 1.6 }}>
               <p style={{ fontWeight: 700, color: '#0F172A', marginBottom: 10 }}>Cadre Juridique Standardisé :</p>
               <ul style={{ paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -584,51 +675,296 @@ function AdminContent() {
         {docType === 'SOCIAL' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 40, width: '100%', alignItems: 'center' }}>
             {socialType === 'POST' ? (
-               <div className="print-target" style={{ width: 600, height: 600, background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 60, boxShadow: '0 40px 100px rgba(0,0,0,0.2)' }}>
-                  {/* Decorative Elements */}
-                  <div style={{ position: 'absolute', top: -100, right: -100, width: 300, height: 300, background: '#7967FF', borderRadius: '50%', opacity: 0.1, filter: 'blur(80px)' }} />
-                  <div style={{ position: 'absolute', bottom: -50, left: -50, width: 200, height: 200, background: '#4F46E5', borderRadius: '50%', opacity: 0.1, filter: 'blur(60px)' }} />
-                  
-                  <img src={primaryLogoSrc} alt="Ozirus" style={{ height: 40, filter: 'brightness(0) invert(1)', marginBottom: 40 }} />
-                  <div style={{ width: 60, height: 4, background: '#7967FF', marginBottom: 30 }} />
-                  
-                  <h2 style={{ fontSize: 42, fontWeight: 900, color: '#FFF', lineHeight: 1.1, fontFamily: 'var(--font-display, "Clash Display"), sans-serif', marginBottom: 20 }}>{socialTitle}</h2>
-                  <p style={{ fontSize: 20, color: '#94A3B8', fontWeight: 600, lineHeight: 1.5, marginBottom: 40 }}>{socialSubtitle}</p>
-                  
-                  <div style={{ display: 'inline-flex', alignSelf: 'flex-start', background: '#7967FF', color: '#FFF', padding: '16px 32px', borderRadius: 12, fontSize: 18, fontWeight: 800, boxShadow: '0 10px 20px rgba(121,103,255,0.3)' }}>
-                    Obtenir mon diagnostic gratuit →
+               <div className="print-target" style={{ 
+                 width: socialSize === 'STORY' ? 450 : (socialSize === 'LANDSCAPE' ? 800 : 600), 
+                 height: socialSize === 'SQUARE' ? 600 : (socialSize === 'PORTRAIT' ? 750 : (socialSize === 'STORY' ? 800 : 450)), 
+                 background: socialTheme === 'DARK' ? 'linear-gradient(135deg, #0F172A 0%, #111827 100%)' : '#FFFFFF', 
+                 position: 'relative', 
+                 overflow: 'hidden', 
+                 display: 'flex', 
+                 flexDirection: 'column', 
+                 justifyContent: 'center', 
+                 padding: socialSize === 'STORY' ? '80px 40px' : (socialSize === 'LANDSCAPE' ? '40px 60px' : 60), 
+                 boxShadow: '0 40px 100px rgba(0,0,0,0.2)',
+                 border: socialTheme === 'LIGHT' ? '1px solid #F1F5F9' : 'none',
+                 transition: 'all 0.3s ease'
+               }}>
+                  {/* Stylized SVG Background Patterns */}
+                  <div style={{ position: 'absolute', inset: 0, opacity: socialTheme === 'DARK' ? 0.05 : 0.03, pointerEvents: 'none' }}>
+                    <svg width="100%" height="100%">
+                      {socialPattern === 'GRID' ? (
+                        <>
+                          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                            <path d="M 40 0 L 0 0 0 40" fill="none" stroke={socialTheme === 'DARK' ? '#FFF' : '#000'} strokeWidth="1"/>
+                          </pattern>
+                          <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse">
+                            <circle cx="2" cy="2" r="1" fill={socialTheme === 'DARK' ? '#FFF' : '#000'} />
+                          </pattern>
+                          <rect width="100%" height="100%" fill="url(#grid)" />
+                          <rect width="100%" height="100%" fill="url(#dots)" />
+                        </>
+                      ) : (
+                        <>
+                          <path 
+                            d="M0 100 C 150 200, 350 0, 600 100 L 600 0 L 0 0 Z" 
+                            fill={socialTheme === 'DARK' ? '#7967FF' : '#7967FF'} 
+                            fillOpacity={socialTheme === 'DARK' ? "0.2" : "0.1"}
+                          />
+                          <path 
+                            d="M0 200 C 200 300, 400 100, 600 200 L 600 0 L 0 0 Z" 
+                            fill={socialTheme === 'DARK' ? '#4F46E5' : '#4F46E5'} 
+                            fillOpacity={socialTheme === 'DARK' ? "0.15" : "0.08"}
+                          />
+                          <path 
+                            d="M0 300 C 300 400, 500 200, 800 300 L 800 0 L 0 0 Z" 
+                            fill="#7967FF" 
+                            fillOpacity="0.05"
+                          />
+                        </>
+                      )}
+                    </svg>
                   </div>
 
-                  <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 20 }}>
-                     <p style={{ fontSize: 14, color: '#7967FF', fontWeight: 800, letterSpacing: '0.1em' }}>OZIRUS.AGENCY</p>
-                     <p style={{ fontSize: 12, color: '#475569', fontWeight: 600 }}>#DigitalExcellence #IA</p>
+                  {/* Glassmorphism Blob */}
+                  <div style={{ 
+                    position: 'absolute', 
+                    top: '20%', 
+                    right: '-10%', 
+                    width: '60%', 
+                    height: '60%', 
+                    background: 'linear-gradient(135deg, rgba(121,103,255,0.05) 0%, rgba(79,70,229,0.02) 100%)', 
+                    borderRadius: '40% 60% 70% 30% / 40% 50% 60% 50%',
+                    filter: 'blur(80px)',
+                    zIndex: 0,
+                    animation: 'blob-float 20s infinite alternate'
+                  }} />
+
+                  {/* Modern Decorative Elements */}
+                  <div style={{ position: 'absolute', top: -50, right: -50, width: 300, height: 300, background: 'radial-gradient(circle, #7967FF 0%, transparent 70%)', opacity: socialTheme === 'DARK' ? 0.05 : 0.02, filter: 'blur(100px)' }} />
+                  <div style={{ position: 'absolute', bottom: -100, left: -100, width: 400, height: 400, background: 'radial-gradient(circle, #4F46E5 0%, transparent 70%)', opacity: socialTheme === 'DARK' ? 0.04 : 0.015, filter: 'blur(120px)' }} />
+                  
+                  {/* Geometric accents */}
+                  <div style={{ position: 'absolute', top: 40, left: 40, width: 2, height: 40, background: 'linear-gradient(to bottom, #7967FF, transparent)' }} />
+                  <div style={{ position: 'absolute', top: 40, left: 40, width: 40, height: 2, background: 'linear-gradient(to right, #7967FF, transparent)' }} />
+
+                  <img src={primaryLogoSrc} alt="Ozirus" style={{ height: socialSize === 'STORY' ? 35 : 45, width: 'auto', maxWidth: 180, objectFit: 'contain', filter: socialTheme === 'DARK' ? 'brightness(0) invert(1)' : 'none', marginBottom: socialSize === 'STORY' ? 40 : 50, opacity: 0.95 }} />
+                  
+                  <div style={{ width: 50, height: 6, background: '#7967FF', marginBottom: 35, borderRadius: 3 }} />
+                  
+                  <h2 style={{ 
+                    fontSize: socialFontSize, 
+                    fontWeight: 900, 
+                    color: socialTheme === 'DARK' ? '#FFF' : '#0F172A', 
+                    lineHeight: 1.1, 
+                    fontFamily: 'var(--font-display, "Clash Display"), sans-serif', 
+                    marginBottom: socialFontSize * 0.4,
+                    letterSpacing: '-0.03em'
+                  }}>{socialTitle}</h2>
+                  
+                  <p style={{ 
+                    fontSize: socialFontSize * 0.42, 
+                    color: socialTheme === 'DARK' ? '#94A3B8' : '#475569', 
+                    fontWeight: 500, 
+                    lineHeight: 1.5, 
+                    marginBottom: socialFontSize * 0.8,
+                    maxWidth: '95%'
+                  }}>{socialSubtitle}</p>
+                  
+                  <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: socialTheme === 'DARK' ? '1px solid rgba(255,255,255,0.08)' : '1px solid rgba(0,0,0,0.05)', paddingTop: 25 }}>
+                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#7967FF' }} />
+                        <p style={{ fontSize: 14, color: socialTheme === 'DARK' ? '#FFF' : '#0F172A', fontWeight: 900, letterSpacing: '0.15em', textTransform: 'uppercase' }}>OZIRUS.AGENCY</p>
+                     </div>
+                     <p style={{ fontSize: 13, color: '#4B5563', fontWeight: 600 }}>#Innovation #Digital #IA</p>
                   </div>
                </div>
             ) : (
-               <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', justifyContent: 'center', padding: '20px 0' }}>
-                  {carouselSlides.map((slide, idx) => (
-                    <div key={idx} className="print-target" style={{ flexShrink: 0, width: 400, height: 500, background: idx % 2 === 0 ? '#0F172A' : '#7967FF', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 40, borderRadius: 16, boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }}>
-                        <div style={{ position: 'absolute', top: 20, right: 30, fontSize: 40, fontWeight: 900, color: 'rgba(255,255,255,0.05)' }}>{idx + 1}</div>
-                        <img src={primaryLogoSrc} alt="Ozirus" style={{ height: 25, filter: 'brightness(0) invert(1)', marginBottom: 30, opacity: 0.8 }} />
-                        <h3 style={{ fontSize: 28, fontWeight: 900, color: '#FFF', lineHeight: 1.2, fontFamily: 'var(--font-display, "Clash Display"), sans-serif', marginBottom: 15 }}>{slide.title}</h3>
-                        <p style={{ fontSize: 16, color: idx % 2 === 0 ? '#94A3B8' : 'rgba(255,255,255,0.9)', fontWeight: 500, lineHeight: 1.6, marginBottom: idx === carouselSlides.length - 1 ? 30 : 0 }}>{slide.text}</p>
-                        
-                        {idx === carouselSlides.length - 1 && (
-                          <div style={{ background: idx % 2 === 0 ? '#7967FF' : '#FFF', color: idx % 2 === 0 ? '#FFF' : '#7967FF', padding: '12px 24px', borderRadius: 10, fontSize: 14, fontWeight: 800, textAlign: 'center', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}>
-                            Obtenir mon diagnostic gratuit →
-                          </div>
-                        )}
+               <div style={{ width: '100%', maxWidth: 1000, overflowX: 'auto', display: 'flex', gap: 30, padding: '40px 60px', scrollSnapType: 'x mandatory' }}>
+                  {carouselSlides.map((slide, idx) => {
+                    const isDarkSlide = socialTheme === 'DARK' ? (idx % 2 === 0) : (idx % 2 !== 0);
+                    const bg = isDarkSlide ? '#0F172A' : '#FFFFFF';
+                    const textPrimary = isDarkSlide ? '#FFF' : '#0F172A';
+                    const textSecondary = isDarkSlide ? '#94A3B8' : '#475569';
+                    const logoFilter = isDarkSlide ? 'brightness(0) invert(1)' : 'none';
+                    const patternOpacity = isDarkSlide ? 0.05 : 0.03;
 
-                        <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                           <p style={{ fontSize: 10, color: idx % 2 === 0 ? '#7967FF' : '#FFF', fontWeight: 800 }}>OZIRUS.AGENCY</p>
-                           <div style={{ display: 'flex', gap: 4 }}>
-                              {carouselSlides.map((_, i) => (
-                                <div key={i} style={{ width: 4, height: 4, borderRadius: '50%', background: i === idx ? '#FFF' : 'rgba(255,255,255,0.3)' }} />
-                              ))}
-                           </div>
-                        </div>
-                    </div>
-                  ))}
+                    return (
+                      <div key={idx} className="print-target" style={{ 
+                        flexShrink: 0, 
+                        width: socialSize === 'STORY' ? 380 : (socialSize === 'LANDSCAPE' ? 600 : 500), 
+                        height: socialSize === 'SQUARE' ? 500 : (socialSize === 'PORTRAIT' ? 625 : (socialSize === 'STORY' ? 675 : 337)), 
+                        background: bg, 
+                        position: 'relative', 
+                        overflow: 'hidden', 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        justifyContent: 'center', 
+                        padding: socialSize === 'STORY' ? '70px 40px' : (socialSize === 'LANDSCAPE' ? '30px 45px' : 50), 
+                        borderRadius: 0, 
+                        boxShadow: '0 30px 60px rgba(0,0,0,0.12)',
+                        scrollSnapAlign: 'center',
+                        border: isDarkSlide ? 'none' : '1px solid #F1F5F9',
+                        transition: 'all 0.3s ease'
+                      }}>
+                          {/* Stylized SVG Background Patterns */}
+                          <div style={{ position: 'absolute', inset: 0, opacity: patternOpacity, pointerEvents: 'none' }}>
+                            <svg width="100%" height="100%">
+                              {socialPattern === 'GRID' ? (
+                                <>
+                                  <pattern id={`grid-${idx}`} width="40" height="40" patternUnits="userSpaceOnUse">
+                                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke={isDarkSlide ? '#FFF' : '#000'} strokeWidth="1"/>
+                                  </pattern>
+                                  <pattern id={`dots-${idx}`} width="20" height="20" patternUnits="userSpaceOnUse">
+                                    <circle cx="2" cy="2" r="1" fill={isDarkSlide ? '#FFF' : '#000'} />
+                                  </pattern>
+                                  <rect width="100%" height="100%" fill={`url(#grid-${idx})`} />
+                                  <rect width="100%" height="100%" fill={`url(#dots-${idx})`} />
+                                </>
+                              ) : (
+                                <>
+                                  <path 
+                                    d="M0 100 C 150 200, 350 0, 500 100 L 500 0 L 0 0 Z" 
+                                    fill={isDarkSlide ? '#7967FF' : '#7967FF'} 
+                                    fillOpacity={isDarkSlide ? "0.25" : "0.15"}
+                                  />
+                                  <path 
+                                    d="M0 200 C 200 300, 400 100, 500 200 L 500 0 L 0 0 Z" 
+                                    fill={isDarkSlide ? '#4F46E5' : '#4F46E5'} 
+                                    fillOpacity={isDarkSlide ? "0.2" : "0.1"}
+                                  />
+                                </>
+                              )}
+                            </svg>
+                          </div>
+
+                          {/* Patterns */}
+                          <div style={{ position: 'absolute', top: -50, right: -50, width: 150, height: 150, background: 'radial-gradient(circle, #7967FF 0%, transparent 70%)', opacity: 0.1, filter: 'blur(40px)' }} />
+                          <div style={{ position: 'absolute', bottom: 20, left: -20, width: 100, height: 100, background: 'radial-gradient(circle, #4F46E5 0%, transparent 70%)', opacity: 0.05, filter: 'blur(30px)' }} />
+                          
+                          <div style={{ position: 'absolute', top: 30, right: 40, fontSize: 60, fontWeight: 900, color: isDarkSlide ? 'rgba(255,255,255,0.03)' : 'rgba(121,103,255,0.05)', fontFamily: 'var(--font-display, "Clash Display"), sans-serif' }}>{String(idx + 1).padStart(2, '0')}</div>
+                          
+                          <img src={primaryLogoSrc} alt="Ozirus" style={{ height: 30, width: 'auto', maxWidth: 120, objectFit: 'contain', filter: logoFilter, marginBottom: 40, opacity: 0.9 }} />
+                          
+                          <div style={{ width: 40, height: 4, background: '#7967FF', marginBottom: 25, borderRadius: 2 }} />
+                          
+                          {/* Background Logo Watermark for final slide */}
+                          {idx === carouselSlides.length - 1 && (
+                            <div style={{ 
+                              position: 'absolute', 
+                              bottom: '-10%', 
+                              right: '-10%', 
+                              width: '60%', 
+                              height: '60%', 
+                              opacity: isDarkSlide ? 0.03 : 0.05, 
+                              pointerEvents: 'none',
+                              zIndex: 0,
+                              transform: 'rotate(-15deg)'
+                            }}>
+                              <img src={primaryLogoSrc} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', filter: logoFilter }} />
+                            </div>
+                          )}
+
+                          <h3 style={{ 
+                            fontSize: idx === carouselSlides.length - 1 ? socialFontSize * 0.7 : socialFontSize * 0.7, 
+                            fontWeight: 900, 
+                            color: textPrimary, 
+                            lineHeight: 1.1, 
+                            fontFamily: 'var(--font-display, "Clash Display"), sans-serif', 
+                            marginBottom: socialFontSize * 0.3,
+                            position: 'relative',
+                            zIndex: 1
+                          }}>{slide.title}</h3>
+                          
+                          <p style={{ 
+                            fontSize: idx === carouselSlides.length - 1 ? socialFontSize * 0.4 : socialFontSize * 0.38, 
+                            color: textSecondary, 
+                            fontWeight: 500, 
+                            lineHeight: 1.5, 
+                            marginBottom: idx === carouselSlides.length - 1 ? socialFontSize * 0.5 : 0,
+                            position: 'relative',
+                            zIndex: 1
+                          }}>{slide.text}</p>
+                          
+                          {idx === carouselSlides.length - 1 && (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 20, width: '100%', position: 'relative', zIndex: 1 }}>
+                               <div style={{ 
+                                 display: 'grid', 
+                                 gridTemplateColumns: socialSize === 'LANDSCAPE' ? 'repeat(3, 1fr)' : '1fr', 
+                                 gap: 15,
+                                 background: isDarkSlide ? 'rgba(255,255,255,0.03)' : 'rgba(121,103,255,0.05)',
+                                 padding: 20,
+                                 borderRadius: 20,
+                                 border: isDarkSlide ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(121,103,255,0.1)'
+                               }}>
+                                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                    <div style={{ width: 32, height: 32, borderRadius: 10, background: '#7967FF22', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                      <Smartphone size={18} color="#7967FF" />
+                                    </div>
+                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                      <span style={{ fontSize: 9, fontWeight: 800, color: '#7967FF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Téléphone</span>
+                                      <span style={{ fontSize: 13, color: textPrimary, fontWeight: 700 }}>{COMPANY_INFO.phone}</span>
+                                    </div>
+                                 </div>
+                                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                    <div style={{ width: 32, height: 32, borderRadius: 10, background: '#7967FF22', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                      <Mail size={18} color="#7967FF" />
+                                    </div>
+                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                      <span style={{ fontSize: 9, fontWeight: 800, color: '#7967FF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Email</span>
+                                      <span style={{ fontSize: 13, color: textPrimary, fontWeight: 700 }}>{COMPANY_INFO.email}</span>
+                                    </div>
+                                 </div>
+                                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                    <div style={{ width: 32, height: 32, borderRadius: 10, background: '#7967FF22', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                      <Globe size={18} color="#7967FF" />
+                                    </div>
+                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                      <span style={{ fontSize: 9, fontWeight: 800, color: '#7967FF', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Website</span>
+                                      <span style={{ fontSize: 13, color: textPrimary, fontWeight: 700 }}>{COMPANY_INFO.website}</span>
+                                    </div>
+                                 </div>
+                               </div>
+
+                               <div style={{ 
+                                 marginTop: 0,
+                                 display: 'flex',
+                                 flexDirection: 'column',
+                                 alignItems: 'center',
+                                 gap: 8,
+                                 width: '100%'
+                               }}>
+                                 <p style={{ fontSize: 11, fontWeight: 800, color: '#7967FF', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: -4 }}>Scannez pour démarrer votre projet</p>
+                                 <div style={{ 
+                                   background: '#FFF', 
+                                   padding: 8, 
+                                   borderRadius: 16, 
+                                   display: 'flex', 
+                                   alignItems: 'center', 
+                                   justifyContent: 'center', 
+                                   boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+                                   border: '1px solid rgba(0,0,0,0.05)'
+                                 }}>
+                                   <img 
+                                     src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(`https://${COMPANY_INFO.website}`)}`} 
+                                     alt="QR" 
+                                     style={{ width: 85, height: 85, objectFit: 'contain' }}
+                                   />
+                                 </div>
+                               </div>
+                            </div>
+                          )}
+
+                          <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: isDarkSlide ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(0,0,0,0.05)', paddingTop: 20 }}>
+                             <p style={{ fontSize: 11, color: '#7967FF', fontWeight: 900, letterSpacing: '0.1em' }}>OZIRUS.AGENCY</p>
+                             <div style={{ display: 'flex', gap: 6 }}>
+                                {carouselSlides.map((_, i) => (
+                                  <div key={i} style={{ width: 6, height: 6, borderRadius: '50%', background: i === idx ? '#7967FF' : (isDarkSlide ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)') }} />
+                                ))}
+                             </div>
+                          </div>
+                      </div>
+                    );
+                  })}
                </div>
             )}
           </div>
@@ -637,7 +973,7 @@ function AdminContent() {
         {docType === 'BADGE' && (
           <div className="print-target" style={{ width: '54mm', height: '86mm', background: '#F8FAFC', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 20px 50px rgba(0,0,0,0.1)', position: 'relative', display: 'flex', flexDirection: 'column', border: '1px solid #E2E8F0' }}>
             <div style={{ height: '28%', background: 'linear-gradient(135deg, #7967FF 0%, #4F46E5 100%)', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: 20 }}>
-              <img src={primaryLogoSrc} alt="Ozirus" style={{ height: 22, filter: 'brightness(0) invert(1)' }} />
+              <img src={primaryLogoSrc} alt="Ozirus" style={{ height: 22, width: 'auto', maxWidth: '80%', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
             </div>
             
             <div style={{ flex: 1, padding: '0 10px 10px 10px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: -45 }}>
@@ -694,7 +1030,7 @@ function AdminContent() {
             {/* FRONT */}
             <div className="print-target" style={{ width: '85mm', height: '55mm', background: '#0F172A', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 20px 50px rgba(0,0,0,0.1)', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <div style={{ position: 'absolute', top: 0, right: 0, width: '40%', height: '100%', background: '#7967FF', clipPath: 'polygon(20% 0, 100% 0, 100% 100%, 0% 100%)', opacity: 0.1 }}></div>
-              <img src={primaryLogoSrc} alt="Ozirus" style={{ height: 35, filter: 'brightness(0) invert(1)' }} />
+              <img src={primaryLogoSrc} alt="Ozirus" style={{ height: 35, width: 'auto', maxWidth: '80%', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
             </div>
             {/* BACK */}
             <div className="print-target" style={{ width: '85mm', height: '55mm', background: '#FFF', borderRadius: '10px', overflow: 'hidden', boxShadow: '0 20px 50px rgba(0,0,0,0.1)', display: 'flex', border: '1px solid #E2E8F0' }}>
@@ -731,7 +1067,7 @@ function AdminContent() {
             {/* PAGE 1: COVER */}
             <div className="a4-page">
               <div style={{ height: '100%', border: '1px solid #7967FF', padding: '40mm 20mm', display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
-                <img src={primaryLogoSrc} alt="Ozirus" style={{ height: 60, filter: primaryLogoSrc === '/logo.png' ? PRIMARY_LOGO_FALLBACK_FILTER : 'none', marginBottom: 60 }} />
+                <img src={primaryLogoSrc} alt="Ozirus" style={{ height: 60, width: 'auto', maxWidth: '80%', objectFit: 'contain', filter: primaryLogoSrc === '/logo.png' ? PRIMARY_LOGO_FALLBACK_FILTER : 'none', marginBottom: 60 }} />
                 <div style={{ width: 80, height: 4, background: '#7967FF', marginBottom: 40 }} />
                 <h2 style={{ fontSize: 32, fontWeight: 900, color: '#0F172A', textAlign: 'center', letterSpacing: '-0.03em', lineHeight: 1.1, fontFamily: 'var(--font-display, "Clash Display"), sans-serif' }}>{docType}</h2>
                 <p style={{ width: '100%', fontSize: 18, color: '#7967FF', fontWeight: 600, marginTop: 10, fontFamily: 'var(--font-display, "Clash Display"), sans-serif', textTransform: 'uppercase', letterSpacing: '0.1em', textAlign: 'center' }}>Digital Excellence & Intelligent Systems</p>
@@ -991,6 +1327,12 @@ function AdminContent() {
           .a4-page:first-child { page-break-before: avoid; }
           @page { size: A4; margin: 0; }
         }
+        @keyframes blob-float {
+          0% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(30px, -50px) scale(1.1); }
+          66% { transform: translate(-20px, 20px) scale(0.9); }
+          100% { transform: translate(0, 0) scale(1); }
+        }
       `}</style>
     </div>
   );
@@ -1090,7 +1432,7 @@ function Header({ docType, docNumber, date, currency, logoSrc }: any) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: 25, borderBottom: '1px solid #F1F5F9' }}>
       <div>
-        <img src={logoSrc} alt="Ozirus" style={{ height: 35, filter: logoSrc === '/logo.png' ? PRIMARY_LOGO_FALLBACK_FILTER : 'none', marginBottom: 12 }} />
+        <img src={logoSrc} alt="Ozirus" style={{ height: 35, width: 'auto', maxWidth: 120, objectFit: 'contain', filter: logoSrc === '/logo.png' ? PRIMARY_LOGO_FALLBACK_FILTER : 'none', marginBottom: 12 }} />
         <p style={{ fontSize: 9, color: '#94A3B8', fontWeight: 800, fontFamily: 'var(--font-display, "Clash Display"), sans-serif', letterSpacing: '0.05em' }}>OZIRUS AGENCY — SOLUTIONS IA & DIGITAL</p>
       </div>
       <div style={{ textAlign: 'right' }}>
@@ -1116,6 +1458,7 @@ const sectionTitle = { fontSize: 10, fontWeight: 800, color: '#94A3B8', textTran
 const inputStyle = { width: '100%', padding: '12px 16px', borderRadius: 10, border: '1px solid #E2E8F0', fontSize: 13, outline: 'none', background: '#FFF', boxSizing: 'border-box' as const };
 const labelStyle = { display: 'block', fontSize: 11, fontWeight: 800, color: '#64748B', marginBottom: 6, marginLeft: 4 };
 const toolBtnStyle = { background: '#FFF', border: '1px solid #E2E8F0', borderRadius: 4, padding: '4px 10px', fontSize: 11, cursor: 'pointer', fontWeight: 800, color: '#475569' };
+const primaryBtnStyle = { width: '100%', background: '#7967FF', color: '#FFF', border: 'none', borderRadius: 12, padding: '14px', fontSize: 14, fontWeight: 800, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, boxShadow: '0 4px 12px rgba(121,103,255,0.3)' };
 
 const methodoStyle = { display: 'flex', gap: 20, alignItems: 'flex-start', padding: '20px', background: '#F8FAFC', borderRadius: '15px', border: '1px solid #F1F5F9' };
 const methodoIconStyle = { width: '40px', height: '40px', background: '#7967FF', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFF', fontSize: '14px', fontWeight: 900, flexShrink: 0 };
