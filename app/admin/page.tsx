@@ -53,7 +53,7 @@ const CATALOG = [
 ];
 
 /* ─── TYPES ───────────────────────────────────────── */
-type DocType = 'PROPOSITION COMMERCIALE' | 'FACTURE' | 'BADGE' | 'CARTE DE VISITE';
+type DocType = 'PROPOSITION COMMERCIALE' | 'FACTURE' | 'BADGE' | 'CARTE DE VISITE' | 'SOCIAL';
 interface LineItem {
   id: string;
   description: string;
@@ -94,6 +94,16 @@ function AdminContent() {
   const [personPhone, setPersonPhone] = useState('+237 694 08 65 71');
   const [personEmail, setPersonEmail] = useState('info.ozirus@gmail.com');
   const [personPhoto, setPersonPhoto] = useState('');
+
+  // Social Media State
+  const [socialTitle, setSocialTitle] = useState('Ozirus transforme votre PME avec l\'IA');
+  const [socialSubtitle, setSocialSubtitle] = useState('Automatisez vos processus et gagnez 10h par semaine');
+  const [socialType, setSocialType] = useState<'POST' | 'CAROUSEL'>('POST');
+  const [carouselSlides, setCarouselSlides] = useState([
+    { title: 'Étape 01', text: 'Audit de vos processus actuels' },
+    { title: 'Étape 02', text: 'Déploiement de votre agent IA' },
+    { title: 'Étape 03', text: 'Formation de vos équipes' }
+  ]);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -247,36 +257,38 @@ function AdminContent() {
   const exportToPDF = async () => {
     setIsGenerating(true);
     try {
-      const isCustomSize = docType === 'BADGE' || docType === 'CARTE DE VISITE';
+      const isCustomSize = docType === 'BADGE' || docType === 'CARTE DE VISITE' || docType === 'SOCIAL';
       const pages = document.querySelectorAll(isCustomSize ? '.print-target' : '.a4-page');
       
-      const pdf = new jsPDF(
-        docType === 'CARTE DE VISITE' ? 'l' : 'p', 
-        'mm', 
-        !isCustomSize ? 'a4' : (docType === 'BADGE' ? [54, 86] : [85, 55])
-      );
+      if (docType === 'SOCIAL') {
+        // Export as Images (JPG) for Social Media
+        for (let i = 0; i < pages.length; i++) {
+          const canvas = await html2canvas(pages[i] as HTMLElement, { scale: 3, useCORS: true });
+          const link = document.createElement('a');
+          link.download = `Ozirus_Post_${i+1}.jpg`;
+          link.href = canvas.toDataURL('image/jpeg', 0.9);
+          link.click();
+        }
+      } else {
+        const pdf = new jsPDF(
+          docType === 'CARTE DE VISITE' ? 'l' : 'p', 
+          'mm', 
+          !isCustomSize ? 'a4' : (docType === 'BADGE' ? [54, 86] : [85, 55])
+        );
 
-      for (let i = 0; i < pages.length; i++) {
-        const page = pages[i] as HTMLElement;
-        
-        const canvas = await html2canvas(page, {
-          scale: 3,
-          useCORS: true,
-          logging: false,
-          backgroundColor: '#FFFFFF',
-        });
+        for (let i = 0; i < pages.length; i++) {
+          const page = pages[i] as HTMLElement;
+          const canvas = await html2canvas(page, { scale: 3, useCORS: true, backgroundColor: '#FFFFFF' });
+          const imgData = canvas.toDataURL('image/jpeg', 1.0);
+          if (i > 0) pdf.addPage();
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = pdf.internal.pageSize.getHeight();
+          pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+        }
 
-        const imgData = canvas.toDataURL('image/jpeg', 1.0);
-        
-        if (i > 0) pdf.addPage();
-        
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
-        pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+        const fileName = `${docType.split(' ')[0]}_${isCustomSize ? personName : clientCompany || 'OZIRUS'}_${docNumber}.pdf`.replace(/\s+/g, '_');
+        pdf.save(fileName);
       }
-
-      const fileName = `${docType.split(' ')[0]}_${isCustomSize ? personName : clientCompany || 'OZIRUS'}_${docNumber}.pdf`.replace(/\s+/g, '_');
-      pdf.save(fileName);
     } catch (err) {
       console.error("PDF Generation error:", err);
       alert("Erreur lors de la génération du PDF.");
@@ -307,7 +319,7 @@ function AdminContent() {
           <div style={{ display: 'flex', background: '#F1F5F9', padding: 4, borderRadius: 10, gap: 2 }}>
             <button onClick={() => setDocType('PROPOSITION COMMERCIALE')} style={{ ...tabBtn, padding: '6px 10px', background: isDoc ? '#FFF' : 'transparent', color: isDoc ? '#7967FF' : '#64748B' }}>DOCS</button>
             <button onClick={() => setDocType('BADGE')} style={{ ...tabBtn, padding: '6px 10px', background: docType === 'BADGE' ? '#FFF' : 'transparent', color: docType === 'BADGE' ? '#7967FF' : '#64748B' }}>BADGE</button>
-            <button onClick={() => setDocType('CARTE DE VISITE')} style={{ ...tabBtn, padding: '6px 10px', background: docType === 'CARTE DE VISITE' ? '#FFF' : 'transparent', color: docType === 'CARTE DE VISITE' ? '#7967FF' : '#64748B' }}>CARTE</button>
+            <button onClick={() => setDocType('SOCIAL')} style={{ ...tabBtn, padding: '6px 10px', background: docType === 'SOCIAL' ? '#FFF' : 'transparent', color: docType === 'SOCIAL' ? '#7967FF' : '#64748B' }}>SOCIAL</button>
           </div>
         </div>
 
@@ -320,6 +332,8 @@ function AdminContent() {
               <button onClick={() => setActiveTab('FINANCE')} style={{ ...subTab, color: activeTab === 'FINANCE' ? '#7967FF' : '#94A3B8', borderBottomColor: activeTab === 'FINANCE' ? '#7967FF' : 'transparent' }}><Briefcase size={14} /></button>
               <button onClick={() => setActiveTab('LEGAL')} style={{ ...subTab, color: activeTab === 'LEGAL' ? '#7967FF' : '#94A3B8', borderBottomColor: activeTab === 'LEGAL' ? '#7967FF' : 'transparent' }}><ShieldCheck size={14} /></button>
             </>
+          ) : docType === 'SOCIAL' ? (
+            <button onClick={() => setActiveTab('PROJET')} style={{ ...subTab, color: activeTab === 'PROJET' ? '#7967FF' : '#94A3B8', borderBottomColor: activeTab === 'PROJET' ? '#7967FF' : 'transparent' }}><Layout size={14} /></button>
           ) : (
             <button onClick={() => setActiveTab('IDENTITE')} style={{ ...subTab, color: activeTab === 'IDENTITE' ? '#7967FF' : '#94A3B8', borderBottomColor: activeTab === 'IDENTITE' ? '#7967FF' : 'transparent' }}><User size={14} /></button>
           )}
@@ -331,6 +345,46 @@ function AdminContent() {
             <div style={{ display: 'flex', background: '#F8FAFC', padding: 8, borderRadius: 12, marginBottom: -10 }}>
               <button onClick={() => setDocType('PROPOSITION COMMERCIALE')} style={{ flex: 1, padding: 8, borderRadius: 8, fontSize: 11, fontWeight: 700, border: 'none', background: docType === 'PROPOSITION COMMERCIALE' ? '#FFF' : 'transparent', color: docType === 'PROPOSITION COMMERCIALE' ? '#7967FF' : '#64748B', boxShadow: docType === 'PROPOSITION COMMERCIALE' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none' }}>PROPOSITION</button>
               <button onClick={() => setDocType('FACTURE')} style={{ flex: 1, padding: 8, borderRadius: 8, fontSize: 11, fontWeight: 700, border: 'none', background: docType === 'FACTURE' ? '#FFF' : 'transparent', color: docType === 'FACTURE' ? '#7967FF' : '#64748B', boxShadow: docType === 'FACTURE' ? '0 2px 4px rgba(0,0,0,0.05)' : 'none' }}>FACTURE</button>
+            </div>
+          )}
+
+          {docType === 'SOCIAL' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+              <div>
+                <p style={sectionTitle}>Type de publication</p>
+                <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+                  <button onClick={() => setSocialType('POST')} style={{ ...tabBtn, flex: 1, background: socialType === 'POST' ? '#7967FF' : '#F1F5F9', color: socialType === 'POST' ? '#FFF' : '#64748B' }}>Post Simple</button>
+                  <button onClick={() => setSocialType('CAROUSEL')} style={{ ...tabBtn, flex: 1, background: socialType === 'CAROUSEL' ? '#7967FF' : '#F1F5F9', color: socialType === 'CAROUSEL' ? '#FFF' : '#64748B' }}>Carrousel</button>
+                </div>
+              </div>
+
+              {socialType === 'POST' ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <div>
+                    <label style={labelStyle}>Accroche principale</label>
+                    <textarea value={socialTitle} onChange={e => setSocialTitle(e.target.value)} style={{ ...inputStyle, minHeight: 80 }} />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Sous-titre / Appel à l'action</label>
+                    <input type="text" value={socialSubtitle} onChange={e => setSocialSubtitle(e.target.value)} style={inputStyle} />
+                  </div>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <p style={sectionTitle}>Slides du carrousel</p>
+                  {carouselSlides.map((slide, idx) => (
+                    <div key={idx} style={{ border: '1px solid #F1F5F9', padding: 12, borderRadius: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <span style={{ fontSize: 10, fontWeight: 900, color: '#7967FF' }}>Slide {idx + 1}</span>
+                          <button onClick={() => setCarouselSlides(carouselSlides.filter((_, i) => i !== idx))} style={{ color: '#EF4444' }}><Trash2 size={14} /></button>
+                       </div>
+                       <input type="text" value={slide.title} onChange={e => setCarouselSlides(carouselSlides.map((s, i) => i === idx ? { ...s, title: e.target.value } : s))} style={inputStyle} placeholder="Titre du slide" />
+                       <textarea value={slide.text} onChange={e => setCarouselSlides(carouselSlides.map((s, i) => i === idx ? { ...s, text: e.target.value } : s))} style={{ ...inputStyle, fontSize: 12 }} placeholder="Texte descriptif" />
+                    </div>
+                  ))}
+                  <button onClick={() => setCarouselSlides([...carouselSlides, { title: 'Nouveau Titre', text: 'Nouveau texte...' }])} style={{ ...primaryBtnStyle, background: '#F8FAFC', color: '#7967FF', boxShadow: 'none', border: '1px dashed #7967FF' }}>+ Ajouter un slide</button>
+                </div>
+              )}
             </div>
           )}
 
@@ -526,6 +580,49 @@ function AdminContent() {
       {/* ─── RIGHT PANEL: PREVIEW ─── */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '60px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 40 }} className="no-print">
         
+        {docType === 'SOCIAL' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 40, width: '100%', alignItems: 'center' }}>
+            {socialType === 'POST' ? (
+               <div className="print-target" style={{ width: 600, height: 600, background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 60, boxShadow: '0 40px 100px rgba(0,0,0,0.2)' }}>
+                  {/* Decorative Elements */}
+                  <div style={{ position: 'absolute', top: -100, right: -100, width: 300, height: 300, background: '#7967FF', borderRadius: '50%', opacity: 0.1, filter: 'blur(80px)' }} />
+                  <div style={{ position: 'absolute', bottom: -50, left: -50, width: 200, height: 200, background: '#4F46E5', borderRadius: '50%', opacity: 0.1, filter: 'blur(60px)' }} />
+                  
+                  <img src={primaryLogoSrc} alt="Ozirus" style={{ height: 40, filter: 'brightness(0) invert(1)', marginBottom: 40 }} />
+                  <div style={{ width: 60, height: 4, background: '#7967FF', marginBottom: 30 }} />
+                  
+                  <h2 style={{ fontSize: 42, fontWeight: 900, color: '#FFF', lineHeight: 1.1, fontFamily: 'var(--font-display, "Clash Display"), sans-serif', marginBottom: 20 }}>{socialTitle}</h2>
+                  <p style={{ fontSize: 20, color: '#94A3B8', fontWeight: 600, lineHeight: 1.5 }}>{socialSubtitle}</p>
+                  
+                  <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 20 }}>
+                     <p style={{ fontSize: 14, color: '#7967FF', fontWeight: 800, letterSpacing: '0.1em' }}>OZIRUS.AGENCY</p>
+                     <p style={{ fontSize: 12, color: '#475569', fontWeight: 600 }}>#DigitalExcellence #IA</p>
+                  </div>
+               </div>
+            ) : (
+               <div style={{ display: 'flex', gap: 20, overflowX: 'auto', maxWidth: '100%', padding: '20px 0' }}>
+                  {carouselSlides.map((slide, idx) => (
+                    <div key={idx} className="print-target" style={{ flexShrink: 0, width: 400, height: 500, background: idx % 2 === 0 ? '#0F172A' : '#7967FF', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 40, borderRadius: 16, boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }}>
+                        <div style={{ position: 'absolute', top: 20, right: 30, fontSize: 40, fontWeight: 900, color: 'rgba(255,255,255,0.05)' }}>{idx + 1}</div>
+                        <img src={primaryLogoSrc} alt="Ozirus" style={{ height: 25, filter: 'brightness(0) invert(1)', marginBottom: 30, opacity: 0.8 }} />
+                        <h3 style={{ fontSize: 28, fontWeight: 900, color: '#FFF', lineHeight: 1.2, fontFamily: 'var(--font-display, "Clash Display"), sans-serif', marginBottom: 15 }}>{slide.title}</h3>
+                        <p style={{ fontSize: 16, color: idx % 2 === 0 ? '#94A3B8' : 'rgba(255,255,255,0.9)', fontWeight: 500, lineHeight: 1.6 }}>{slide.text}</p>
+                        
+                        <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                           <p style={{ fontSize: 10, color: idx % 2 === 0 ? '#7967FF' : '#FFF', fontWeight: 800 }}>OZIRUS.AGENCY</p>
+                           <div style={{ display: 'flex', gap: 4 }}>
+                              {carouselSlides.map((_, i) => (
+                                <div key={i} style={{ width: 4, height: 4, borderRadius: '50%', background: i === idx ? '#FFF' : 'rgba(255,255,255,0.3)' }} />
+                              ))}
+                           </div>
+                        </div>
+                    </div>
+                  ))}
+               </div>
+            )}
+          </div>
+        )}
+
         {docType === 'BADGE' && (
           <div className="print-target" style={{ width: '54mm', height: '86mm', background: '#F8FAFC', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 20px 50px rgba(0,0,0,0.1)', position: 'relative', display: 'flex', flexDirection: 'column', border: '1px solid #E2E8F0' }}>
             <div style={{ height: '28%', background: 'linear-gradient(135deg, #7967FF 0%, #4F46E5 100%)', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', paddingTop: 20 }}>
