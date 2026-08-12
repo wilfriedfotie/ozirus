@@ -1,13 +1,28 @@
 import type { Metadata } from 'next';
 import { DM_Sans } from 'next/font/google';
+import localFont from 'next/font/local';
 import LayoutClientWrapper from '@/components/LayoutClientWrapper';
 import './globals.css';
 
 const dmSans = DM_Sans({
   subsets: ['latin'],
-  variable: '--font-sans',
+  variable: '--font-sans-loaded',
   weight: ['300', '400', '500', '600', '700'],
   display: 'swap',
+});
+
+// Approche 1 (active) : police auto-hébergée, indépendante de Fontshare.
+// Fiable en local (Fontshare bloque les requêtes venant de localhost) et en prod,
+// et plus rapide dans les deux cas : pas de requête vers un domaine tiers.
+const clashDisplay = localFont({
+  variable: '--font-display-loaded',
+  display: 'swap',
+  src: [
+    { path: './fonts/ClashDisplay-Regular.woff2', weight: '400', style: 'normal' },
+    { path: './fonts/ClashDisplay-Medium.woff2', weight: '500', style: 'normal' },
+    { path: './fonts/ClashDisplay-Semibold.woff2', weight: '600', style: 'normal' },
+    { path: './fonts/ClashDisplay-Bold.woff2', weight: '700', style: 'normal' },
+  ],
 });
 
 export const metadata: Metadata = {
@@ -40,19 +55,25 @@ export const viewport = { width: 'device-width', initialScale: 1 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="fr" className={`scroll-smooth ${dmSans.variable}`}>
+    <html lang="fr" className={`scroll-smooth ${dmSans.variable} ${clashDisplay.variable}`}>
       <head>
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/site.webmanifest" />
+        {/*
+          Approche 2 (désactivée) : Clash Display via l'URL Fontshare.
+          Gardée en référence — plus lente (round-trip vers un domaine tiers) et
+          peu fiable : Fontshare bloque les requêtes envoyées depuis localhost,
+          donc la police ne charge jamais en dev avec cette méthode.
         <link rel="preconnect" href="https://api.fontshare.com" />
         <link rel="preconnect" href="https://cdn.fontshare.com" crossOrigin="anonymous" />
         <link
           rel="stylesheet"
           href="https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap"
         />
+        */}
       </head>
-      <body style={{ fontFamily: 'var(--font-sans, "DM Sans"), -apple-system, BlinkMacSystemFont, sans-serif' }}>
+      <body style={{ fontFamily: 'var(--font-sans-loaded, "DM Sans"), -apple-system, BlinkMacSystemFont, sans-serif' }}>
         <LayoutClientWrapper>
           {children}
         </LayoutClientWrapper>

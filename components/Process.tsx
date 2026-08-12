@@ -96,7 +96,7 @@ export default function Process() {
                 {/* Number + Icon */}
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, paddingTop: 4 }}>
                   <span style={{
-                    fontFamily: 'Clash Display, sans-serif',
+                    fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif',
                     fontSize: '0.6875rem', fontWeight: 700,
                     color: step.color, letterSpacing: '0.1em',
                   }}>{step.number}</span>

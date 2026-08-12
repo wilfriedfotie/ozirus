@@ -97,7 +97,7 @@ export default function Realizations() {
 
               {/* Title + Desc */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                <h3 style={{ fontSize: '1rem', fontWeight: 600, color: '#0F172A', lineHeight: 1.35, letterSpacing: '-0.01em', fontFamily: 'Clash Display, sans-serif' }}>{c.title}</h3>
+                <h3 style={{ fontSize: '1rem', fontWeight: 600, color: '#0F172A', lineHeight: 1.35, letterSpacing: '-0.01em', fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif' }}>{c.title}</h3>
                 <p style={{ fontSize: '0.8125rem', color: '#64748B', lineHeight: 1.65 }}>{c.desc}</p>
               </div>
 
@@ -105,7 +105,7 @@ export default function Realizations() {
               <div style={{ display: 'flex', gap: 16 }}>
                 {c.metrics.map((m, j) => (
                   <div key={j}>
-                    <p style={{ fontSize: '1.375rem', fontWeight: 800, color: c.color, letterSpacing: '-0.02em', lineHeight: 1, fontFamily: 'Clash Display, sans-serif' }}>{m.value}</p>
+                    <p style={{ fontSize: '1.375rem', fontWeight: 800, color: c.color, letterSpacing: '-0.02em', lineHeight: 1, fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif' }}>{m.value}</p>
                     <p style={{ fontSize: '0.6875rem', color: '#94A3B8', marginTop: 3, fontWeight: 500 }}>{m.label}</p>
                   </div>
                 ))}

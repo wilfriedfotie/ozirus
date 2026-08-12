@@ -215,7 +215,7 @@ function OffersPanel() {
             </div>
             <div>
               <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#aaa', marginBottom: 4 }}>{offer.cat}</p>
-              <h3 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: isMobile ? 17 : 20, color: '#111', lineHeight: 1.2 }}>{offer.title}</h3>
+              <h3 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: isMobile ? 17 : 20, color: '#111', lineHeight: 1.2 }}>{offer.title}</h3>
             </div>
           </div>
 
@@ -268,7 +268,7 @@ function OffersPanel() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
             <div>
               <p style={{ fontSize: 11, color: '#bbb', marginBottom: 2 }}>À partir de</p>
-              <p style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 700, fontSize: 24, color: '#111' }}>{offer.from} <span style={{ fontSize: 13, fontWeight: 400, color: '#aaa' }}>FCFA</span></p>
+              <p style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 700, fontSize: 24, color: '#111' }}>{offer.from} <span style={{ fontSize: 13, fontWeight: 400, color: '#aaa' }}>FCFA</span></p>
             </div>
             <a href="#contact" style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: '#7967FF', color: '#fff', padding: '13px 24px', borderRadius: 8, fontSize: 13, fontWeight: 600, textDecoration: 'none', transition: 'background 0.15s' }}
               onMouseEnter={e => (e.currentTarget.style.background = '#6654F0')}
@@ -363,7 +363,7 @@ function OffersPanel() {
             </div>
             <div>
               <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#aaa', marginBottom: 4 }}>{offer.cat}</p>
-              <h3 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 20, color: '#111', lineHeight: 1.2 }}>{offer.title}</h3>
+              <h3 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 20, color: '#111', lineHeight: 1.2 }}>{offer.title}</h3>
             </div>
           </div>
 
@@ -416,7 +416,7 @@ function OffersPanel() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
             <div>
               <p style={{ fontSize: 11, color: '#bbb', marginBottom: 2 }}>À partir de</p>
-              <p style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 700, fontSize: 24, color: '#111' }}>{offer.from} <span style={{ fontSize: 13, fontWeight: 400, color: '#aaa' }}>FCFA</span></p>
+              <p style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 700, fontSize: 24, color: '#111' }}>{offer.from} <span style={{ fontSize: 13, fontWeight: 400, color: '#aaa' }}>FCFA</span></p>
             </div>
             <a href="#contact" style={{ display: 'inline-flex', alignItems: 'center', gap: 7, background: '#7967FF', color: '#fff', padding: '13px 24px', borderRadius: 8, fontSize: 13, fontWeight: 600, textDecoration: 'none', transition: 'background 0.15s' }}
               onMouseEnter={e => (e.currentTarget.style.background = '#6654F0')}
@@ -1507,7 +1507,7 @@ function MockupsShowcase() {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
           <div style={{ marginBottom: 12, textAlign: 'center' }}>
             <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 4 }}>App Mobile</p>
-            <p style={{ fontSize: 12, fontWeight: 600, color: '#111', fontFamily: 'Clash Display, sans-serif' }}>{APPS[phoneIdx].label}</p>
+            <p style={{ fontSize: 12, fontWeight: 600, color: '#111', fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif' }}>{APPS[phoneIdx].label}</p>
             <p style={{ fontSize: 10, color: '#aaa', marginTop: 2 }}>{APPS[phoneIdx].sub}</p>
           </div>
           <IPhone light={APPS[phoneIdx].light}>{APPS[phoneIdx].screen}</IPhone>
@@ -1529,7 +1529,7 @@ function MockupsShowcase() {
             <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 4 }}>
               SaaS — {SAAS_LIST[saasIdx].label}
             </p>
-            <p style={{ fontSize: 12, fontWeight: 600, color: '#111', fontFamily: 'Clash Display, sans-serif' }}>{SAAS_LIST[saasIdx].sub}</p>
+            <p style={{ fontSize: 12, fontWeight: 600, color: '#111', fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif' }}>{SAAS_LIST[saasIdx].sub}</p>
           </div>
           <div style={{ width: '100%', minWidth: 0 }}>
             {SAAS_LIST[saasIdx].el(isMobile)}
@@ -1574,7 +1574,7 @@ function StatsGrid() {
           { v: '2', u: 'sem', l: 'entre chaque démo produit' },
         ].map(({ v, u, l }, i) => (
           <div key={v + l} style={{ padding: '40px 20px', textAlign: 'center', borderRight: i < 3 ? '1px solid #E8E6FF' : 'none' }}>
-            <p style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 700, fontSize: 36, color: '#7967FF', lineHeight: 1 }}>
+            <p style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 700, fontSize: 36, color: '#7967FF', lineHeight: 1 }}>
               {v}<span style={{ fontSize: 16, fontWeight: 500, color: '#A78BFA', marginLeft: 3 }}>{u}</span>
             </p>
             <p style={{ fontSize: 13, color: '#777', marginTop: 8, lineHeight: 1.5 }}>{l}</p>
@@ -1597,7 +1597,7 @@ export default function DevPage() {
 
         <div style={{ position: 'relative', zIndex: 1, maxWidth: 1200, margin: '0 auto', minHeight: 'calc(100vh - 64px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '72px 24px', textAlign: 'center' }}>
 
-          <motion.h1 {...up(0)} style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2.8rem, 7vw, 5.8rem)', lineHeight: 0.97, letterSpacing: '-0.025em', color: '#111', margin: '0 auto' }}>
+          <motion.h1 {...up(0)} style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2.8rem, 7vw, 5.8rem)', lineHeight: 0.97, letterSpacing: '-0.025em', color: '#111', margin: '0 auto' }}>
             On construit le produit
             <br />
             <span style={{ background: 'linear-gradient(135deg, #7967FF, #A78BFA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
@@ -1634,7 +1634,7 @@ export default function DevPage() {
         <div style={{ maxWidth: 1080, margin: '0 auto' }}>
           <div style={{ maxWidth: 640, marginBottom: 48 }}>
             <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 12 }}>Nos offres</p>
-            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', lineHeight: 1.1, letterSpacing: '-0.02em', color: '#111' }}>
+            <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', lineHeight: 1.1, letterSpacing: '-0.02em', color: '#111' }}>
               Choisissez ce que{' '}
               <span style={{ background: 'linear-gradient(135deg, #7967FF, #A78BFA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 vous voulez construire.
@@ -1677,7 +1677,7 @@ export default function DevPage() {
         <div style={{ position: 'relative', zIndex: 1, maxWidth: 1080, margin: '0 auto' }}>
           <div style={{ maxWidth: 640, margin: '0 auto 56px', textAlign: 'center' }}>
             <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 12 }}>Notre processus</p>
-            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', lineHeight: 1.1, letterSpacing: '-0.02em', color: '#111' }}>
+            <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', lineHeight: 1.1, letterSpacing: '-0.02em', color: '#111' }}>
               Vous savez ce qui se passe.{' '}
               <span style={{ background: 'linear-gradient(135deg, #7967FF, #A78BFA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 À chaque étape.
@@ -1695,10 +1695,10 @@ export default function DevPage() {
                     <div style={{ width: 44, height: 44, background: '#7967FF', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <Icon size={20} color="#fff" />
                     </div>
-                    <span style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 700, fontSize: 32, color: '#EDEAFF' }}>{s.n}</span>
+                    <span style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 700, fontSize: 32, color: '#EDEAFF' }}>{s.n}</span>
                   </div>
                   <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7967FF', marginTop: 20 }}>{s.week}</p>
-                  <p style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 16, color: '#111', marginTop: 6 }}>{s.title}</p>
+                  <p style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 16, color: '#111', marginTop: 6 }}>{s.title}</p>
                   <p style={{ fontSize: 13, color: '#666', lineHeight: 1.65, marginTop: 8, flex: 1 }}>{s.body}</p>
                 </motion.div>
               );
@@ -1713,7 +1713,7 @@ export default function DevPage() {
           <motion.div {...upView()} style={{ background: 'linear-gradient(135deg, #7967FF 0%, #6654F0 100%)', borderRadius: 24, padding: 'clamp(36px, 5vw, 64px)' }}>
             <div style={{ maxWidth: 560, marginBottom: 40 }}>
               <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)', marginBottom: 12 }}>Stack technique</p>
-              <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(1.8rem, 3.5vw, 2.6rem)', lineHeight: 1.1, color: '#fff' }}>
+              <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(1.8rem, 3.5vw, 2.6rem)', lineHeight: 1.1, color: '#fff' }}>
                 Des technologies modernes, pas à la mode.
               </h2>
               <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.65)', lineHeight: 1.7, marginTop: 12 }}>
@@ -1764,7 +1764,7 @@ export default function DevPage() {
         <div style={{ maxWidth: 1080, margin: '0 auto' }}>
           <div style={{ maxWidth: 640, margin: '0 auto 48px', textAlign: 'center' }}>
             <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 12 }}>Réalisations</p>
-            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2rem, 4.5vw, 3rem)', lineHeight: 1.1, letterSpacing: '-0.02em', color: '#111' }}>
+            <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2rem, 4.5vw, 3rem)', lineHeight: 1.1, letterSpacing: '-0.02em', color: '#111' }}>
               Des produits en production, pas des maquettes.
             </h2>
           </div>
@@ -1780,7 +1780,7 @@ export default function DevPage() {
                     </div>
                     <span style={{ fontSize: 11, fontWeight: 700, color: '#7967FF', background: '#F0EEFF', padding: '3px 10px', borderRadius: 99 }}>{r.tag}</span>
                   </div>
-                  <p style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 16, color: '#111', marginBottom: 10 }}>{r.title}</p>
+                  <p style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 16, color: '#111', marginBottom: 10 }}>{r.title}</p>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 7, background: '#F0EEFF', borderRadius: 9, padding: '9px 14px', marginBottom: 14 }}>
                     <TrendingUp size={14} color="#7967FF" />
                     <p style={{ fontSize: 13, fontWeight: 700, color: '#7967FF' }}>{r.result}</p>
@@ -1798,7 +1798,7 @@ export default function DevPage() {
         <div style={{ maxWidth: 1080, margin: '0 auto' }}>
           <div style={{ maxWidth: 640, margin: '0 auto 48px', textAlign: 'center' }}>
             <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 12 }}>Pourquoi Ozirus</p>
-            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2rem, 4.5vw, 3rem)', lineHeight: 1.1, letterSpacing: '-0.02em', color: '#111' }}>
+            <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2rem, 4.5vw, 3rem)', lineHeight: 1.1, letterSpacing: '-0.02em', color: '#111' }}>
               Pas une agence qui livre et disparaît.
             </h2>
           </div>
@@ -1811,7 +1811,7 @@ export default function DevPage() {
                   <div style={{ width: 44, height: 44, background: '#F0EEFF', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Icon size={20} color="#7967FF" />
                   </div>
-                  <p style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 16, color: '#111', marginTop: 20 }}>{w.title}</p>
+                  <p style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 16, color: '#111', marginTop: 20 }}>{w.title}</p>
                   <p style={{ fontSize: 13, color: '#666', lineHeight: 1.65, marginTop: 8 }}>{w.body}</p>
                 </motion.div>
               );
@@ -1826,7 +1826,7 @@ export default function DevPage() {
         <div aria-hidden style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 600, height: 400, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(121,103,255,0.08) 0%, transparent 65%)', pointerEvents: 'none' }} />
         <div style={{ position: 'relative', zIndex: 1, maxWidth: 680, margin: '0 auto', textAlign: 'center' }}>
           <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 16 }}>Démarrons</p>
-          <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2.2rem, 5vw, 4rem)', lineHeight: 1.05, letterSpacing: '-0.02em', color: '#111', marginBottom: 16 }}>
+          <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2.2rem, 5vw, 4rem)', lineHeight: 1.05, letterSpacing: '-0.02em', color: '#111', marginBottom: 16 }}>
             Votre prochain produit commence par une conversation.
           </h2>
           <p style={{ fontSize: 16, color: '#666', lineHeight: 1.7, maxWidth: 500, margin: '0 auto 36px' }}>

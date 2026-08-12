@@ -137,7 +137,7 @@ export default function Contact() {
                       <Calendar size={16} color="#1A56DB" />
                     </div>
                     <div>
-                      <p style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#0F172A', fontFamily: 'Clash Display, sans-serif' }}>Réserver mon audit gratuit</p>
+                      <p style={{ fontSize: '0.9375rem', fontWeight: 600, color: '#0F172A', fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif' }}>Réserver mon audit gratuit</p>
                       <p style={{ fontSize: '0.75rem', color: '#94A3B8' }}>Réponse sous 24h · Sans engagement</p>
                     </div>
                   </div>
@@ -207,7 +207,7 @@ export default function Contact() {
                   <div style={{ width: 56, height: 56, borderRadius: '50%', background: '#E6F4EE', border: '1.5px solid #A7D7BC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <CheckCircle size={24} color="#008751" />
                   </div>
-                  <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: '#0F172A', fontFamily: 'Clash Display, sans-serif' }}>Demande envoyée !</h3>
+                  <h3 style={{ fontSize: '1.125rem', fontWeight: 700, color: '#0F172A', fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif' }}>Demande envoyée !</h3>
                   <p style={{ fontSize: '0.875rem', color: '#64748B', maxWidth: 280, lineHeight: 1.6 }}>
                     Notre équipe vous contacte dans les 24h pour planifier votre audit IA gratuit.
                   </p>

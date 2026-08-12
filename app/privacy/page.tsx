@@ -9,7 +9,7 @@ export default function PrivacyPage() {
       <div style={{ maxWidth: 800, margin: '0 auto' }}>
         <Link href="/" style={{ color: '#7967FF', textDecoration: 'none', fontSize: 14, fontWeight: 600 }}>← Retour à l'accueil</Link>
         
-        <h1 style={{ fontFamily: 'Clash Display, sans-serif', fontSize: 40, marginTop: 32, marginBottom: 40 }}>Politique de Confidentialité</h1>
+        <h1 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontSize: 40, marginTop: 32, marginBottom: 40 }}>Politique de Confidentialité</h1>
         
         <p style={{ color: '#666', marginBottom: 32 }}>Dernière mise à jour : 31 Mai 2026</p>
 

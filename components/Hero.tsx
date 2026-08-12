@@ -196,7 +196,7 @@ export default function Hero() {
             }}
           >
             <p style={{
-              fontFamily: 'Clash Display, sans-serif',
+              fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif',
               fontSize: '2rem',
               fontWeight: 700,
               color: '#0F172A',
@@ -271,9 +271,9 @@ export default function Hero() {
                   background: '#0F172A',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 11, fontWeight: 700, color: '#fff',
-                  fontFamily: 'Clash Display, sans-serif',
+                  fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif',
                 }}>O</div>
-                <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#0F172A', fontFamily: 'Clash Display, sans-serif' }}>Ozirus Agency</span>
+                <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#0F172A', fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif' }}>Ozirus Agency</span>
               </div>
               {[
                 { label: 'Projets', active: true },
@@ -309,7 +309,7 @@ export default function Hero() {
                   }}>
                     <p style={{ fontSize: '0.6875rem', color: '#94A3B8', marginBottom: 6 }}>{kpi.label}</p>
                     <p style={{
-                      fontFamily: 'Clash Display, sans-serif',
+                      fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif',
                       fontSize: '1.3rem', fontWeight: 700, color: '#0F172A', lineHeight: 1,
                     }}>{kpi.value}</p>
                     <p style={{ fontSize: '0.6875rem', color: kpi.color, marginTop: 5, fontWeight: 600 }}>{kpi.trend}</p>
@@ -322,7 +322,7 @@ export default function Hero() {
                 background: '#FFFFFF', borderRadius: 10, padding: 14,
                 border: '1.5px solid #E4E8EF', flex: 1,
               }}>
-                <p style={{ fontSize: '0.75rem', fontWeight: 700, color: '#475569', marginBottom: 12, fontFamily: 'Clash Display, sans-serif' }}>Projets en cours</p>
+                <p style={{ fontSize: '0.75rem', fontWeight: 700, color: '#475569', marginBottom: 12, fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif' }}>Projets en cours</p>
                 {clients.map((client, i) => (
                   <div key={i} style={{
                     display: 'flex', alignItems: 'center', gap: 10,

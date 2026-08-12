@@ -220,7 +220,7 @@ const titleStyle: React.CSSProperties = {
   fontSize: 24,
   fontWeight: 800,
   color: '#0F172A',
-  fontFamily: 'Clash Display, sans-serif',
+  fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif',
   marginBottom: 8,
 };
 

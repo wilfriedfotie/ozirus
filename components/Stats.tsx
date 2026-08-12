@@ -39,7 +39,7 @@ function Counter({ end, suffix, color }: { end: number; suffix: string; color: s
 
   return (
     <span ref={ref} style={{
-      fontFamily: 'Clash Display, sans-serif',
+      fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif',
       fontSize: '3rem',
       fontWeight: 700,
       lineHeight: 1,
@@ -100,7 +100,7 @@ export default function Stats() {
             >
               <Counter end={stat.number} suffix={stat.suffix} color={stat.color} />
               <p style={{
-                fontFamily: 'Clash Display, sans-serif',
+                fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif',
                 fontSize: '0.9375rem',
                 fontWeight: 600,
                 color: '#0F172A',
@@ -154,7 +154,7 @@ export default function Stats() {
               </div>
               <div>
                 <h3 style={{
-                  fontFamily: 'Clash Display, sans-serif',
+                  fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif',
                   fontSize: '1rem', fontWeight: 600, color: '#0F172A', marginBottom: 6,
                 }}>{p.title}</h3>
                 <p className="body-sm" style={{ lineHeight: 1.7 }}>{p.desc}</p>

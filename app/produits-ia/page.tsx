@@ -282,9 +282,9 @@ function ProductsPanel() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, flexWrap: 'wrap' }}>
                 <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#aaa' }}>Cadres d'utilisation : {product.for}</p>
               </div>
-              <h3 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 20, color: '#111', lineHeight: 1.2, marginBottom: 6 }}>{product.title}</h3>
+              <h3 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 20, color: '#111', lineHeight: 1.2, marginBottom: 6 }}>{product.title}</h3>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 16 }}>
-                <span style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 700, fontSize: 22, color: '#7967FF' }}>{product.price}</span>
+                <span style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 700, fontSize: 22, color: '#7967FF' }}>{product.price}</span>
                 <span style={{ fontSize: 11, color: '#aaa' }}>{product.type}</span>
               </div>
               <div style={{ height: 1, background: '#EDEAFF', marginBottom: 16 }} />
@@ -376,9 +376,9 @@ function ProductsPanel() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
             <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#aaa' }}>Cadres d'utilisation : {product.for}</p>
           </div>
-          <h3 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: isTablet ? 20 : 24, color: '#111', lineHeight: 1.2, marginBottom: 8 }}>{product.title}</h3>
+          <h3 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: isTablet ? 20 : 24, color: '#111', lineHeight: 1.2, marginBottom: 8 }}>{product.title}</h3>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 20 }}>
-            <span style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 700, fontSize: isTablet ? 22 : 26, color: '#7967FF' }}>{product.price}</span>
+            <span style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 700, fontSize: isTablet ? 22 : 26, color: '#7967FF' }}>{product.price}</span>
             <span style={{ fontSize: 12, color: '#aaa' }}>{product.type}</span>
           </div>
           <div style={{ height: 1, background: '#EDEAFF', marginBottom: 20 }} />
@@ -487,7 +487,7 @@ export default function ProduitsPage() {
             <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 16 }}>
               Produits IA — Ozirus Africa
             </p>
-            <h1 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2.6rem, 6vw, 4.5rem)', lineHeight: 1.0, letterSpacing: '-0.025em', color: '#111', marginBottom: 20 }}>
+            <h1 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2.6rem, 6vw, 4.5rem)', lineHeight: 1.0, letterSpacing: '-0.025em', color: '#111', marginBottom: 20 }}>
               Achetez aujourd'hui.{' '}
               <span style={{ background: 'linear-gradient(135deg, #7967FF, #A78BFA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 Utilisez demain.
@@ -589,7 +589,7 @@ export default function ProduitsPage() {
         <div style={{ maxWidth: 960, margin: '0 auto' }}>
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} style={{ textAlign: 'center', marginBottom: 52 }}>
             <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 12 }}>Mise en route</p>
-            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', lineHeight: 1.1, color: '#111', letterSpacing: '-0.02em' }}>
+            <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', lineHeight: 1.1, color: '#111', letterSpacing: '-0.02em' }}>
               De l'achat à l'utilisation en 24h
             </h2>
           </motion.div>
@@ -624,7 +624,7 @@ export default function ProduitsPage() {
         <div style={{ maxWidth: 960, margin: '0 auto' }}>
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} style={{ textAlign: 'center', marginBottom: 48 }}>
             <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 12 }}>Ils l'utilisent déjà</p>
-            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', lineHeight: 1.1, color: '#111', letterSpacing: '-0.02em' }}>
+            <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', lineHeight: 1.1, color: '#111', letterSpacing: '-0.02em' }}>
               Des résultats réels, pas des promesses.
             </h2>
           </motion.div>
@@ -663,7 +663,7 @@ export default function ProduitsPage() {
               { v: '14j', l: 'garantie remboursement', sub: 'sans condition' },
             ].map(s => (
               <div key={s.v} style={{ textAlign: 'center' }}>
-                <p style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 700, fontSize: 32, color: '#7967FF', lineHeight: 1 }}>{s.v}</p>
+                <p style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 700, fontSize: 32, color: '#7967FF', lineHeight: 1 }}>{s.v}</p>
                 <p style={{ fontSize: 13, fontWeight: 600, color: '#333', marginTop: 4 }}>{s.l}</p>
                 <p style={{ fontSize: 11, color: '#888', marginTop: 2 }}>{s.sub}</p>
               </div>
@@ -677,7 +677,7 @@ export default function ProduitsPage() {
         <div aria-hidden style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 500, height: 300, borderRadius: '50%', background: 'radial-gradient(ellipse, rgba(121,103,255,0.15) 0%, transparent 65%)', pointerEvents: 'none' }} />
         <div style={{ position: 'relative', zIndex: 1, maxWidth: 640, margin: '0 auto', textAlign: 'center' }}>
           <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 14 }}>Aller plus loin</p>
-          <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(1.8rem, 4vw, 3rem)', lineHeight: 1.1, color: '#fff', letterSpacing: '-0.02em', marginBottom: 16 }}>
+          <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(1.8rem, 4vw, 3rem)', lineHeight: 1.1, color: '#fff', letterSpacing: '-0.02em', marginBottom: 16 }}>
             Vous voulez vendre ces produits à d'autres ?
           </h2>
           <p style={{ fontSize: 15, color: '#888', lineHeight: 1.75, marginBottom: 28 }}>

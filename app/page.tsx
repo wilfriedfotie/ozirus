@@ -476,7 +476,7 @@ function SectorsPanel() {
           <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 12 }}>
             15 secteurs accompagnés
           </p>
-          <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', lineHeight: 1.1, letterSpacing: '-0.02em', color: '#111' }}>
+          <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', lineHeight: 1.1, letterSpacing: '-0.02em', color: '#111' }}>
             Comment pouvons-nous{' '}
             <span style={{ background: 'linear-gradient(135deg, #7967FF, #A78BFA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               vous aider ?
@@ -574,7 +574,7 @@ function SectorsPanel() {
                   <Icon size={22} color="#7967FF" />
                 </div>
                 <div style={{ flex: 1, minWidth: 200 }}>
-                  <h3 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 22, color: '#111', lineHeight: 1.2 }}>{sector.label}</h3>
+                  <h3 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 22, color: '#111', lineHeight: 1.2 }}>{sector.label}</h3>
                   <p style={{ fontSize: 13, color: '#999', marginTop: 3 }}>{sector.sub}</p>
                 </div>
                 <div style={{
@@ -680,7 +680,7 @@ export default function HomePage() {
           <motion.h1
             {...up(0)}
             style={{
-              fontFamily: 'Clash Display, sans-serif',
+              fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif',
               fontSize: 'clamp(2.4rem, 8vw, 5.5rem)',
               fontWeight: 600,
               lineHeight: 1.05,
@@ -783,7 +783,7 @@ export default function HomePage() {
         <div style={{ maxWidth: 1080, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', padding: '0 24px' }}>
           {STATS.map(({ v, l }, i) => (
             <div key={v} style={{ padding: '44px 24px', textAlign: 'center', borderRight: i < STATS.length - 1 ? '1px solid #E8E6FF' : 'none' }}>
-              <p style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(32px, 5vw, 44px)', color: '#7967FF' }}>{v}</p>
+              <p style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(32px, 5vw, 44px)', color: '#7967FF' }}>{v}</p>
               <p style={{ fontSize: 14, color: '#777', marginTop: 6, lineHeight: 1.5 }}>{l}</p>
             </div>
           ))}
@@ -797,7 +797,7 @@ export default function HomePage() {
             <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 12 }}>
               Pourquoi choisir Ozirus Agency ?
             </p>
-            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', lineHeight: 1.1, letterSpacing: '-0.02em', color: '#111' }}>
+            <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', lineHeight: 1.1, letterSpacing: '-0.02em', color: '#111' }}>
               Nous ne vendons pas de la technologie.{' '}
               <span style={{ background: 'linear-gradient(135deg, #7967FF, #A78BFA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 Nous créons des résultats.
@@ -824,7 +824,7 @@ export default function HomePage() {
                   <div style={{ width: 44, height: 44, background: '#F0EEFF', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Icon size={20} color="#7967FF" />
                   </div>
-                  <p style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 16, color: '#111', marginTop: 20 }}>{w.title}</p>
+                  <p style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 16, color: '#111', marginTop: 20 }}>{w.title}</p>
                   <p style={{ fontSize: 13, color: '#666', lineHeight: 1.65, marginTop: 8 }}>{w.body}</p>
                 </motion.div>
               );
@@ -847,7 +847,7 @@ export default function HomePage() {
               <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)', marginBottom: 12 }}>
                 Notre expertise
               </p>
-              <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(1.8rem, 3.5vw, 2.6rem)', lineHeight: 1.1, color: '#fff' }}>
+              <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(1.8rem, 3.5vw, 2.6rem)', lineHeight: 1.1, color: '#fff' }}>
                 L'Intelligence Artificielle concrète, pensée pour vous.
               </h2>
               <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.65)', lineHeight: 1.7, marginTop: 12 }}>
@@ -882,7 +882,7 @@ export default function HomePage() {
             <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 12 }}>
               Réalisations
             </p>
-            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', lineHeight: 1.1, letterSpacing: '-0.02em', color: '#111' }}>
+            <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', lineHeight: 1.1, letterSpacing: '-0.02em', color: '#111' }}>
               Des résultats concrets, pas des promesses.
             </h2>
           </div>
@@ -905,7 +905,7 @@ export default function HomePage() {
                 }}>
                   {r.tag}
                 </span>
-                <p style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 18, color: '#111' }}>{r.title}</p>
+                <p style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 18, color: '#111' }}>{r.title}</p>
                 <div style={{
                   display: 'flex', alignItems: 'center', gap: 8,
                   background: '#F0EEFF', borderRadius: 10, padding: '10px 16px',
@@ -928,7 +928,7 @@ export default function HomePage() {
             <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 12 }}>
               Notre processus
             </p>
-            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', lineHeight: 1.1, letterSpacing: '-0.02em', color: '#111' }}>
+            <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', lineHeight: 1.1, letterSpacing: '-0.02em', color: '#111' }}>
               De A à Z.{' '}
               <span style={{ background: 'linear-gradient(135deg, #7967FF, #A78BFA)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 En 90 jours.
@@ -953,10 +953,10 @@ export default function HomePage() {
                   <div style={{ width: 40, height: 40, background: '#7967FF', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <span style={{ fontSize: 13, fontWeight: 700, color: '#fff' }}>{s.n}</span>
                   </div>
-                  <span style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 32, color: '#EDEAFF' }}>{s.n}</span>
+                  <span style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 32, color: '#EDEAFF' }}>{s.n}</span>
                 </div>
                 <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#7967FF', marginTop: 20 }}>{s.week}</p>
-                <p style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 16, color: '#111', marginTop: 6 }}>{s.title}</p>
+                <p style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 16, color: '#111', marginTop: 6 }}>{s.title}</p>
                 <p style={{ fontSize: 13, color: '#666', lineHeight: 1.65, marginTop: 8, flex: 1 }}>{s.body}</p>
                 <div style={{
                   marginTop: 20, paddingTop: 16, borderTop: '1px solid #F0EEFF',
@@ -980,7 +980,7 @@ export default function HomePage() {
             <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 12 }}>
               Tarifs par secteur
             </p>
-            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2rem, 4.5vw, 3rem)', lineHeight: 1.1, letterSpacing: '-0.02em', color: '#111' }}>
+            <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2rem, 4.5vw, 3rem)', lineHeight: 1.1, letterSpacing: '-0.02em', color: '#111' }}>
               Des prix adaptés à la réalité camerounaise.
             </h2>
             <p style={{ fontSize: 15, color: '#666', lineHeight: 1.7, marginTop: 14 }}>
@@ -1047,7 +1047,7 @@ export default function HomePage() {
             <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)', marginBottom: 16 }}>
               Pourquoi travailler avec nous
             </p>
-            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(1.8rem, 4vw, 3rem)', lineHeight: 1.1, color: '#fff', maxWidth: 620, margin: '0 auto' }}>
+            <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(1.8rem, 4vw, 3rem)', lineHeight: 1.1, color: '#fff', maxWidth: 620, margin: '0 auto' }}>
               Nous comprenons vos défis. Électricité, connexion, budget, ressources limitées.
             </h2>
             <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.72)', lineHeight: 1.7, maxWidth: 540, margin: '16px auto 0' }}>
@@ -1077,7 +1077,7 @@ export default function HomePage() {
           <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 16 }}>
             Démarrons ensemble
           </p>
-          <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2.2rem, 5vw, 4rem)', lineHeight: 1.05, letterSpacing: '-0.02em', color: '#111' }}>
+          <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2.2rem, 5vw, 4rem)', lineHeight: 1.05, letterSpacing: '-0.02em', color: '#111' }}>
             Prêt à transformer votre entreprise avec l'IA ?
           </h2>
           <p style={{ fontSize: 17, color: '#666', lineHeight: 1.7, marginTop: 20, maxWidth: 540, margin: '20px auto 0' }}>

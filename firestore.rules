@@ -1,0 +1,44 @@
+rules_version = '2';
+
+// Règles Firestore du backoffice Ozirus.
+//
+// ⚠️ SÉCURITÉ — à lire avant de déployer.
+// Le backoffice /admin est protégé côté client uniquement (clé partagée dans l'URL
+// ou email whitelisté, stocké dans localStorage). Il n'y a pas d'authentification
+// Firebase : les requêtes arrivent donc ici en anonyme, et ces règles ouvrent les
+// collections internes en lecture/écriture publique — quiconque connaît l'ID du
+// projet Firebase peut lire et écrire. C'est déjà le cas des collections existantes.
+// Les documents archivés (propositions, factures, contrats) contiennent des données
+// client réelles : brancher Firebase Auth et remplacer `if true` par
+// `if request.auth != null && request.auth.token.email in [...]` dès que possible.
+//
+// ⚠️ Ce fichier doit lister TOUTES les collections utilisées par l'app : déployer
+// un fichier partiel révoque l'accès aux collections absentes.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Propositions commerciales, factures et contrats archivés depuis /admin.
+    match /documents/{docId} {
+      allow read, write: if true;
+    }
+
+    // Plan marketing (objectifs, secteurs, todos quotidiennes).
+    match /marketing/{docId} {
+      allow read, write: if true;
+    }
+
+    // Module Leads IA (/admin/leads).
+    match /campaigns/{docId} {
+      allow read, write: if true;
+    }
+    match /prospects/{docId} {
+      allow read, write: if true;
+    }
+    match /lead_scores/{docId} {
+      allow read, write: if true;
+    }
+    match /lead_messages/{docId} {
+      allow read, write: if true;
+    }
+  }
+}

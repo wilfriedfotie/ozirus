@@ -197,7 +197,7 @@ export default function FormationPage() {
             <p style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#7967FF', marginBottom: 20 }}>
               Formation · Agence IA Africa
             </p>
-            <h1 style={{ fontFamily: 'Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2.4rem, 6vw, 5rem)', lineHeight: 0.98, letterSpacing: '-0.025em', color: '#fff', marginBottom: 24 }}>
+            <h1 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontWeight: 600, fontSize: 'clamp(2.4rem, 6vw, 5rem)', lineHeight: 0.98, letterSpacing: '-0.025em', color: '#fff', marginBottom: 24 }}>
               Lancez votre
               <br />
               <span style={{ background: 'linear-gradient(135deg, #7967FF 0%, #A78BFA 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
@@ -301,7 +301,7 @@ export default function FormationPage() {
       <section style={{ padding: '80px 24px', position: 'relative' }}>
         <div style={{ maxWidth: 860, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 56 }}>
-            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontSize: 28, fontWeight: 600, marginBottom: 16 }}>Cette formation est pour vous si...</h2>
+            <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontSize: 28, fontWeight: 600, marginBottom: 16 }}>Cette formation est pour vous si...</h2>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 20 }}>
             {[
@@ -324,7 +324,7 @@ export default function FormationPage() {
         <div style={{ maxWidth: 860, margin: '0 auto' }}>
           <div style={{ background: '#111', borderRadius: 24, padding: '48px', border: '1px solid rgba(121,103,255,0.15)', position: 'relative', overflow: 'hidden' }}>
             <div style={{ position: 'absolute', top: 0, right: 0, padding: '12px 24px', background: '#7967FF', fontSize: 12, fontWeight: 800, borderRadius: '0 0 0 16px' }}>OPPORTUNITÉ 2026</div>
-            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontSize: 28, fontWeight: 600, marginBottom: 32, maxWidth: 500 }}>Pourquoi lancer votre agence IA en Afrique maintenant ?</h2>
+            <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontSize: 28, fontWeight: 600, marginBottom: 32, maxWidth: 500 }}>Pourquoi lancer votre agence IA en Afrique maintenant ?</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 32 }}>
               {[
                 { t: 'Adoption massive', b: 'Les PME locales cherchent désespérément à réduire leurs coûts face à l\'inflation.' },
@@ -346,7 +346,7 @@ export default function FormationPage() {
         <div style={{ maxWidth: 860, margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: 48, alignItems: 'center' }}>
             <div>
-              <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontSize: 32, fontWeight: 600, marginBottom: 24 }}>Tout ce qu'il vous faut pour réussir.</h2>
+              <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontSize: 32, fontWeight: 600, marginBottom: 24 }}>Tout ce qu'il vous faut pour réussir.</h2>
               <p style={{ color: 'rgba(255,255,255,0.6)', lineHeight: 1.7, marginBottom: 32 }}>On ne vous donne pas juste des cours. On vous donne l'infrastructure complète d'une agence IA opérationnelle.</p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {[
@@ -381,7 +381,7 @@ export default function FormationPage() {
       <section id="programme" style={{ padding: '80px 24px', background: 'rgba(255,255,255,0.02)' }}>
         <div style={{ maxWidth: 860, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 56 }}>
-            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontSize: 32, fontWeight: 600, marginBottom: 16 }}>Le programme complet</h2>
+            <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontSize: 32, fontWeight: 600, marginBottom: 16 }}>Le programme complet</h2>
             <p style={{ color: 'rgba(255,255,255,0.5)', maxWidth: 500, margin: '0 auto' }}>8 modules intensifs pour passer de zéro à vos premiers 500 000 FCFA de chiffre d'affaires.</p>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 24 }}>
@@ -400,7 +400,7 @@ export default function FormationPage() {
       <section id="resultats" style={{ padding: '100px 24px' }}>
         <div style={{ maxWidth: 860, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 56 }}>
-            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontSize: 28, fontWeight: 600, marginBottom: 16 }}>Ce qu'ils en pensent</h2>
+            <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontSize: 28, fontWeight: 600, marginBottom: 16 }}>Ce qu'ils en pensent</h2>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 24 }}>
             {TESTIMONIALS.map(t => (
@@ -423,7 +423,7 @@ export default function FormationPage() {
       <section id="faq" style={{ padding: '80px 24px', background: 'rgba(255,255,255,0.01)' }}>
         <div style={{ maxWidth: 720, margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontSize: 32, fontWeight: 600, marginBottom: 16 }}>Questions fréquentes</h2>
+            <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontSize: 32, fontWeight: 600, marginBottom: 16 }}>Questions fréquentes</h2>
             <p style={{ color: 'rgba(255,255,255,0.5)' }}>Tout ce que vous devez savoir avant de nous rejoindre.</p>
           </div>
           <div style={{ background: '#111', borderRadius: 20, padding: '8px 32px', border: '1px solid rgba(255,255,255,0.06)' }}>
@@ -452,7 +452,7 @@ export default function FormationPage() {
       {/* ── INSCRIPTION ── */}
       <section id="inscription" style={{ padding: '80px 24px 120px' }}>
         <div style={{ maxWidth: 600, margin: '0 auto', background: '#7967FF', borderRadius: 24, padding: '56px 40px', textAlign: 'center', boxShadow: '0 40px 100px rgba(121,103,255,0.3)' }}>
-          <h2 style={{ fontFamily: 'Clash Display, sans-serif', fontSize: 32, fontWeight: 600, marginBottom: 16 }}>Rejoindre la session</h2>
+          <h2 style={{ fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif', fontSize: 32, fontWeight: 600, marginBottom: 16 }}>Rejoindre la session</h2>
           <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: 40, fontSize: 16 }}>Prêt à changer de dimension ? Réservez votre place pour la session du {config.prochaineSession.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}.</p>
 
           <div style={{ background: 'rgba(255,255,255,0.1)', borderRadius: 16, padding: 24, marginBottom: 40, textAlign: 'left' }}>

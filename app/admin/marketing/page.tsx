@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, useEffect, useMemo, useState } from 'react';
+import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   ArrowDown,
@@ -47,9 +47,17 @@ import {
   createEmptyTodos,
   getTodayKey,
 } from './marketingService.mock';
-import { marketingService } from './marketingService';
 
 const ADMIN_SECRET_KEY = 'ozirus_admin_2026';
+
+type MarketingService = typeof import('./marketingService').marketingService;
+
+let marketingServicePromise: Promise<MarketingService> | null = null;
+
+const getMarketingService = () => {
+  marketingServicePromise ??= import('./marketingService').then(module => module.marketingService);
+  return marketingServicePromise;
+};
 
 const ICONS = {
   building: Building2,
@@ -266,6 +274,7 @@ function MarketingSkeleton() {
 function MarketingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const shouldSkipNextTodoSave = useRef(true);
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [prefs, setPrefs] = useState<MarketingPrefs>(DEFAULT_MARKETING_PREFS);
@@ -298,19 +307,30 @@ function MarketingContent() {
   const todoProgress = dailyTodos.length ? Math.round((checkedCount / dailyTodos.length) * 100) : 0;
 
   const objectiveProgress = useMemo(() => {
-    if (!objective) return { revenue: 0, contracts: 0, days: 0, elapsedDays: 0 };
+    if (!objective) return { revenue: 0, contracts: 0, days: 0, elapsedDays: 0, isActive: false, isUpcoming: false, isFinished: false };
 
     const start = new Date(`${objective.startDate}T00:00:00`);
-    const now = new Date();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const end = new Date(start);
+    end.setDate(end.getDate() + Math.max(1, objective.durationDays) - 1);
+
+    const isUpcoming = today < start;
+    const isFinished = today > end;
+    const isActive = !isUpcoming && !isFinished;
+
     const elapsedDays = Math.min(
       objective.durationDays,
-      Math.max(0, Math.ceil((now.getTime() - start.getTime()) / 86400000) + 1),
+      Math.max(0, Math.ceil((today.getTime() - start.getTime()) / 86400000) + 1),
     );
     return {
       revenue: objective.targetRevenue ? Math.min(100, (objective.currentRevenue / objective.targetRevenue) * 100) : 0,
       contracts: objective.targetContracts ? Math.min(100, (objective.currentContracts / objective.targetContracts) * 100) : 0,
       days: Math.min(100, (elapsedDays / objective.durationDays) * 100),
       elapsedDays,
+      isActive,
+      isUpcoming,
+      isFinished,
     };
   }, [objective]);
 
@@ -362,8 +382,14 @@ function MarketingContent() {
       return;
     }
 
-    marketingService.loadPrefs().then(loadedPrefs => {
-      marketingService.loadDailyTodoState(loadedPrefs.dailyTodos).then(loadedTodoState => {
+    let isCancelled = false;
+
+    getMarketingService().then(async marketingService => {
+      const loadedPrefs = await marketingService.loadPrefs();
+      const loadedTodoState = await marketingService.loadDailyTodoState(loadedPrefs.dailyTodos);
+
+      if (!isCancelled) {
+        shouldSkipNextTodoSave.current = true;
         setPrefs(loadedPrefs);
         setTodoState(loadedTodoState);
         setActiveTodoId(loadedPrefs.dailyTodos[0]?.id ?? '');
@@ -375,13 +401,25 @@ function MarketingContent() {
           setSelectedSectorId(loadedPrefs.sectors[0].id);
           fillSectorForm(loadedPrefs.sectors[0]);
         }
-      });
+      }
     });
+
+    return () => {
+      isCancelled = true;
+    };
   }, [router, searchParams]);
 
   useEffect(() => {
-    if (isAuthorized) marketingService.saveDailyTodoState(todoState);
-  }, [isAuthorized, todoState]);
+    if (!isAuthorized || isLoading) return;
+    if (shouldSkipNextTodoSave.current) {
+      shouldSkipNextTodoSave.current = false;
+      return;
+    }
+
+    getMarketingService().then(marketingService => {
+      marketingService.saveDailyTodoState(todoState);
+    });
+  }, [isAuthorized, isLoading, todoState]);
 
   const fillFormFromObjective = (nextObjective: MarketingObjective) => {
     setTitle(nextObjective.title);
@@ -437,12 +475,13 @@ function MarketingContent() {
 
     const nextTodos = buildDailyTodos(nextObjective);
     const nextPrefs = { ...prefs, objective: nextObjective, dailyTodos: nextTodos };
-    marketingService.savePrefs(nextPrefs).then(() => {
+    getMarketingService().then(async marketingService => {
+      await marketingService.savePrefs(nextPrefs);
       setPrefs(nextPrefs);
-      marketingService.loadDailyTodoState(nextTodos).then(state => {
-        setTodoState(state);
-        setActiveTodoId(nextTodos[0]?.id ?? '');
-      });
+      const state = await marketingService.loadDailyTodoState(nextTodos);
+      shouldSkipNextTodoSave.current = true;
+      setTodoState(state);
+      setActiveTodoId(nextTodos[0]?.id ?? '');
     });
   };
 
@@ -457,7 +496,9 @@ function MarketingContent() {
         currentContracts: toNumber(currentContracts),
       },
     };
-    marketingService.savePrefs(nextPrefs).then(() => setPrefs(nextPrefs));
+    getMarketingService().then(marketingService => {
+      marketingService.savePrefs(nextPrefs).then(() => setPrefs(nextPrefs));
+    });
   };
 
   const startNewSector = () => {
@@ -495,9 +536,12 @@ function MarketingContent() {
 
     const nextTodos = buildDailyTodos(nextObjective);
     const nextPrefs = { ...prefs, sectors: nextSectors, objective: nextObjective, dailyTodos: nextTodos };
-    marketingService.savePrefs(nextPrefs).then(() => {
+    getMarketingService().then(async marketingService => {
+      await marketingService.savePrefs(nextPrefs);
       setPrefs(nextPrefs);
-      marketingService.loadDailyTodoState(nextTodos).then(state => setTodoState(state));
+      const state = await marketingService.loadDailyTodoState(nextTodos);
+      shouldSkipNextTodoSave.current = true;
+      setTodoState(state);
       setSelectedSectorId(sector.id);
       setSectorDrafts(prev => ({
         ...createSectorDrafts(nextSectors, nextObjective),
@@ -520,9 +564,12 @@ function MarketingContent() {
     const nextTodos = buildDailyTodos(nextObjective);
     const nextPrefs = { ...prefs, sectors: nextSectors, objective: nextObjective, dailyTodos: nextTodos };
 
-    marketingService.savePrefs(nextPrefs).then(() => {
+    getMarketingService().then(async marketingService => {
+      await marketingService.savePrefs(nextPrefs);
       setPrefs(nextPrefs);
-      marketingService.loadDailyTodoState(nextTodos).then(state => setTodoState(state));
+      const state = await marketingService.loadDailyTodoState(nextTodos);
+      shouldSkipNextTodoSave.current = true;
+      setTodoState(state);
       setSectorDrafts(createSectorDrafts(nextSectors, nextObjective));
       const nextSelected = nextSectors[0];
       if (nextSelected) {
@@ -537,7 +584,8 @@ function MarketingContent() {
   };
 
   const resetToday = () => {
-    marketingService.resetDailyTodoState().then(() => {
+    getMarketingService().then(marketingService => marketingService.resetDailyTodoState()).then(() => {
+      shouldSkipNextTodoSave.current = true;
       setTodoState(createEmptyTodos(dailyTodos));
     });
   };
@@ -613,20 +661,28 @@ function MarketingContent() {
           )}
 
           {activeTab === 'todo' && (
-            <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 360px), 1fr))', gap: 20, alignItems: 'start', marginBottom: 20, gridAutoRows: '1fr' }}>
-              <TodoTimeline
-                todos={dailyTodos}
-                todoState={todoState}
-                activeTodoId={activeTodo?.id ?? ''}
-                objectiveTitle={objective?.title ?? 'Objectif commercial'}
-                progress={todoProgress}
-                checkedCount={checkedCount}
-                onSelect={setActiveTodoId}
-                onToggle={toggleTodo}
-                onReset={resetToday}
-              />
-              <TodoDetails todo={activeTodo} details={activeTodoDetails} />
-            </section>
+            objectiveProgress.isUpcoming ? (
+              <SprintNotStarted objective={objective} />
+            ) : objectiveProgress.isFinished ? (
+              <SprintFinished objective={objective} />
+            ) : !objective ? (
+              <SprintNotStarted objective={null} />
+            ) : (
+              <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 360px), 1fr))', gap: 20, alignItems: 'start', marginBottom: 20, gridAutoRows: '1fr' }}>
+                <TodoTimeline
+                  todos={dailyTodos}
+                  todoState={todoState}
+                  activeTodoId={activeTodo?.id ?? ''}
+                  objectiveTitle={objective?.title ?? 'Objectif commercial'}
+                  progress={todoProgress}
+                  checkedCount={checkedCount}
+                  onSelect={setActiveTodoId}
+                  onToggle={toggleTodo}
+                  onReset={resetToday}
+                />
+                <TodoDetails todo={activeTodo} details={activeTodoDetails} />
+              </section>
+            )
           )}
 
           {activeTab === 'objective' && (
@@ -884,6 +940,46 @@ function Insight({ text }: { text: string }) {
     <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: 12, padding: 13 }}>
       <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#7967FF', marginTop: 7, flexShrink: 0 }} />
       <p style={{ fontSize: 13, color: '#334155', lineHeight: 1.55 }}>{text}</p>
+    </div>
+  );
+}
+
+function SprintNotStarted({ objective }: { objective: MarketingObjective | null }) {
+  return (
+    <div style={{ ...panelStyle, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: 48, gap: 16, minHeight: 300 }}>
+      <div style={{ width: 56, height: 56, borderRadius: 16, background: '#F0EEFF', color: '#7967FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Clock size={26} />
+      </div>
+      <div>
+        <p style={{ fontSize: 11, fontWeight: 800, color: '#7967FF', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8 }}>Sprint pas encore démarré</p>
+        <h3 style={{ fontSize: 22, fontWeight: 900, color: '#0F172A', margin: '0 0 8px' }}>
+          {objective ? `Démarre le ${formatDate(objective.startDate)}` : 'Aucun objectif défini'}
+        </h3>
+        <p style={{ fontSize: 14, color: '#64748B', lineHeight: 1.6, maxWidth: 360 }}>
+          {objective
+            ? `La todo du jour sera disponible à partir du début du sprint. Reviens le ${formatDate(objective.startDate)}.`
+            : 'Crée un objectif dans l\'onglet Objectif pour générer ton plan d\'action quotidien.'}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function SprintFinished({ objective }: { objective: MarketingObjective | null }) {
+  return (
+    <div style={{ ...panelStyle, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: 48, gap: 16, minHeight: 300 }}>
+      <div style={{ width: 56, height: 56, borderRadius: 16, background: '#ECFDF5', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <CheckCircle2 size={26} />
+      </div>
+      <div>
+        <p style={{ fontSize: 11, fontWeight: 800, color: '#10B981', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 8 }}>Sprint terminé</p>
+        <h3 style={{ fontSize: 22, fontWeight: 900, color: '#0F172A', margin: '0 0 8px' }}>
+          {objective?.title ?? 'Objectif clôturé'}
+        </h3>
+        <p style={{ fontSize: 14, color: '#64748B', lineHeight: 1.6, maxWidth: 360 }}>
+          Ce sprint est terminé. Consulte les résultats dans l&apos;onglet Résultats ou crée un nouvel objectif.
+        </p>
+      </div>
     </div>
   );
 }

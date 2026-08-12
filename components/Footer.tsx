@@ -102,7 +102,7 @@ export default function Footer() {
             {footerLinks.map((group) => (
               <div key={group.title} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <p style={{
-                  fontFamily: 'Clash Display, sans-serif',
+                  fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif',
                   fontSize: '0.6875rem', fontWeight: 700,
                   color: '#94A3B8', letterSpacing: '0.1em',
                   textTransform: 'uppercase', marginBottom: 4,

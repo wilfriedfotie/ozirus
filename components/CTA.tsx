@@ -47,7 +47,7 @@ export default function CTA() {
 
           {/* Heading */}
           <h2 style={{
-            fontFamily: 'Clash Display, sans-serif',
+            fontFamily: 'var(--font-display-loaded), Clash Display, sans-serif',
             fontSize: 'clamp(2rem, 5vw, 3.8rem)',
             fontWeight: 700,
             lineHeight: 1.08,
