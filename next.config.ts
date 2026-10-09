@@ -4,6 +4,16 @@ const nextConfig = {
     root: __dirname,
   },
 
+  // Sous-domaine de l'offre MVP : mvp.ozirus.agency sert la page /mvp.
+  // Le domaine doit aussi être ajouté au projet Vercel (Settings → Domains).
+  async rewrites() {
+    return {
+      beforeFiles: [
+        { source: '/', has: [{ type: 'host', value: 'mvp\\..+' }], destination: '/mvp' },
+      ],
+    }
+  },
+
   typescript: {
     // Ignore les erreurs TypeScript pendant le build
     ignoreBuildErrors: true,

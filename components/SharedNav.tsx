@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSelectedLayoutSegment } from 'next/navigation';
 import { ChevronDown, X, Menu } from 'lucide-react';
 
 interface NavAnchor { label: string; href: string }
@@ -29,6 +29,7 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
   const [isTablet, setIsTablet] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const segment = useSelectedLayoutSegment();
 
   /* ── auto-config based on route ── */
   const config = {
@@ -121,7 +122,9 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
     return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
 
-  if (pathname.startsWith('/admin')) return null;
+  // `segment` suit la route rendue (et non l'URL) : sur mvp.ozirus.agency, l'URL est `/`
+  // mais la page rendue est `/mvp`, qui a son propre header.
+  if (pathname.startsWith('/admin') || segment === 'mvp') return null;
 
   /* ── theme tokens ── */
   const textColor     = dark ? 'rgba(255,255,255,0.6)' : '#555';
