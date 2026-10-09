@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'MVP en 30 jours — 5 000 € avec un CTO cofondateur | Ozirus',
   description:
-    'Offre spéciale : votre MVP SaaS, mobile ou desktop livré en 30 jours chrono pour 5 000 € au lieu de 10 000 €. Landing page et vidéo motion promo offertes. 5 ans d\'expérience, un CTO cofondateur à vos côtés.',
+    'Offre spéciale : votre MVP SaaS, mobile ou desktop livré en 30 jours chrono pour 5 000 € au lieu de 10 000 €. Landing page et vidéo motion promo offertes. 5 ans d\'expérience, une méthode augmentée par l\'IA, un CTO cofondateur à vos côtés.',
   alternates: { canonical: 'https://mvp.ozirus.agency' },
   openGraph: {
     title: 'Votre MVP en 30 jours chrono — 5 000 € au lieu de 10 000 €',

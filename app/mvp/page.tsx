@@ -9,6 +9,7 @@ import 'lenis/dist/lenis.css';
 import {
   ArrowRight, CheckCircle2, X, ChevronDown, Clock, Smartphone, Monitor, Globe,
   Layers, Compass, Rocket, Gift, Film, LayoutTemplate, MessageCircle, Cpu, Target, Scissors,
+  Bot, Eye, ShieldCheck, Sparkles, AlertTriangle,
 } from 'lucide-react';
 
 /* ─── config de l'offre ─────────────────────────────── */
@@ -84,7 +85,36 @@ const BONUSES = [
 
 const STACK = ['Next.js', 'React', 'React Native', 'Flutter', 'Node.js', 'TypeScript', 'PostgreSQL', 'Supabase', 'Stripe', 'Electron', 'OpenAI', 'Vercel'];
 
+const AI_METHOD = [
+  { icon: Bot, title: 'L\'IA écrit le code répétitif', desc: 'Formulaires, écrans, tests, documentation : des agents IA les produisent en quelques minutes au lieu de quelques jours.' },
+  { icon: Eye, title: 'Je relis chaque ligne', desc: 'Rien n\'arrive en production sans avoir été relu, compris et validé. L\'IA propose, le CTO décide.' },
+  { icon: ShieldCheck, title: 'La sécurité ne se délègue pas', desc: 'Données, paiements, accès : tout ce qui peut coûter cher est vérifié à la main, pas laissé à un modèle.' },
+  { icon: Sparkles, title: 'Le temps gagné va au produit', desc: 'Ce que l\'IA fait gagner sert à affiner votre produit et à livrer en 30 jours, pas à gonfler la facture.' },
+];
+
+const TERMINAL_LINES = [
+  { who: 'vous', color: '#FBBF24', text: '« Mes clients doivent pouvoir payer en ligne. »', ok: false },
+  { who: 'cto', color: '#A78BFA', text: 'Périmètre : 1 abonnement mensuel, paiement Stripe', ok: true },
+  { who: 'agent', color: '#38BDF8', text: 'Génère le module abonnements et ses webhooks', ok: true },
+  { who: 'agent', color: '#38BDF8', text: 'Écrit 42 tests automatisés', ok: true },
+  { who: 'cto', color: '#A78BFA', text: 'Revue : 2 failles corrigées, architecture validée', ok: true },
+  { who: 'prod', color: '#4ADE80', text: 'En ligne, démo envoyée au fondateur', ok: true },
+];
+
+const LAST_20 = [
+  'Sécurité des comptes et des données',
+  'Paiements et facturation fiables',
+  'Publication sur l\'App Store et Google Play',
+  'Performance quand les utilisateurs arrivent',
+  'Bugs en production, à corriger vite',
+  'Un code qui tient pour la V2',
+];
+
 const FAQS = [
+  {
+    q: 'Pourquoi ne pas le faire moi-même avec Claude ou ChatGPT ?',
+    a: 'Pour un prototype, vous pouvez. L\'IA vous emmène vite à 80 % ; les 20 % restants (sécurité, paiements, mise en production, publication sur les stores, bugs) demandent de savoir lire et corriger ce qu\'elle produit. Et votre temps de fondateur vaut plus sur la vente que sur le débogage.',
+  },
   {
     q: 'Un MVP en 30 jours, c\'est vraiment possible ?',
     a: 'Oui, parce que le périmètre est verrouillé dès la première semaine. Un MVP n\'est pas votre produit final : c\'est la plus petite version capable de prouver que des utilisateurs en veulent. Le rôle du CTO est justement de trouver ce périmètre avec vous.',
@@ -561,6 +591,97 @@ function StruckPrice({ play, delay, size }: { play: boolean; delay: number; size
   );
 }
 
+function AgentTerminal() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.4 });
+  const step = 0.55;
+  return (
+    <motion.div
+      ref={ref}
+      {...upView(0.1)}
+      style={{ borderRadius: 18, overflow: 'hidden', background: '#0C0B12', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 30px 80px rgba(0,0,0,0.5), 0 0 60px rgba(121,103,255,0.12)', textAlign: 'left' }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        {['#FF5F57', '#FEBC2E', '#28C840'].map(c => <span key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c, opacity: 0.8 }} />)}
+        <span style={{ marginLeft: 8, fontSize: 12, color: 'rgba(255,255,255,0.4)', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace' }}>votre-mvp — workflow</span>
+      </div>
+      <div style={{ padding: '18px 20px 22px', fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace', fontSize: 13, lineHeight: 1.6, display: 'grid', gap: 10 }}>
+        {TERMINAL_LINES.map((line, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 6 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.4, ease: EASE, delay: 0.3 + i * step }}
+            style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}
+          >
+            <span style={{ color: line.color, minWidth: 52, flexShrink: 0 }}>{line.who} ›</span>
+            <span style={{ color: 'rgba(255,255,255,0.78)', flex: 1 }}>{line.text}</span>
+            {line.ok && (
+              <motion.span
+                initial={{ opacity: 0, scale: 0.4 }}
+                animate={inView ? { opacity: 1, scale: 1 } : {}}
+                transition={{ type: 'spring', stiffness: 420, damping: 15, delay: 0.3 + i * step + 0.35 }}
+                style={{ color: '#4ADE80', flexShrink: 0 }}
+              >
+                ✓
+              </motion.span>
+            )}
+          </motion.div>
+        ))}
+        <motion.span
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: [0, 1, 1, 0] } : {}}
+          transition={{ duration: 1, repeat: Infinity, delay: 0.3 + TERMINAL_LINES.length * step }}
+          style={{ width: 8, height: 15, background: 'rgba(255,255,255,0.7)', display: 'inline-block' }}
+        />
+      </div>
+    </motion.div>
+  );
+}
+
+function ProgressRace() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.5 });
+  const rows = [
+    { label: 'Seul avec Claude, ChatGPT ou Cursor', to: 80, color: '#F59E0B', end: 'Bloqué à 80 %', icon: AlertTriangle, duration: 1.4, stall: true },
+    { label: 'Avec un CTO qui pilote l\'IA', to: 100, color: '#4ADE80', end: `En ligne en ${OFFER.days} jours`, icon: Rocket, duration: 2.6, stall: false },
+  ];
+  return (
+    <div ref={ref} style={{ display: 'grid', gap: 28 }}>
+      {rows.map((row, i) => (
+        <div key={row.label}>
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 10 }}>
+            <p style={{ fontSize: 15, fontWeight: 600, color: i === 0 ? 'rgba(255,255,255,0.7)' : '#fff' }}>{row.label}</p>
+            <p style={{ fontFamily: DISPLAY, fontSize: 22, fontWeight: 600, color: row.color }}>
+              <CountUp to={row.to} duration={row.duration} delay={0.2 + i * 0.3} play={inView} />%
+            </p>
+          </div>
+          <motion.div
+            animate={inView && row.stall ? { x: [0, -4, 4, -3, 3, 0] } : {}}
+            transition={{ duration: 0.5, delay: 0.2 + row.duration + 0.1 }}
+            style={{ height: 12, borderRadius: 999, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}
+          >
+            <motion.div
+              initial={{ width: '0%' }}
+              animate={inView ? { width: `${row.to}%` } : {}}
+              transition={{ duration: row.duration, ease: row.stall ? [0.1, 0.9, 0.2, 1] : EASE, delay: 0.2 + i * 0.3 }}
+              style={{ height: '100%', borderRadius: 999, background: row.stall ? 'linear-gradient(90deg, #F59E0B, #F87171)' : `linear-gradient(90deg, ${ACCENT}, #4ADE80)` }}
+            />
+          </motion.div>
+          <motion.p
+            initial={{ opacity: 0, y: 6 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, ease: EASE, delay: 0.3 + i * 0.3 + row.duration }}
+            style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 10, fontSize: 13, fontWeight: 600, color: row.color }}
+          >
+            <row.icon size={14} /> {row.end}
+          </motion.p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const openContact = () => window.dispatchEvent(new Event('ozirus:open-contact-modal'));
 
 /* ─── page ─────────────────────────────────────────── */
@@ -674,7 +795,7 @@ export default function MvpOfferPage() {
             <motion.p {...heroItem(0.55)} style={{ fontSize: 'clamp(16px, 2vw, 19px)', lineHeight: 1.75, color: 'rgba(255,255,255,0.65)', maxWidth: 680, margin: '0 auto 40px' }}>
               SaaS, application mobile, desktop ou produit IA : je construis votre MVP comme si c&apos;était le mien.
               Pas un prestataire de plus, <strong style={{ color: '#fff' }}>un associé technique pendant {OFFER.days} jours</strong>, avec {OFFER.years} ans
-              de produits livrés derrière lui.
+              de produits livrés et une méthode augmentée par l&apos;IA.
             </motion.p>
 
             <motion.div {...heroItem(0.7)} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: 14, marginBottom: 44 }}>
@@ -808,6 +929,71 @@ export default function MvpOfferPage() {
               </div>
             ))}
           </motion.div>
+        </section>
+
+        {/* ── MÉTHODE IA ── */}
+        <section style={{ position: 'relative', padding: '96px 24px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <SectionHead
+            eyebrow="Ma méthode"
+            title={[{ text: 'Un CTO' }, { text: 'augmenté par l\'IA.', gradient: true }]}
+            sub={`C'est ce qui rend les ${OFFER.days} jours possibles : l'IA apporte la vitesse, ${OFFER.years} ans d'expérience apportent le jugement.`}
+          />
+          <div style={{ maxWidth: 1040, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 40, alignItems: 'center' }}>
+            <div style={{ display: 'grid', gap: 22 }}>
+              {AI_METHOD.map((m, i) => (
+                <motion.div key={m.title} {...upView(i * 0.1)} style={{ display: 'flex', gap: 16 }}>
+                  <div style={{ width: 42, height: 42, flexShrink: 0, borderRadius: 12, background: 'rgba(121,103,255,0.14)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <m.icon size={20} color={ACCENT} />
+                  </div>
+                  <div>
+                    <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 6 }}>{m.title}</h3>
+                    <p style={{ fontSize: 14, lineHeight: 1.65, color: 'rgba(255,255,255,0.55)' }}>{m.desc}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            <AgentTerminal />
+          </div>
+        </section>
+
+        {/* ── ET CLAUDE ? ── */}
+        <section style={{ position: 'relative', overflow: 'hidden', padding: '96px 24px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <SectionHead
+            eyebrow="La question qu'on me pose"
+            title={[{ text: 'Pourquoi ne pas juste' }, { text: 'le faire avec Claude ?', gradient: true }]}
+            sub="Claude est excellent : je l'utilise tous les jours. Mais un outil qui écrit du code ne remplace pas quelqu'un qui sait quoi construire, et comment le mettre en production."
+          />
+          <div style={{ maxWidth: 820, margin: '0 auto' }}>
+            <motion.div {...upView()} style={{ ...card, padding: 'clamp(24px, 4vw, 40px)', marginBottom: 40 }}>
+              <ProgressRace />
+            </motion.div>
+
+            <motion.p {...upView()} style={{ textAlign: 'center', fontSize: 13, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', marginBottom: 20 }}>
+              Les 20 % où les projets meurent
+            </motion.p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 10, marginBottom: 48 }}>
+              {LAST_20.map((item, i) => (
+                <motion.span
+                  key={item}
+                  initial={{ opacity: 0, scale: 0.85, y: 10 }}
+                  whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-40px' }}
+                  transition={{ type: 'spring', stiffness: 260, damping: 20, delay: i * 0.07 }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 16px', borderRadius: 999, background: 'rgba(245,158,11,0.07)', border: '1px solid rgba(245,158,11,0.22)', fontSize: 14, color: 'rgba(255,255,255,0.85)' }}
+                >
+                  <AlertTriangle size={14} color="#F59E0B" /> {item}
+                </motion.span>
+              ))}
+            </div>
+
+            <motion.div {...upView()} style={{ position: 'relative', borderRadius: 20, padding: '28px 32px', background: 'linear-gradient(135deg, rgba(121,103,255,0.12), rgba(255,255,255,0.02))', borderLeft: `3px solid ${ACCENT}` }}>
+              <p style={{ fontSize: 13, fontWeight: 700, color: ACCENT, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>Mon conseil honnête</p>
+              <p style={{ fontSize: 'clamp(16px, 2vw, 19px)', lineHeight: 1.7, color: 'rgba(255,255,255,0.85)' }}>
+                Pour tester une idée en un week-end, lancez-vous seul avec Claude. Pour un produit que de vrais clients vont payer,
+                {' '}<strong style={{ color: '#fff' }}>entourez-vous de quelqu&apos;un qui sait lire, corriger et assumer ce que l&apos;IA produit.</strong>
+              </p>
+            </motion.div>
+          </div>
         </section>
 
         {/* ── PLATEFORMES ── */}
