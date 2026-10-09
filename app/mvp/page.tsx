@@ -9,7 +9,7 @@ import 'lenis/dist/lenis.css';
 import {
   ArrowRight, CheckCircle2, X, ChevronDown, Clock, Smartphone, Monitor, Globe,
   Layers, Compass, Rocket, Gift, Film, LayoutTemplate, MessageCircle, Cpu, Target, Scissors,
-  Bot, Eye, ShieldCheck, Sparkles, AlertTriangle,
+  Bot, Eye, ShieldCheck, Sparkles, AlertTriangle, Play,
 } from 'lucide-react';
 
 /* ─── config de l'offre ─────────────────────────────── */
@@ -21,6 +21,17 @@ const OFFER = {
   whatsapp: '237694086571',
   whatsappText: 'Bonjour Wilfried, je suis intéressé par l\'offre MVP en 30 jours à 5 000 €. Voici mon projet : ',
   email: 'info.ozirus@gmail.com',
+};
+
+// Vidéo de présentation. Renseigner `src` (fichier déposé dans public/, ex. '/videos/mvp.mp4')
+// OU `youtubeId`. Tant que les deux sont vides, l'affiche reste visible avec « Bientôt disponible ».
+const VIDEO = {
+  src: '',
+  youtubeId: '',
+  poster: '',
+  photo: '',
+  duration: '',
+  chapters: ['Qui je suis', 'Pourquoi un CTO cofondateur', 'Ma méthode avec l\'IA', 'L\'offre à 5 000 €'],
 };
 
 const WHATSAPP_URL = `https://wa.me/${OFFER.whatsapp}?text=${encodeURIComponent(OFFER.whatsappText)}`;
@@ -174,7 +185,9 @@ const PAGE_CSS = `
   @keyframes mvp-pulse { 0% { box-shadow: 0 0 0 0 rgba(22,163,74,.45); } 100% { box-shadow: 0 0 0 9px rgba(22,163,74,0); } }
   .mvp-navlink { color: ${MUTED}; font-size: 14px; font-weight: 500; background: none; border: none; cursor: pointer; padding: 6px 2px; transition: color .2s; }
   .mvp-navlink:hover { color: ${INK}; }
+  .mvp-video-chip { bottom: 9%; }
   @media (max-width: 720px) {
+    .mvp-video-chip { bottom: auto; top: 7%; }
     .mvp-hide-sm { display: none !important; }
     .mvp-mock-main { padding: 14px !important; }
     .mvp-compare-row p { padding: 14px 12px !important; font-size: 13px !important; }
@@ -700,6 +713,169 @@ function ProgressRace() {
   );
 }
 
+function VideoPosterArt() {
+  return (
+    <motion.div
+      variants={{ rest: { scale: 1 }, hover: { scale: 1.025 } }}
+      transition={{ duration: 0.8, ease: EASE }}
+      style={{ position: 'absolute', inset: 0, background: '#111113', color: '#fff' }}
+    >
+      <svg aria-hidden style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.06 }}>
+        <defs>
+          <pattern id="mvp-video-grid" width="44" height="44" patternUnits="userSpaceOnUse">
+            <path d="M44 0 L0 0 0 44" fill="none" stroke="#fff" strokeWidth="1" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#mvp-video-grid)" />
+      </svg>
+      <span aria-hidden style={{ position: 'absolute', right: '4%', bottom: '-12%', fontFamily: DISPLAY, fontWeight: 600, fontSize: 'clamp(140px, 30vw, 340px)', lineHeight: 1, letterSpacing: '-0.05em', color: 'rgba(255,255,255,0.05)' }}>
+        {OFFER.days}
+      </span>
+      <div className="mvp-hide-sm" style={{ position: 'absolute', top: '9%', left: '6%', right: '6%' }}>
+        <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', marginBottom: 14 }}>Ozirus · Offre MVP</p>
+        <p style={{ fontFamily: DISPLAY, fontWeight: 600, fontSize: 'clamp(20px, 4vw, 44px)', lineHeight: 1.05, letterSpacing: '-0.03em' }}>
+          Votre MVP en {OFFER.days} jours,
+          <br />
+          <span style={{ color: 'rgba(255,255,255,0.45)' }}>avec un CTO cofondateur.</span>
+        </p>
+      </div>
+      <div style={{ position: 'absolute', left: '6%', bottom: '9%', display: 'flex', alignItems: 'center', gap: 12 }}>
+        {VIDEO.photo ? (
+          <img src={VIDEO.photo} alt="Wilfried Fotie" style={{ width: 44, height: 44, borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,255,255,0.2)' }} />
+        ) : (
+          <span style={{ width: 44, height: 44, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: ACCENT_SOFT, color: ACCENT_INK, fontSize: 15, fontWeight: 700 }}>WF</span>
+        )}
+        <div>
+          <p style={{ fontSize: 14, fontWeight: 600 }}>Wilfried Fotie</p>
+          <p className="mvp-hide-sm" style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>CTO cofondateur · {OFFER.years} ans d&apos;expérience</p>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function VideoSection() {
+  const [playing, setPlaying] = useState(false);
+  const [soon, setSoon] = useState(false);
+  const hasVideo = Boolean(VIDEO.src || VIDEO.youtubeId);
+
+  const play = () => {
+    if (hasVideo) { setPlaying(true); return; }
+    setSoon(true);
+    window.setTimeout(() => setSoon(false), 2600);
+  };
+
+  return (
+    <Section id="video">
+      <SectionHead
+        eyebrow="En vidéo"
+        title={[{ text: 'Je vous explique tout,' }, { text: 'en quelques minutes.', muted: true }]}
+        sub={`Qui je suis, comment je travaille avec l'IA, et ce que vous obtenez en ${OFFER.days} jours.`}
+      />
+
+      <motion.div
+        initial={{ opacity: 0, y: 40, scale: 0.96 }}
+        whileInView={{ opacity: 1, y: 0, scale: 1 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={{ duration: 1, ease: EASE }}
+        style={{ maxWidth: 980, margin: '0 auto', padding: 10, borderRadius: 30, background: '#fff', border: `1px solid ${LINE}`, boxShadow: '0 2px 4px rgba(16,16,20,0.04), 0 40px 100px rgba(16,16,20,0.12)' }}
+      >
+        <div style={{ position: 'relative', aspectRatio: '16 / 9', borderRadius: 22, overflow: 'hidden', background: '#111113' }}>
+          <AnimatePresence mode="wait">
+            {playing ? (
+              <motion.div key="player" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} style={{ position: 'absolute', inset: 0 }}>
+                {VIDEO.youtubeId ? (
+                  <iframe
+                    src={`https://www.youtube-nocookie.com/embed/${VIDEO.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
+                    title="Présentation de l'offre MVP"
+                    allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+                    allowFullScreen
+                    style={{ width: '100%', height: '100%', border: 0 }}
+                  />
+                ) : (
+                  <video src={VIDEO.src} poster={VIDEO.poster || undefined} controls autoPlay playsInline style={{ width: '100%', height: '100%', objectFit: 'contain', background: '#000' }} />
+                )}
+              </motion.div>
+            ) : (
+              <motion.button
+                key="poster"
+                onClick={play}
+                aria-label="Lire la vidéo"
+                initial="rest"
+                animate="rest"
+                whileHover="hover"
+                exit={{ opacity: 0 }}
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', padding: 0, border: 'none', background: 'transparent', cursor: 'pointer', textAlign: 'left' }}
+              >
+                {VIDEO.poster
+                  ? <img src={VIDEO.poster} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                  : <VideoPosterArt />}
+
+                <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ position: 'relative', width: 'clamp(64px, 9vw, 88px)', aspectRatio: '1' }}>
+                    {[0, 1.2].map(delay => (
+                      <motion.span
+                        key={delay}
+                        aria-hidden
+                        animate={{ scale: [1, 1.75], opacity: [0.5, 0] }}
+                        transition={{ duration: 2.4, repeat: Infinity, ease: 'easeOut', delay }}
+                        style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '1.5px solid rgba(255,255,255,0.6)' }}
+                      />
+                    ))}
+                    <motion.span
+                      variants={{ rest: { scale: 1 }, hover: { scale: 1.1 } }}
+                      transition={{ type: 'spring', stiffness: 320, damping: 18 }}
+                      style={{ position: 'absolute', inset: 0, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 20px 50px rgba(0,0,0,0.35)' }}
+                    >
+                      <Play size={28} fill={INK} color={INK} style={{ marginLeft: 4 }} />
+                    </motion.span>
+                  </span>
+                </span>
+
+                <span className="mvp-video-chip" style={{ position: 'absolute', right: '4%', display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 999, background: 'rgba(255,255,255,0.12)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.16)', color: '#fff', fontSize: 12, fontWeight: 600 }}>
+                  {hasVideo ? <><Play size={11} fill="#fff" /> {VIDEO.duration || 'Regarder'}</> : 'Bientôt disponible'}
+                </span>
+              </motion.button>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {soon && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.35, ease: EASE }}
+                style={{ position: 'absolute', top: 16, left: '50%', translateX: '-50%', padding: '10px 16px', borderRadius: 12, background: '#fff', color: INK, fontSize: 14, fontWeight: 600, boxShadow: '0 12px 30px rgba(0,0,0,0.25)', whiteSpace: 'nowrap' }}
+              >
+                La vidéo arrive très bientôt.
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </motion.div>
+
+      {VIDEO.chapters.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 10, marginTop: 28 }}>
+          {VIDEO.chapters.map((chapter, i) => (
+            <motion.span
+              key={chapter}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: EASE, delay: 0.3 + i * 0.08 }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 14px', borderRadius: 999, background: '#fff', border: `1px solid ${LINE}`, fontSize: 14, color: INK }}
+            >
+              <span style={{ fontSize: 12, fontWeight: 600, color: FAINT, fontVariantNumeric: 'tabular-nums' }}>{String(i + 1).padStart(2, '0')}</span>
+              {chapter}
+            </motion.span>
+          ))}
+        </div>
+      )}
+    </Section>
+  );
+}
+
 const openContact = () => window.dispatchEvent(new Event('ozirus:open-contact-modal'));
 
 /* ─── page ─────────────────────────────────────────── */
@@ -766,7 +942,7 @@ export default function MvpOfferPage() {
                 <img src="/logo.png" alt="Ozirus" style={{ height: 24, filter: 'brightness(0)' }} />
               </a>
               <nav className="mvp-hide-sm" style={{ display: 'flex', gap: 22 }}>
-                {[['methode', 'Méthode'], ['ia', 'Et Claude ?'], ['offre', 'Offre'], ['faq', 'FAQ']].map(([id, label]) => (
+                {[['video', 'Vidéo'], ['methode', 'Méthode'], ['ia', 'Et Claude ?'], ['offre', 'Offre'], ['faq', 'FAQ']].map(([id, label]) => (
                   <button key={id} className="mvp-navlink" onClick={() => scrollTo(id)}>{label}</button>
                 ))}
               </nav>
@@ -876,6 +1052,9 @@ export default function MvpOfferPage() {
               </motion.div>
             </div>
           </section>
+
+          {/* ── VIDÉO ── */}
+          <VideoSection />
 
           {/* ── POURQUOI UN CTO ── */}
           <Section>
