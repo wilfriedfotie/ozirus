@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { usePathname, useSelectedLayoutSegment } from 'next/navigation';
 import { ChevronDown, X, Menu } from 'lucide-react';
+import { useMainSiteHref } from '@/lib/useMainSiteHref';
 
 interface NavAnchor { label: string; href: string }
 
@@ -16,8 +17,7 @@ interface Props {
 
 const PAGES = [
   { href: '/',             label: 'Accueil PME' },
-  { href: '/produits-ia',  label: 'Produits IA' },
-  { href: '/formation-ia', label: 'Formation' },
+  // { href: '/produits-ia',  label: 'Produits IA' }, // masqué pour l'instant
   { href: '/dev',          label: 'Studio Dev' },
 ];
 
@@ -30,6 +30,9 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const segment = useSelectedLayoutSegment();
+  const siteHref = useMainSiteHref();
+  // Route réellement rendue (sur un sous-domaine, `pathname` vaut `/` quelle que soit la page).
+  const route = segment ? `/${segment}` : pathname;
 
   /* ── auto-config based on route ── */
   const config = {
@@ -40,31 +43,19 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
   };
 
   if (!propAnchors) {
-    if (pathname === '/') {
+    if (route === '/') {
       config.anchors = [
         { label: 'Secteurs', href: '#secteurs' },
         { label: 'Processus', href: '#processus' },
         { label: 'Tarifs', href: '#tarifs' },
         { label: 'Contact', href: '#contact' },
       ];
-    } else if (pathname === '/produits-ia') {
+    } else if (route === '/produits-ia') {
       config.anchors = [
         { label: 'Produits IA', href: '#produits' },
-        { label: 'Formation',   href: '#formation' },
         { label: 'Contact',     href: '#contact' },
       ];
-      config.ctaLabel = 'Lancer mon agence IA';
-      config.ctaHref = '/formation-ia';
-    } else if (pathname === '/formation-ia') {
-      config.anchors = [
-        { label: 'Programme', href: '#programme' },
-        { label: 'Résultats',  href: '#resultats' },
-        { label: 'Inscription', href: '#inscription' },
-      ];
-      config.ctaLabel = 'Réserver ma place';
-      config.ctaHref = '#inscription';
-      config.dark = true;
-    } else if (pathname === '/dev') {
+    } else if (route === '/dev') {
       config.anchors = [
         { label: 'Offres', href: '#offres' },
         { label: 'Processus', href: '#processus' },
@@ -123,8 +114,8 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
   }, [menuOpen]);
 
   // `segment` suit la route rendue (et non l'URL) : sur mvp.ozirus.agency, l'URL est `/`
-  // mais la page rendue est `/mvp`, qui a son propre header.
-  if (pathname.startsWith('/admin') || segment === 'mvp') return null;
+  // mais la page rendue est `/mvp`. Les landings sur sous-domaine ont leur propre header.
+  if (pathname.startsWith('/admin') || segment === 'mvp' || segment === 'formation-ia') return null;
 
   /* ── theme tokens ── */
   const textColor     = dark ? 'rgba(255,255,255,0.6)' : '#555';
@@ -164,7 +155,7 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
           display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px',
         }}>
           {/* logo */}
-          <a href="/" style={{ flexShrink: 0 }}>
+          <a href={siteHref('/')} style={{ flexShrink: 0 }}>
             <img src="/logo.png" alt="Ozirus" style={{ height: 30, filter: logoFilter }} />
           </a>
 
@@ -224,11 +215,11 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
 
               {/* page links — hidden on tablet (too many) */}
               {!isTablet && PAGES.map(({ href, label }) => {
-                const isActive = pathname === href;
+                const isActive = route === href;
                 return (
                   <a
                     key={href}
-                    href={href}
+                    href={siteHref(href)}
                     style={{
                       color: isActive ? '#7967FF' : textColor,
                       textDecoration: 'none', fontSize: 14,
@@ -387,11 +378,11 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
                 </p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   {PAGES.map(({ href, label }) => {
-                    const isActive = pathname === href;
+                    const isActive = route === href;
                     return (
                       <a
                         key={href}
-                        href={href}
+                        href={siteHref(href)}
                         onClick={() => setMenuOpen(false)}
                         style={{
                           display: 'block', padding: '12px 14px',

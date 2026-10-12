@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  motion, AnimatePresence, MotionConfig, animate, useInView, useScroll, useSpring, useTransform,
+  motion, AnimatePresence, MotionConfig, animate, useInView, useMotionValue, useScroll, useSpring, useTransform,
 } from 'framer-motion';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
@@ -35,7 +35,10 @@ const VIDEO = {
 };
 
 const WHATSAPP_URL = `https://wa.me/${OFFER.whatsapp}?text=${encodeURIComponent(OFFER.whatsappText)}`;
-const eur = (n: number) => `${Math.round(n).toLocaleString('fr-FR')} €`;
+// Formatage fr-FR fait à la main : la méthode Intl dépend de l'ICU du moteur (Node et le
+// navigateur n'emploient pas toujours la même espace insécable), d'où des erreurs d'hydratation.
+const frNum = (n: number) => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '\u202F');
+const eur = (n: number) => `${frNum(n)} €`;
 
 const ACCENT = '#7967FF';
 const DISPLAY = 'var(--font-display-loaded), Clash Display, sans-serif';
@@ -189,11 +192,26 @@ const PAGE_CSS = `
   @media (max-width: 720px) {
     .mvp-video-chip { bottom: auto; top: 7%; }
     .mvp-hide-sm { display: none !important; }
-    .mvp-mock-main { padding: 14px !important; }
     .mvp-compare-row p { padding: 14px 12px !important; font-size: 13px !important; }
   }
+  .mvp-glass {
+    background: linear-gradient(135deg, rgba(255,255,255,0.62), rgba(255,255,255,0.32));
+    backdrop-filter: blur(16px) saturate(140%); -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid rgba(255,255,255,0.8);
+    box-shadow: inset 0 1px 0 #fff, inset 0 -1px 1px rgba(255,255,255,0.5), 0 1px 2px rgba(16,16,20,0.05), 0 8px 22px rgba(16,16,20,0.07);
+  }
+  .mvp-glass-pill {
+    position: absolute; top: 5px; bottom: 5px; left: 5px; width: calc((100% - 10px) / 3); border-radius: 24px;
+    background: rgba(14,14,16,0.06); box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+    animation: mvp-tab 7.5s cubic-bezier(.5,1.6,.4,1) infinite;
+  }
+  @keyframes mvp-tab { 0%, 28% { transform: translateX(0); } 33%, 61% { transform: translateX(100%); } 66%, 95% { transform: translateX(200%); } 100% { transform: translateX(0); } }
+  .mvp-blob { animation: mvp-blob 12s ease-in-out infinite alternate; }
+  .mvp-blob-b { animation-duration: 15s; animation-direction: alternate-reverse; }
+  .mvp-blob-c { animation-duration: 18s; }
+  @keyframes mvp-blob { 0% { transform: translate(0, 0) scale(1); } 50% { transform: translate(60px, 50px) scale(1.15); } 100% { transform: translate(-30px, 110px) scale(0.9); } }
   @media (prefers-reduced-motion: reduce) {
-    .mvp-pulse { animation: none; }
+    .mvp-pulse, .mvp-glass-pill, .mvp-blob { animation: none; }
   }
 `;
 
@@ -218,7 +236,7 @@ function useLoaderGone() {
   return gone;
 }
 
-function CountUp({ from = 0, to, duration = 1.6, delay = 0, format = (v: number) => Math.round(v).toLocaleString('fr-FR'), play }: {
+function CountUp({ from = 0, to, duration = 1.6, delay = 0, format = frNum, play }: {
   from?: number; to: number; duration?: number; delay?: number; format?: (v: number) => string; play?: boolean;
 }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -340,165 +358,335 @@ function Skel({ w, h = 8, o = 0.08, r = 4 }: { w: number | string; h?: number; o
   return <div style={{ width: w, height: h, borderRadius: r, background: `rgba(14,14,16,${o})` }} />;
 }
 
+// La scène est dessinée en pixels « design » puis mise à l'échelle de son conteneur :
+// les cadres gardent les proportions réelles des appareils quelle que soit la largeur.
+const SCENE_W = 1400;
+const SCENE_H = 900;
+
+function useFitScale(ref: React.RefObject<HTMLDivElement | null>, designWidth: number) {
+  const [scale, setScale] = useState(0);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => setScale(entry.contentRect.width / designWidth));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [ref, designWidth]);
+  return scale;
+}
+
+// MacBook Pro 14" : dalle 3024×1964 (≈ 1,54), bordures fines, encoche, base aluminium.
+function MacBookPro14({ play, delay, children }: { play: boolean; delay: number; children: React.ReactNode }) {
+  return (
+    <div style={{ position: 'absolute', left: 0, top: 20, width: 1260, perspective: 2200, perspectiveOrigin: '50% 100%' }}>
+      <motion.div
+        initial={{ rotateX: -84 }}
+        animate={play ? { rotateX: 0 } : {}}
+        transition={{ duration: 1.7, ease: EASE, delay }}
+        style={{ position: 'relative', width: 1220, height: 800, margin: '0 auto', transformOrigin: '50% 100%', borderRadius: '30px 30px 10px 10px', padding: '16px 16px 24px', background: 'linear-gradient(180deg, #1C1C1F, #0B0B0D)', boxShadow: 'inset 0 0 0 1.5px #3A3A3F, inset 0 0 0 4px #0B0B0D, 0 40px 80px -20px rgba(16,16,20,0.35)' }}
+      >
+        <div style={{ position: 'relative', width: '100%', height: '100%', borderRadius: '14px 14px 4px 4px', overflow: 'hidden', background: '#000' }}>
+          {children}
+          {/* reflet de la dalle */}
+          <div aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: 'linear-gradient(115deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0) 38%)' }} />
+          {/* écran qui s'allume une fois le capot ouvert */}
+          <motion.div
+            aria-hidden
+            initial={{ opacity: 1 }}
+            animate={play ? { opacity: 0 } : {}}
+            transition={{ duration: 0.9, ease: 'easeOut', delay: delay + 1.2 }}
+            style={{ position: 'absolute', inset: 0, background: '#000', pointerEvents: 'none' }}
+          />
+        </div>
+        {/* encoche */}
+        <div aria-hidden style={{ position: 'absolute', top: 16, left: '50%', width: 186, height: 30, marginLeft: -93, borderRadius: '0 0 12px 12px', background: '#0B0B0D', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <span style={{ width: 9, height: 9, borderRadius: '50%', background: 'radial-gradient(circle at 35% 35%, #2C3550, #050507 70%)' }} />
+        </div>
+      </motion.div>
+
+      {/* charnière + base aluminium */}
+      <div aria-hidden style={{ position: 'relative', width: 1180, height: 8, margin: '0 auto', background: 'linear-gradient(180deg, #2A2A2E, #6B6B72)', borderRadius: '0 0 4px 4px' }} />
+      <div aria-hidden style={{ position: 'relative', height: 22, marginTop: -2, borderRadius: '3px 3px 40px 40px / 3px 3px 22px 22px', background: 'linear-gradient(180deg, #E9EAEE 0%, #D3D5DB 45%, #A9ABB3 100%)', boxShadow: 'inset 0 1px 0 #FFFFFF, inset 0 -2px 3px rgba(0,0,0,0.12)' }}>
+        <span style={{ position: 'absolute', top: 0, left: '50%', width: 200, height: 9, marginLeft: -100, borderRadius: '0 0 12px 12px', background: 'linear-gradient(180deg, #B7B9C0, #D8DAE0)' }} />
+      </div>
+      <div aria-hidden style={{ width: '94%', height: 30, margin: '-12px auto 0', borderRadius: '50%', background: 'radial-gradient(ellipse at center, rgba(16,16,20,0.28), transparent 70%)', filter: 'blur(6px)' }} />
+    </div>
+  );
+}
+
+// iPhone 17 Pro Max : 78 × 163,4 mm, cadre aluminium, Dynamic Island, boutons latéraux.
+const PHONE_W = 290;
+const PHONE_H = Math.round(PHONE_W * 163.4 / 78);
+
+function IPhone17ProMax({ play, delay, children }: { play: boolean; delay: number; children: React.ReactNode }) {
+  const metal = 'linear-gradient(90deg, #8E9097, #E4E5E9 30%, #B9BBC2 60%, #7C7E85)';
+  const btn = (side: 'left' | 'right', top: number, h: number) => (
+    <span aria-hidden style={{ position: 'absolute', [side]: -4, top, width: 5, height: h, borderRadius: side === 'left' ? '3px 0 0 3px' : '0 3px 3px 0', background: 'linear-gradient(180deg, #C9CBD1, #8B8D94)' }} />
+  );
+  return (
+    <div style={{ position: 'absolute', left: SCENE_W - PHONE_W - 30, top: SCENE_H - PHONE_H - 14, width: PHONE_W, height: PHONE_H, perspective: 1600 }}>
+      <motion.div
+        initial={{ opacity: 0, x: 220, y: 40, rotateY: -70, rotateZ: 10 }}
+        animate={play ? { opacity: 1, x: 0, y: 0, rotateY: -18, rotateZ: 0 } : {}}
+        transition={{ duration: 1.5, ease: EASE, delay }}
+        style={{ width: '100%', height: '100%', transformStyle: 'preserve-3d' }}
+      >
+        <motion.div
+          animate={{ y: [0, -12, 0], rotateX: [0, 3, 0] }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+          style={{ position: 'relative', width: '100%', height: '100%', transformStyle: 'preserve-3d' }}
+        >
+          {/* tranche (épaisseur réelle visible en 3D) */}
+          <span aria-hidden style={{ position: 'absolute', top: 54, bottom: 54, right: 0, width: 16, transformOrigin: '100% 50%', transform: 'rotateY(90deg)', background: metal, borderRadius: 8 }} />
+          {btn('left', 128, 26)}
+          {btn('left', 178, 50)}
+          {btn('left', 240, 50)}
+          {btn('right', 196, 78)}
+          {btn('right', 330, 44)}
+          <div style={{ position: 'absolute', inset: 0, borderRadius: 52, padding: 3, background: metal, boxShadow: '0 50px 90px -20px rgba(16,16,20,0.45), 0 18px 30px -12px rgba(16,16,20,0.3)' }}>
+            <div style={{ width: '100%', height: '100%', borderRadius: 49, padding: 9, background: '#050506' }}>
+              <div style={{ position: 'relative', width: '100%', height: '100%', borderRadius: 40, overflow: 'hidden', background: '#fff' }}>
+                {children}
+                <div aria-hidden style={{ position: 'absolute', top: 11, left: '50%', width: 88, height: 26, marginLeft: -44, borderRadius: 20, background: '#000' }} />
+                <div aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: 'linear-gradient(120deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 35%)' }} />
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </div>
+  );
+}
+
 function ProductMock({ ready }: { ready: boolean }) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const inView = useInView(rootRef, { once: true, amount: 0.35 });
-  const play = ready && inView;
+  const inView = useInView(rootRef, { once: true, amount: 0.3 });
+  const scale = useFitScale(rootRef, SCENE_W);
+  const play = ready && inView && scale > 0;
   const base = 0.15;
+  const screenOn = base + 1.5;
+
+  // Inclinaison 3D qui suit la souris.
+  const px = useMotionValue(0);
+  const py = useMotionValue(0);
+  const tiltY = useSpring(useTransform(px, [-0.5, 0.5], [-7, 7]), { stiffness: 80, damping: 18 });
+  const tiltX = useSpring(useTransform(py, [-0.5, 0.5], [5, -5]), { stiffness: 80, damping: 18 });
+  const onMove = (e: React.MouseEvent) => {
+    const r = rootRef.current?.getBoundingClientRect();
+    if (!r) return;
+    px.set((e.clientX - r.left) / r.width - 0.5);
+    py.set((e.clientY - r.top) / r.height - 0.5);
+  };
+  const onLeave = () => { px.set(0); py.set(0); };
+
   const pop = (d: number) => ({
     initial: { opacity: 0, y: 14, scale: 0.97 },
     animate: play ? { opacity: 1, y: 0, scale: 1 } : {},
-    transition: { duration: 0.7, ease: EASE, delay: base + d },
+    transition: { duration: 0.7, ease: EASE, delay: screenOn + d },
   });
   const bars = [38, 56, 44, 70, 62, 84, 76, 96];
   const kpis = [
-    { label: 'Utilisateurs', to: 1284, fmt: (v: number) => Math.round(v).toLocaleString('fr-FR') },
+    { label: 'Utilisateurs', to: 1284, fmt: frNum },
     { label: 'Revenu mensuel', to: 4920, fmt: eur },
     { label: 'Conversion', to: 6.8, fmt: (v: number) => `${v.toFixed(1).replace('.', ',')} %` },
   ];
-  const panel: React.CSSProperties = { borderRadius: 12, background: '#fff', border: `1px solid ${LINE}` };
+  const panel: React.CSSProperties = { borderRadius: 14, background: '#fff', border: `1px solid ${LINE}` };
   const chip: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderRadius: 12, background: 'rgba(255,255,255,0.92)', backdropFilter: 'blur(12px)', border: `1px solid ${LINE}`, fontSize: 12, fontWeight: 600, color: INK, boxShadow: '0 12px 30px rgba(16,16,20,0.1)' };
 
   return (
-    <div ref={rootRef} style={{ position: 'relative', maxWidth: 960, margin: '0 auto' }}>
-      {/* navigateur */}
-      <motion.div {...pop(0)} style={{ borderRadius: 18, overflow: 'hidden', background: '#FAFAFB', border: `1px solid ${LINE}`, boxShadow: '0 2px 4px rgba(16,16,20,0.04), 0 40px 100px rgba(16,16,20,0.12)', color: INK }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 16px', borderBottom: `1px solid ${LINE}`, background: '#fff' }}>
-          {['#FF5F57', '#FEBC2E', '#28C840'].map(c => <span key={c} style={{ width: 10, height: 10, borderRadius: '50%', background: c }} />)}
-          <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
-            <span style={{ padding: '5px 14px', borderRadius: 8, background: '#F4F4F5', fontSize: 11, color: MUTED }}>app.votre-startup.com</span>
-          </div>
-        </div>
+    <div ref={rootRef} onMouseMove={onMove} onMouseLeave={onLeave} style={{ position: 'relative', width: '100%', aspectRatio: `${SCENE_W} / ${SCENE_H}` }}>
+      <div style={{ position: 'absolute', left: 0, top: 0, width: SCENE_W, height: SCENE_H, transformOrigin: '0 0', transform: `scale(${scale})`, opacity: scale ? 1 : 0, perspective: 2600 }}>
+        <motion.div style={{ position: 'absolute', inset: 0, rotateX: tiltX, rotateY: tiltY, transformStyle: 'preserve-3d' }}>
 
-        <div style={{ display: 'flex', minHeight: 360 }}>
-          <motion.aside {...pop(0.15)} className="mvp-hide-sm" style={{ width: 170, padding: 18, borderRight: `1px solid ${LINE}`, background: '#fff', display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-              <span style={{ width: 22, height: 22, borderRadius: 7, background: INK }} />
-              <Skel w={70} h={9} o={0.16} />
-            </div>
-            {[0, 1, 2, 3, 4].map(n => (
-              <div key={n} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '7px 8px', borderRadius: 8, background: n === 0 ? ACCENT_SOFT : 'transparent' }}>
-                <span style={{ width: 12, height: 12, borderRadius: 4, background: n === 0 ? ACCENT : 'rgba(14,14,16,0.12)' }} />
-                <Skel w={[64, 54, 72, 48, 60][n]} o={n === 0 ? 0.2 : 0.08} />
+          <MacBookPro14 play={play} delay={base}>
+            <div style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#FAFAFB', color: INK, textAlign: 'left' }}>
+              {/* barre des menus macOS */}
+              <div style={{ height: 30, flexShrink: 0, display: 'flex', alignItems: 'center', gap: 18, padding: '0 16px', background: 'rgba(255,255,255,0.85)', borderBottom: `1px solid ${LINE}`, fontSize: 12.5 }}>
+                <svg width="13" height="15" viewBox="0 0 814 1000" aria-hidden><path fill={INK} d="M788 341c-6 4-108 62-108 190 0 149 131 201 135 203-1 3-21 72-69 142-43 62-88 124-156 124s-86-40-164-40c-77 0-104 41-166 41s-106-57-156-127C46 792 0 666 0 546c0-193 125-295 249-295 66 0 121 43 162 43 39 0 101-46 176-46 29 0 131 3 201 93zM555 159c31-37 53-88 53-139 0-7-1-14-2-20-51 2-111 34-147 76-28 32-55 83-55 135 0 8 1 16 2 18 3 1 9 2 14 2 45 0 102-30 135-72z" /></svg>
+                <span style={{ fontWeight: 700 }}>Safari</span>
+                {['Fichier', 'Édition', 'Présentation', 'Historique'].map(m => <span key={m} style={{ color: '#3A3A40' }}>{m}</span>)}
+                <span style={{ marginLeft: 'auto', color: '#3A3A40', fontVariantNumeric: 'tabular-nums' }}>lun. 9:41</span>
               </div>
-            ))}
-          </motion.aside>
 
-          <div className="mvp-mock-main" style={{ flex: 1, padding: 24, display: 'flex', flexDirection: 'column', gap: 16, textAlign: 'left' }}>
-            <motion.div {...pop(0.2)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div>
-                <p style={{ fontSize: 15, fontWeight: 700 }}>Tableau de bord</p>
-                <p style={{ fontSize: 11, color: FAINT, marginTop: 3 }}>Vos premiers utilisateurs, en temps réel</p>
-              </div>
-              <span style={{ width: 28, height: 28, borderRadius: '50%', background: '#F2C9A8', border: '2px solid #fff', boxShadow: `0 0 0 1px ${LINE}` }} />
-            </motion.div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
-              {kpis.map((k, i) => (
-                <motion.div key={k.label} {...pop(0.3 + i * 0.1)} style={{ ...panel, padding: 14 }}>
-                  <p style={{ fontSize: 10, color: FAINT, marginBottom: 6 }}>{k.label}</p>
-                  <p style={{ fontSize: 'clamp(13px, 2vw, 19px)', fontWeight: 700 }}>
-                    <CountUp to={k.to} format={k.fmt} duration={2} delay={base + 0.45 + i * 0.1} play={play} />
-                  </p>
-                </motion.div>
-              ))}
-            </div>
-
-            <motion.div {...pop(0.55)} style={{ flex: 1, display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: 12, minHeight: 170 }}>
-              <div style={{ ...panel, position: 'relative', padding: 14, overflow: 'hidden' }}>
-                <p style={{ fontSize: 10, color: FAINT }}>Inscriptions</p>
-                <svg viewBox="0 0 300 120" preserveAspectRatio="none" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, width: '100%', height: '75%' }}>
-                  <motion.path
-                    d="M0 100 C 30 95, 50 88, 75 80 S 120 82, 150 62 S 210 50, 235 34 S 280 18, 300 10 L 300 120 L 0 120 Z"
-                    fill={ACCENT_SOFT}
-                    initial={{ opacity: 0 }}
-                    animate={play ? { opacity: 1 } : {}}
-                    transition={{ duration: 1, delay: base + 1.6 }}
-                  />
-                  <motion.path
-                    d="M0 100 C 30 95, 50 88, 75 80 S 120 82, 150 62 S 210 50, 235 34 S 280 18, 300 10"
-                    fill="none" stroke={ACCENT} strokeWidth="2.5" strokeLinecap="round"
-                    initial={{ pathLength: 0 }}
-                    animate={play ? { pathLength: 1 } : {}}
-                    transition={{ duration: 1.8, ease: EASE, delay: base + 0.7 }}
-                  />
-                </svg>
-              </div>
-              <div style={{ ...panel, padding: 14, display: 'flex', flexDirection: 'column' }}>
-                <p style={{ fontSize: 10, color: FAINT }}>Activité</p>
-                <div style={{ flex: 1, display: 'flex', alignItems: 'flex-end', gap: 6, paddingTop: 12 }}>
-                  {bars.map((h, i) => (
-                    <motion.span
-                      key={i}
-                      initial={{ scaleY: 0 }}
-                      animate={play ? { scaleY: 1 } : {}}
-                      transition={{ duration: 0.8, ease: EASE, delay: base + 0.8 + i * 0.07 }}
-                      style={{ flex: 1, height: `${h}%`, borderRadius: 4, transformOrigin: 'bottom', background: i === bars.length - 1 ? INK : '#E4E4E8' }}
-                    />
-                  ))}
+              {/* fenêtre Safari */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '12px 18px', borderBottom: `1px solid ${LINE}`, background: '#fff', flexShrink: 0 }}>
+                {['#FF5F57', '#FEBC2E', '#28C840'].map(c => <span key={c} style={{ width: 12, height: 12, borderRadius: '50%', background: c }} />)}
+                <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+                  <span style={{ padding: '6px 120px', borderRadius: 9, background: '#F4F4F5', fontSize: 12, color: MUTED }}>app.votre-startup.com</span>
                 </div>
               </div>
-            </motion.div>
-          </div>
-        </div>
-      </motion.div>
 
-      {/* téléphone */}
-      <motion.div
-        className="mvp-hide-sm"
-        initial={{ opacity: 0, y: 60, rotate: 4 }}
-        animate={play ? { opacity: 1, y: 0, rotate: 0 } : {}}
-        transition={{ duration: 1, ease: EASE, delay: base + 0.5 }}
-        style={{ position: 'absolute', right: -28, bottom: -48, width: 190, borderRadius: 30, padding: 6, background: '#1A1A1D', boxShadow: '0 30px 70px rgba(16,16,20,0.25)' }}
-      >
-        <div style={{ borderRadius: 25, overflow: 'hidden', background: '#fff', padding: '14px 12px 10px', textAlign: 'left', color: INK }}>
-          <div style={{ width: 54, height: 14, borderRadius: 8, background: '#1A1A1D', margin: '-6px auto 12px' }} />
-          <p style={{ fontSize: 12, fontWeight: 700, marginBottom: 10 }}>Mon espace</p>
-          <div style={{ borderRadius: 12, padding: 12, marginBottom: 10, background: INK, color: '#fff' }}>
-            <p style={{ fontSize: 9, opacity: 0.6 }}>Ce mois-ci</p>
-            <p style={{ fontSize: 17, fontWeight: 700, marginTop: 2 }}>
-              <CountUp to={4920} format={eur} duration={2} delay={base + 1} play={play} />
-            </p>
-          </div>
-          {[0, 1, 2, 3].map(n => (
-            <motion.div
-              key={n}
-              initial={{ opacity: 0, x: 16 }}
-              animate={play ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.6, ease: EASE, delay: base + 1.1 + n * 0.12 }}
-              style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0', borderBottom: `1px solid ${LINE}` }}
-            >
-              <span style={{ width: 20, height: 20, borderRadius: '50%', background: ['#FCD9B8', '#C7F0D2', '#C9E7FB', '#FBD3E6'][n] }} />
-              <div style={{ flex: 1, display: 'grid', gap: 4 }}>
-                <Skel w="70%" h={6} o={0.16} />
-                <Skel w="45%" h={5} o={0.07} />
+              <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
+                <motion.aside {...pop(0)} style={{ width: 210, padding: 20, borderRight: `1px solid ${LINE}`, background: '#fff', display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                    <span style={{ width: 24, height: 24, borderRadius: 7, background: INK }} />
+                    <Skel w={80} h={10} o={0.16} />
+                  </div>
+                  {[0, 1, 2, 3, 4, 5].map(n => (
+                    <div key={n} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 9px', borderRadius: 8, background: n === 0 ? ACCENT_SOFT : 'transparent' }}>
+                      <span style={{ width: 13, height: 13, borderRadius: 4, background: n === 0 ? ACCENT : 'rgba(14,14,16,0.12)' }} />
+                      <Skel w={[74, 60, 84, 54, 68, 58][n]} o={n === 0 ? 0.2 : 0.08} />
+                    </div>
+                  ))}
+                </motion.aside>
+
+                <div style={{ flex: 1, padding: 28, display: 'flex', flexDirection: 'column', gap: 18 }}>
+                  <motion.div {...pop(0.05)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div>
+                      <p style={{ fontSize: 19, fontWeight: 700 }}>Tableau de bord</p>
+                      <p style={{ fontSize: 12.5, color: FAINT, marginTop: 4 }}>Vos premiers utilisateurs, en temps réel</p>
+                    </div>
+                    <span style={{ width: 34, height: 34, borderRadius: '50%', background: '#F2C9A8', border: '2px solid #fff', boxShadow: `0 0 0 1px ${LINE}` }} />
+                  </motion.div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+                    {kpis.map((k, i) => (
+                      <motion.div key={k.label} {...pop(0.15 + i * 0.1)} style={{ ...panel, padding: 18 }}>
+                        <p style={{ fontSize: 12, color: FAINT, marginBottom: 8 }}>{k.label}</p>
+                        <p style={{ fontSize: 26, fontWeight: 700 }}>
+                          <CountUp to={k.to} format={k.fmt} duration={2} delay={screenOn + 0.3 + i * 0.1} play={play} />
+                        </p>
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  <motion.div {...pop(0.4)} style={{ flex: 1, display: 'grid', gridTemplateColumns: '1.6fr 1fr', gap: 14 }}>
+                    <div style={{ ...panel, position: 'relative', padding: 18, overflow: 'hidden' }}>
+                      <p style={{ fontSize: 12, color: FAINT }}>Inscriptions</p>
+                      <svg viewBox="0 0 300 120" preserveAspectRatio="none" style={{ position: 'absolute', left: 0, right: 0, bottom: 0, width: '100%', height: '78%' }}>
+                        <motion.path
+                          d="M0 100 C 30 95, 50 88, 75 80 S 120 82, 150 62 S 210 50, 235 34 S 280 18, 300 10 L 300 120 L 0 120 Z"
+                          fill={ACCENT_SOFT}
+                          initial={{ opacity: 0 }}
+                          animate={play ? { opacity: 1 } : {}}
+                          transition={{ duration: 1, delay: screenOn + 1.5 }}
+                        />
+                        <motion.path
+                          d="M0 100 C 30 95, 50 88, 75 80 S 120 82, 150 62 S 210 50, 235 34 S 280 18, 300 10"
+                          fill="none" stroke={ACCENT} strokeWidth="2.5" strokeLinecap="round"
+                          initial={{ pathLength: 0 }}
+                          animate={play ? { pathLength: 1 } : {}}
+                          transition={{ duration: 1.8, ease: EASE, delay: screenOn + 0.6 }}
+                        />
+                      </svg>
+                    </div>
+                    <div style={{ ...panel, padding: 18, display: 'flex', flexDirection: 'column' }}>
+                      <p style={{ fontSize: 12, color: FAINT }}>Activité</p>
+                      <div style={{ flex: 1, display: 'flex', alignItems: 'flex-end', gap: 8, paddingTop: 14 }}>
+                        {bars.map((h, i) => (
+                          <motion.span
+                            key={i}
+                            initial={{ scaleY: 0 }}
+                            animate={play ? { scaleY: 1 } : {}}
+                            transition={{ duration: 0.8, ease: EASE, delay: screenOn + 0.7 + i * 0.07 }}
+                            style={{ flex: 1, height: `${h}%`, borderRadius: 5, transformOrigin: 'bottom', background: i === bars.length - 1 ? INK : '#E4E4E8' }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
               </div>
-            </motion.div>
-          ))}
-          <div style={{ display: 'flex', justifyContent: 'space-around', paddingTop: 10 }}>
-            {[0, 1, 2].map(n => <span key={n} style={{ width: 14, height: 14, borderRadius: 5, background: n === 0 ? INK : '#E4E4E8' }} />)}
-          </div>
-        </div>
-      </motion.div>
+            </div>
+          </MacBookPro14>
+
+          <IPhone17ProMax play={play} delay={base + 0.9}>
+            {/* Fond d'écran vivant : c'est lui que le verre réfracte. */}
+            <div aria-hidden style={{ position: 'absolute', inset: 0, overflow: 'hidden', background: '#F3F3F5' }}>
+              <span className="mvp-blob" style={{ position: 'absolute', width: 260, height: 260, left: -70, top: 40, borderRadius: '50%', background: '#DCDCE2', filter: 'blur(28px)' }} />
+              <span className="mvp-blob mvp-blob-b" style={{ position: 'absolute', width: 220, height: 220, right: -60, top: 230, borderRadius: '50%', background: '#E6E3F5', filter: 'blur(28px)' }} />
+              <span className="mvp-blob mvp-blob-c" style={{ position: 'absolute', width: 240, height: 240, left: 10, bottom: -40, borderRadius: '50%', background: '#D5D6DC', filter: 'blur(30px)' }} />
+            </div>
+
+            <div style={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column', padding: '0 12px', textAlign: 'left', color: INK }}>
+              <div style={{ height: 48, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 12px 0', fontSize: 13, fontWeight: 600 }}>
+                <span>9:41</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                  {[5, 7, 9, 11].map(h => <span key={h} style={{ width: 3, height: h, borderRadius: 1, background: INK }} />)}
+                  <span style={{ width: 22, height: 11, marginLeft: 4, borderRadius: 3, border: `1.5px solid ${INK}`, padding: 1 }}>
+                    <span style={{ display: 'block', width: '75%', height: '100%', borderRadius: 1, background: INK }} />
+                  </span>
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '8px 2px 12px' }}>
+                <p style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.02em' }}>Mon espace</p>
+                <span className="mvp-glass" style={{ width: 36, height: 36, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ width: 20, height: 20, borderRadius: '50%', background: '#D9D9DE' }} />
+                </span>
+              </div>
+
+              <motion.div
+                initial={{ opacity: 0, scale: 0.94 }}
+                animate={play ? { opacity: 1, scale: 1 } : {}}
+                transition={{ duration: 0.8, ease: EASE, delay: base + 1.7 }}
+                className="mvp-glass"
+                style={{ borderRadius: 24, padding: 16, marginBottom: 10 }}
+              >
+                <p style={{ fontSize: 11, color: '#3A3A44' }}>Ce mois-ci</p>
+                <p style={{ fontSize: 28, fontWeight: 700, marginTop: 2, letterSpacing: '-0.02em' }}>
+                  <CountUp to={4920} format={eur} duration={2} delay={base + 1.8} play={play} />
+                </p>
+                <p style={{ fontSize: 11, fontWeight: 600, color: GREEN, marginTop: 2 }}>+18 % vs mois dernier</p>
+              </motion.div>
+
+              <div className="mvp-glass" style={{ borderRadius: 24, padding: '4px 14px' }}>
+                {[0, 1, 2, 3, 4].map(n => (
+                  <motion.div
+                    key={n}
+                    initial={{ opacity: 0, x: 16 }}
+                    animate={play ? { opacity: 1, x: 0 } : {}}
+                    transition={{ duration: 0.6, ease: EASE, delay: base + 1.9 + n * 0.1 }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderBottom: n < 4 ? '1px solid rgba(14,14,16,0.06)' : 'none' }}
+                  >
+                    <span style={{ width: 28, height: 28, borderRadius: '50%', background: n === 0 ? '#E8E5FA' : '#E4E4E8', boxShadow: 'inset 0 0 0 1.5px rgba(255,255,255,0.7)' }} />
+                    <div style={{ flex: 1, display: 'grid', gap: 5 }}>
+                      <Skel w="70%" h={7} o={0.22} />
+                      <Skel w="45%" h={6} o={0.1} />
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* barre d'onglets flottante en verre, la bulle active glisse d'un onglet à l'autre */}
+              <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', gap: 8, padding: '0 4px 26px' }}>
+                <div className="mvp-glass" style={{ position: 'relative', flex: 1, height: 58, borderRadius: 29, display: 'flex', alignItems: 'center', padding: '0 5px' }}>
+                  <span className="mvp-glass-pill" />
+                  {[0, 1, 2].map(n => (
+                    <span key={n} style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                      <span style={{ width: 18, height: 18, borderRadius: 6, background: 'rgba(14,14,16,0.7)' }} />
+                      <Skel w={26} h={4} o={0.35} />
+                    </span>
+                  ))}
+                </div>
+                <span className="mvp-glass" style={{ width: 58, height: 58, flexShrink: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ width: 18, height: 18, borderRadius: '50%', border: '2.5px solid rgba(14,14,16,0.75)' }} />
+                </span>
+              </div>
+              <span style={{ position: 'absolute', bottom: 8, left: '50%', width: 120, height: 5, marginLeft: -60, borderRadius: 3, background: INK }} />
+            </div>
+          </IPhone17ProMax>
+        </motion.div>
+      </div>
 
       {/* pastilles de progression */}
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={play ? { opacity: 1, scale: 1 } : {}}
-        transition={{ duration: 0.6, ease: EASE, delay: base + 0.3 }}
-        style={{ position: 'absolute', top: 64, left: -24, zIndex: 2 }}
+        transition={{ duration: 0.6, ease: EASE, delay: base + 1.2 }}
+        style={{ position: 'absolute', top: '10%', left: -24, zIndex: 2 }}
       >
         <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }} style={chip}>
           <Clock size={14} color={ACCENT_INK} />
-          <span>Jour <CountUp from={1} to={OFFER.days} duration={2.6} delay={base + 0.6} play={play} />/{OFFER.days}</span>
+          <span>Jour <CountUp from={1} to={OFFER.days} duration={2.6} delay={base + 1.4} play={play} />/{OFFER.days}</span>
         </motion.div>
       </motion.div>
 
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={play ? { opacity: 1, scale: 1 } : {}}
-        transition={{ duration: 0.6, ease: EASE, delay: base + 3.2 }}
-        style={{ position: 'absolute', bottom: 28, left: -18, zIndex: 2 }}
+        transition={{ duration: 0.6, ease: EASE, delay: base + 4 }}
+        style={{ position: 'absolute', bottom: '14%', left: -18, zIndex: 2 }}
       >
         <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }} style={chip}>
           <span className="mvp-pulse" style={{ width: 8, height: 8, borderRadius: '50%', background: GREEN }} />
@@ -928,7 +1116,7 @@ export default function MvpOfferPage() {
 
         <motion.div aria-hidden style={{ position: 'fixed', top: 0, left: 0, right: 0, height: 2, zIndex: 60, background: INK, transformOrigin: 'left', scaleX: progress }} />
 
-        <div style={{ position: 'relative', maxWidth: 1200, margin: '0 auto', background: '#FCFCFC', borderLeft: `1px solid ${LINE}`, borderRight: `1px solid ${LINE}` }}>
+        <div style={{ position: 'relative', maxWidth: 1760, margin: '0 auto', background: '#FCFCFC', borderLeft: `1px solid ${LINE}`, borderRight: `1px solid ${LINE}` }}>
 
           {/* ── NAV FLOTTANTE ── */}
           <motion.header
@@ -1017,7 +1205,7 @@ export default function MvpOfferPage() {
               </motion.p>
             </motion.div>
 
-            <div style={{ position: 'relative', maxWidth: 960, margin: '80px auto 0', perspective: 1400 }}>
+            <div style={{ position: 'relative', maxWidth: 1060, margin: '80px auto 0', perspective: 1400 }}>
               <motion.div style={{ rotateX: mockTilt, scale: mockScale, transformOrigin: 'center top' }}>
                 <ProductMock ready={ready} />
               </motion.div>

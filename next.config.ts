@@ -1,16 +1,20 @@
+import { SUBDOMAIN_ROUTES } from './lib/subdomains'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   turbopack: {
     root: __dirname,
   },
 
-  // Sous-domaine de l'offre MVP : mvp.ozirus.agency sert la page /mvp.
-  // Le domaine doit aussi être ajouté au projet Vercel (Settings → Domains).
+  // Sous-domaines (mvp.ozirus.agency → /mvp, formation.ozirus.agency → /formation-ia…),
+  // déclarés dans lib/subdomains.ts. Chaque domaine doit aussi être ajouté au projet Vercel.
   async rewrites() {
     return {
-      beforeFiles: [
-        { source: '/', has: [{ type: 'host', value: 'mvp\\..+' }], destination: '/mvp' },
-      ],
+      beforeFiles: SUBDOMAIN_ROUTES.map(({ subdomain, route }) => ({
+        source: '/',
+        has: [{ type: 'host' as const, value: `${subdomain}\\..+` }],
+        destination: route,
+      })),
     }
   },
 

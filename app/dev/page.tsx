@@ -1863,7 +1863,8 @@ export default function DevPage() {
           </div>
           <div style={{ display: 'flex', gap: 24, fontSize: 13 }}>
             <Link href="/" style={{ color: '#aaa', textDecoration: 'none' }}>Accueil</Link>
-            <Link href="/produits-ia" style={{ color: '#aaa', textDecoration: 'none' }}>Produits IA</Link>
+            {/* Produits IA masqué pour l'instant
+            <Link href="/produits-ia" style={{ color: '#aaa', textDecoration: 'none' }}>Produits IA</Link> */}
             <Link href="/formation-ia" style={{ color: '#aaa', textDecoration: 'none' }}>Formation</Link>
             <Link href="/terms" style={{ color: '#aaa', textDecoration: 'none' }}>Conditions</Link>
             <Link href="/privacy" style={{ color: '#aaa', textDecoration: 'none' }}>Confidentialité</Link>

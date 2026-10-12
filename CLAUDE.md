@@ -8,6 +8,17 @@ Site Next.js (App Router) de l'agence Ozirus + backoffice `/admin`.
 - `pnpm build` — build prod (Turbopack)
 - `pnpm start` — serveur prod
 
+## Landings sur sous-domaine
+
+`lib/subdomains.ts` (`SUBDOMAIN_ROUTES`) est la source unique : `mvp.ozirus.agency` → `/mvp`,
+`formation.ozirus.agency` → `/formation-ia`. `next.config.ts` en génère les rewrites (seul `/`
+est réécrit). Sur un sous-domaine, un lien relatif vers `/` resservirait la landing : les liens
+vers le site principal passent par `useMainSiteHref()` (`lib/useMainSiteHref.ts`). Chaque
+landing a son propre header autonome (ancres de la page + CTA, aucun lien vers le reste du site) :
+`SharedNav` se masque pour ces routes, détectées via `useSelectedLayoutSegment` (la route rendue),
+pas via `pathname` (qui vaut `/` sur le sous-domaine). Ajouter un sous-domaine = une entrée dans `SUBDOMAIN_ROUTES` + le
+domaine dans Vercel (Settings → Domains). Test local : `http://<sub>.localhost:<port>/`.
+
 ## Structure `/admin`
 
 Backoffice protégé par un auth simple : clé partagée dans l'URL (`?key=...`) ou email
@@ -103,6 +114,15 @@ Couleur primaire : `#7967FF`. Tokens de couleur habituels : ink `#0F172A`,
 muted `#64748B`, faint `#94A3B8`, border `#E2E8F0`, surface `#F8FAFC`.
 
 Ne pas réinventer un nouveau design pattern pour un outil admin — copier ce layout.
+
+## Module Roadmap MVP (`app/admin/mvp-roadmap/`)
+
+Plan marketing de l'offre MVP (mvp.ozirus.agency) : objectif et funnel calculé à l'envers depuis
+« 1 client », personas, canaux et budget ads, scripts de prospection et d'appel, script vidéo,
+plan semaine par semaine. Tout le contenu est dans `roadmapData.ts` (prix à garder aligné avec
+`OFFER` de `app/mvp/page.tsx`). Hypothèses, budget et cases cochées sont stockés dans
+`localStorage['ozirus_mvp_roadmap']` (propre au navigateur, pas de Firestore). Export PDF :
+une capture html2canvas de la feuille, découpée en pages A4.
 
 ## Module Brief Client (`app/admin/brief/`)
 
