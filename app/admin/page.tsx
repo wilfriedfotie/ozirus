@@ -12,7 +12,7 @@ import {
   Layout, ListChecks, Database, Zap,
   Globe, Smartphone, Mail,
   Target, Rocket, X, Users, TrendingUp,
-  BarChart2, Home, ClipboardList, RefreshCw, Save, FolderOpen
+  BarChart2, Home, ClipboardList, RefreshCw, Save, FolderOpen, CalendarDays
 } from 'lucide-react';
 import { documentsService, DocumentKind, DocumentStatus, DOCUMENT_STATUS_LABELS } from './documents/documentsService';
 
@@ -795,6 +795,24 @@ function AdminContent() {
         color: '#10B981',
         action: () => router.push('/admin/marketing'),
         tags: ['Objectifs', 'Secteurs', 'Todos', 'Suivi'],
+      },
+      {
+        id: 'mvp-roadmap',
+        label: 'Roadmap MVP',
+        description: 'Plan marketing pour vendre l\'offre MVP : personas, canaux et budget ads, scripts de prospection, script vidéo et plan semaine par semaine.',
+        icon: <Rocket size={28} color="#F97316" />,
+        color: '#F97316',
+        action: () => router.push('/admin/mvp-roadmap'),
+        tags: ['Personas', 'Ads', 'Scripts', 'Vidéo', 'Plan'],
+      },
+      {
+        id: 'planning',
+        label: 'Plannings',
+        description: 'Créez et sauvegardez les plannings des contrats signés, avec responsabilités, aperçu et export PDF.',
+        icon: <CalendarDays size={28} color="#14B8A6" />,
+        color: '#14B8A6',
+        action: () => router.push('/admin/planning'),
+        tags: ['Contrats signés', 'Éditeur', 'Firebase', 'PDF'],
       },
       {
         id: 'core',
@@ -1607,19 +1625,19 @@ function AdminContent() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 18 }}>
                 <div>
                   <label style={labelStyle}>Délais et livraison (suite)</label>
-                  <textarea value={conditionsDelais} onChange={e => setConditionsDelais(e.target.value)} style={{ ...inputStyle, minHeight: 70 }} />
+                  <RichEditor value={conditionsDelais} onChange={setConditionsDelais} />
                 </div>
                 <div>
                   <label style={labelStyle}>Support et maintenance</label>
-                  <textarea value={supportTerms} onChange={e => setSupportTerms(e.target.value)} style={{ ...inputStyle, minHeight: 70 }} />
+                  <RichEditor value={supportTerms} onChange={setSupportTerms} />
                 </div>
                 <div>
                   <label style={labelStyle}>Propriété intellectuelle</label>
-                  <textarea value={conditionsPI} onChange={e => setConditionsPI(e.target.value)} style={{ ...inputStyle, minHeight: 70 }} />
+                  <RichEditor value={conditionsPI} onChange={setConditionsPI} />
                 </div>
                 <div>
                   <label style={labelStyle}>Gestion des impayés</label>
-                  <textarea value={conditionsImpayes} onChange={e => setConditionsImpayes(e.target.value)} style={{ ...inputStyle, minHeight: 70 }} />
+                  <RichEditor value={conditionsImpayes} onChange={setConditionsImpayes} />
                 </div>
               </div>
 
@@ -1632,31 +1650,31 @@ function AdminContent() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                     <div>
                       <label style={labelStyle}>Obligations du Prestataire</label>
-                      <textarea value={termObligationsPrestataire} onChange={e => setTermObligationsPrestataire(e.target.value)} style={{ ...inputStyle, minHeight: 90 }} />
+                      <RichEditor value={termObligationsPrestataire} onChange={setTermObligationsPrestataire} />
                     </div>
                     <div>
                       <label style={labelStyle}>Obligations du Client</label>
-                      <textarea value={termObligationsClient} onChange={e => setTermObligationsClient(e.target.value)} style={{ ...inputStyle, minHeight: 90 }} />
+                      <RichEditor value={termObligationsClient} onChange={setTermObligationsClient} />
                     </div>
                     <div>
                       <label style={labelStyle}>Confidentialité</label>
-                      <textarea value={termConfidentialite} onChange={e => setTermConfidentialite(e.target.value)} style={{ ...inputStyle, minHeight: 80 }} />
+                      <RichEditor value={termConfidentialite} onChange={setTermConfidentialite} />
                     </div>
                     <div>
                       <label style={labelStyle}>Résiliation</label>
-                      <textarea value={termResiliation} onChange={e => setTermResiliation(e.target.value)} style={{ ...inputStyle, minHeight: 80 }} />
+                      <RichEditor value={termResiliation} onChange={setTermResiliation} />
                     </div>
                     <div>
                       <label style={labelStyle}>Force majeure</label>
-                      <textarea value={termForceMajeure} onChange={e => setTermForceMajeure(e.target.value)} style={{ ...inputStyle, minHeight: 80 }} />
+                      <RichEditor value={termForceMajeure} onChange={setTermForceMajeure} />
                     </div>
                     <div>
                       <label style={labelStyle}>Réversibilité / restitution des données</label>
-                      <textarea value={termReversibilite} onChange={e => setTermReversibilite(e.target.value)} style={{ ...inputStyle, minHeight: 80 }} />
+                      <RichEditor value={termReversibilite} onChange={setTermReversibilite} />
                     </div>
                     <div>
                       <label style={labelStyle}>Droit applicable & juridiction</label>
-                      <textarea value={termDroitApplicable} onChange={e => setTermDroitApplicable(e.target.value)} style={{ ...inputStyle, minHeight: 80 }} />
+                      <RichEditor value={termDroitApplicable} onChange={setTermDroitApplicable} />
                     </div>
                   </div>
                 </div>
@@ -3564,7 +3582,21 @@ function SignatureBlock({ role, company, rep, repRole }: any) {
       <p style={{ fontSize: 9, color: '#94A3B8', marginTop: 10, marginBottom: 6 }}>
         Précédée de la mention « Lu et approuvé »
       </p>
-      <div style={{ height: 90, marginTop: 'auto', border: '1px dashed #CBD5E1', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      {/* Lieu et date renseignés par le signataire lui-même : une signature manuscrite
+          non datée n'a quasiment aucune valeur probante en cas de contestation. */}
+      <div style={{ display: 'flex', gap: 10, marginTop: 'auto', marginBottom: 8 }}>
+        <div style={{ flex: 1 }}>
+          <span style={{ fontSize: 8, color: '#94A3B8', letterSpacing: '0.04em' }}>Fait à</span>
+          <div style={{ borderBottom: '1px solid #CBD5E1', height: 16 }} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <span style={{ fontSize: 8, color: '#94A3B8', letterSpacing: '0.04em' }}>Le</span>
+          <div style={{ borderBottom: '1px solid #CBD5E1', height: 16 }} />
+        </div>
+      </div>
+      {/* 120px ≈ 32 mm sur A4 : une signature tracée au doigt (Markup iOS) déborde
+          facilement d'un cadre plus petit. */}
+      <div style={{ height: 120, border: '1px dashed #CBD5E1', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <span style={{ fontSize: 9, color: '#CBD5E1' }}>Cachet et signature</span>
       </div>
     </div>

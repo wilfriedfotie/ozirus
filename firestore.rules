@@ -22,6 +22,11 @@ service cloud.firestore {
       allow read, write: if true;
     }
 
+    // Plannings liés aux contrats signés (/admin/planning).
+    match /plannings/{docId} {
+      allow read, write: if true;
+    }
+
     // Plan marketing (objectifs, secteurs, todos quotidiennes).
     match /marketing/{docId} {
       allow read, write: if true;
