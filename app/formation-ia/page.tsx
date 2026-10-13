@@ -301,6 +301,18 @@ function AnimatedNumber({ value }: { value: number }) {
   return <motion.span ref={ref} style={{ fontVariantNumeric: 'tabular-nums' }}>{text}</motion.span>;
 }
 
+function useIsMobile(query = '(max-width: 720px)') {
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const update = () => setMobile(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, [query]);
+  return mobile;
+}
+
 function CtaButton({ children, href = WHATSAPP_URL, big = false }: { children: React.ReactNode; href?: string; big?: boolean }) {
   const external = href.startsWith('http');
   return (
@@ -340,17 +352,17 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
 
 function SectionHead({ eyebrow, title, sub }: { eyebrow: string; title: React.ReactNode; sub?: string }) {
   return (
-    <motion.div {...upView()} style={{ textAlign: 'center', maxWidth: 720, margin: '0 auto 56px' }}>
+    <motion.div {...upView()} className="fo-shead" style={{ textAlign: 'center', maxWidth: 720, margin: '0 auto 56px' }}>
       <Eyebrow>{eyebrow}</Eyebrow>
       <h2 style={{ fontFamily: DISPLAY, fontWeight: 600, fontSize: 'clamp(1.9rem, 4.2vw, 3rem)', lineHeight: 1.05, letterSpacing: '-0.02em', color: INK, marginBottom: sub ? 18 : 0 }}>{title}</h2>
-      {sub && <p style={{ fontSize: 17, color: MUTED, lineHeight: 1.7 }}>{sub}</p>}
+      {sub && <p className="fo-ssub" style={{ fontSize: 17, color: MUTED, lineHeight: 1.7 }}>{sub}</p>}
     </motion.div>
   );
 }
 
 function Section({ id, children, style }: { id?: string; children: React.ReactNode; style?: React.CSSProperties }) {
   return (
-    <section id={id} style={{ position: 'relative', padding: '96px 20px', scrollMarginTop: 64, ...style }}>
+    <section id={id} className="fo-section" style={{ position: 'relative', padding: '96px 20px', scrollMarginTop: 64, ...style }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>{children}</div>
     </section>
   );
@@ -400,7 +412,7 @@ function VideoBlock() {
   return (
     <div ref={ref} style={{ perspective: 1400, margin: '0 auto' }}>
       <motion.div
-        style={{ rotateX: tilt, scale, transformOrigin: 'center top', position: 'relative', aspectRatio: '16 / 9', borderRadius: 24, overflow: 'hidden', background: '#0D0607', border: `6px solid #fff`, boxShadow: '0 50px 100px -30px rgba(229,19,43,0.45), 0 0 0 1px rgba(20,10,12,0.08)' }}
+        className="fo-video" style={{ rotateX: tilt, scale, transformOrigin: 'center top', position: 'relative', aspectRatio: '16 / 9', borderRadius: 24, overflow: 'hidden', background: '#0D0607', border: `6px solid #fff`, boxShadow: '0 50px 100px -30px rgba(229,19,43,0.45), 0 0 0 1px rgba(20,10,12,0.08)' }}
       >
         {playing && VIDEO.youtubeId ? (
           <iframe
@@ -500,6 +512,7 @@ const KIT = [
 
 function KitStack() {
   const ref = useRef<HTMLDivElement>(null);
+  const mobile = useIsMobile();
   const inView = useInView(ref, { once: true, amount: 0.3 });
   const px = useMotionValue(0);
   const py = useMotionValue(0);
@@ -515,7 +528,7 @@ function KitStack() {
 
   return (
     <div ref={ref} onMouseMove={onMove} onMouseLeave={onLeave} style={{ perspective: 1400, padding: '10px 0' }}>
-      <motion.div style={{ rotateX: rotX, rotateY: rotY, transformStyle: 'preserve-3d', display: 'grid', gap: 12 }}>
+      <motion.div style={{ rotateX: mobile ? 0 : rotX, rotateY: mobile ? 0 : rotY, transformStyle: 'preserve-3d', display: 'grid', gap: mobile ? 10 : 12 }}>
         {KIT.map((k, i) => (
           <motion.div
             key={k.t}
@@ -543,7 +556,7 @@ function KitStack() {
 function GuaranteeSeal() {
   const text = 'SATISFAIT OU REMBOURSÉ · 14 JOURS · SATISFAIT OU REMBOURSÉ · 14 JOURS · ';
   return (
-    <div style={{ position: 'relative', width: 170, height: 170, flexShrink: 0 }}>
+    <div className="fo-seal" style={{ position: 'relative', width: 170, height: 170, flexShrink: 0 }}>
       <motion.svg viewBox="0 0 200 200" animate={{ rotate: 360 }} transition={{ duration: 24, repeat: Infinity, ease: 'linear' }} style={{ position: 'absolute', inset: 0 }}>
         <defs><path id="fo-seal" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0" /></defs>
         <circle cx="100" cy="100" r="98" fill={RED} />
@@ -579,9 +592,18 @@ function Personas() {
     return () => clearTimeout(t);
   }, [active, playing]);
 
+  // Sur mobile les onglets défilent horizontalement : on garde l'onglet actif visible.
+  const tabsRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const list = tabsRef.current;
+    const btn = list?.children[active] as HTMLElement | undefined;
+    if (!list || !btn || list.scrollWidth <= list.clientWidth) return;
+    list.scrollTo({ left: btn.offsetLeft - 16, behavior: 'smooth' });
+  }, [active]);
+
   return (
     <div ref={ref}>
-      <div role="tablist" aria-label="Métiers" className="fo-ptabs" style={{ display: 'grid', gridTemplateColumns: `repeat(${PERSONAS.length}, 1fr)`, gap: 10, marginBottom: 28 }}>
+      <div ref={tabsRef} role="tablist" aria-label="Métiers" className="fo-ptabs fo-scrolltabs" style={{ display: 'grid', gridTemplateColumns: `repeat(${PERSONAS.length}, 1fr)`, gap: 10, marginBottom: 28 }}>
         {PERSONAS.map((x, i) => {
           const on = i === active;
           return (
@@ -615,16 +637,16 @@ function Personas() {
             transition={{ duration: 0.5, ease: EASE }}
             style={{ borderRadius: 28, background: '#fff', border: `1px solid ${LINE}`, overflow: 'hidden', boxShadow: CARD_SHADOW }}
           >
-            <div style={{ padding: '36px 36px 30px', borderBottom: `1px solid ${LINE}`, display: 'flex', gap: 22, alignItems: 'center', flexWrap: 'wrap' }}>
-              <div style={{ width: 76, height: 76, borderRadius: 22, flexShrink: 0, background: `linear-gradient(135deg, ${RED_HI}, ${RED_DEEP})`, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: DISPLAY, fontSize: 32, fontWeight: 600, boxShadow: '0 12px 30px rgba(229,19,43,0.3)' }}>
+            <div className="fo-phead" style={{ padding: '36px 36px 30px', borderBottom: `1px solid ${LINE}`, display: 'flex', gap: 22, alignItems: 'center', flexWrap: 'wrap' }}>
+              <div className="fo-pavatar" style={{ width: 76, height: 76, borderRadius: 22, flexShrink: 0, background: `linear-gradient(135deg, ${RED_HI}, ${RED_DEEP})`, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: DISPLAY, fontSize: 32, fontWeight: 600, boxShadow: '0 12px 30px rgba(229,19,43,0.3)' }}>
                 {p.name[0]}
               </div>
               <div style={{ flex: 1, minWidth: 240 }}>
-                <p style={{ fontSize: 14, color: FAINT, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                <p className="fo-pmeta" style={{ fontSize: 14, color: FAINT, marginBottom: 6, display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
                   <strong style={{ color: INK, fontSize: 16 }}>{p.name}, {p.age} ans</strong>
                   <span>·</span><MapPin size={13} />{p.city}, {p.country}<span>·</span>{p.situation}
                 </p>
-                <p style={{ fontFamily: DISPLAY, fontSize: 'clamp(1.25rem, 2.6vw, 1.7rem)', lineHeight: 1.3, fontWeight: 500, color: INK }}>
+                <p className="fo-pquote" style={{ fontFamily: DISPLAY, fontSize: 'clamp(1.25rem, 2.6vw, 1.7rem)', lineHeight: 1.3, fontWeight: 500, color: INK }}>
                   « {p.thought} »
                 </p>
               </div>
@@ -726,7 +748,7 @@ function BeforeAfter() {
                 transition={{ duration: 0.8, ease: EASE, delay: i * 0.09 }}
                 style={{ display: 'grid', transformStyle: 'preserve-3d' }}
               >
-                <div style={{ gridArea: '1 / 1', backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', padding: '20px 24px', borderRadius: 16, background: '#F3F0F0', border: `1px solid ${LINE}`, display: 'flex', gap: 14, alignItems: 'center' }}>
+                <div style={{ gridArea: '1 / 1', backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', padding: 'var(--fo-face-pad, 20px 24px)', borderRadius: 16, background: '#F3F0F0', border: `1px solid ${LINE}`, display: 'flex', gap: 14, alignItems: 'center' }}>
                   <X size={18} color={FAINT} style={{ flexShrink: 0 }} />
                   <span style={{ fontSize: 16, lineHeight: 1.5, color: MUTED }}>{row.before}</span>
                 </div>
@@ -895,7 +917,7 @@ function CaseStudies() {
 
   return (
     <div>
-      <div role="tablist" aria-label="Études de cas" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 10, marginBottom: 32 }}>
+      <div role="tablist" aria-label="Études de cas" className="fo-scrolltabs" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 10, marginBottom: 32 }}>
         {CASES.map((x, i) => {
           const on = i === active;
           const XIcon = x.icon;
@@ -924,7 +946,7 @@ function CaseStudies() {
           style={{ display: 'grid', gridTemplateColumns: '1.35fr 1fr', gap: 24 }}
         >
           {/* le raisonnement */}
-          <div style={{ borderRadius: 28, padding: 34, background: '#fff', border: `1px solid ${LINE}`, boxShadow: CARD_SHADOW }}>
+          <div className="fo-ccard" style={{ borderRadius: 28, padding: 34, background: '#fff', border: `1px solid ${LINE}`, boxShadow: CARD_SHADOW }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 26 }}>
               <span style={{ width: 48, height: 48, borderRadius: 14, background: RED_TINT, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon size={22} color={RED} /></span>
               <div>
@@ -959,7 +981,7 @@ function CaseStudies() {
           </div>
 
           {/* le calcul */}
-          <div style={{ position: 'relative', borderRadius: 28, padding: 34, background: `linear-gradient(160deg, ${RED} 0%, ${RED_DEEP} 100%)`, color: '#fff', overflow: 'hidden', boxShadow: '0 30px 70px -20px rgba(229,19,43,0.45)', display: 'flex', flexDirection: 'column' }}>
+          <div className="fo-ccard" style={{ position: 'relative', borderRadius: 28, padding: 34, background: `linear-gradient(160deg, ${RED} 0%, ${RED_DEEP} 100%)`, color: '#fff', overflow: 'hidden', boxShadow: '0 30px 70px -20px rgba(229,19,43,0.45)', display: 'flex', flexDirection: 'column' }}>
             <div aria-hidden style={{ position: 'absolute', top: -100, right: -100, width: 260, height: 260, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.2), transparent 70%)' }} />
             <p style={{ position: 'relative', fontSize: 12.5, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', opacity: 0.85, marginBottom: 18 }}>Faites le calcul</p>
             <div style={{ position: 'relative', display: 'grid', gap: 10, fontSize: 15, marginBottom: 24 }}>
@@ -1044,13 +1066,43 @@ export default function FormationPage() {
             .fo-trust { grid-template-columns: 1fr 1fr !important; }
             .fo-ptabs { grid-template-columns: repeat(3, 1fr) !important; }
           }
+          .fo-short { display: none; }
+          .fo-scrolltabs { scrollbar-width: none; }
+          .fo-scrolltabs::-webkit-scrollbar { display: none; }
           @media (max-width: 720px) {
-            .fo-nav { display: none !important; }
+            .fo-nav, .fo-hbadge, .fo-long { display: none !important; }
+            .fo-short { display: inline; }
+            .fo-section { padding: 60px 16px !important; }
+            .fo-shead { margin-bottom: 32px !important; }
+            .fo-ssub { font-size: 15.5px !important; }
+            .fo-herosec { padding: 28px 16px 52px !important; }
+            .fo-badge { font-size: 12.5px !important; padding: 6px 12px !important; margin-bottom: 20px !important; }
+            .fo-h1 { font-size: clamp(2.05rem, 9.4vw, 2.6rem) !important; margin-bottom: 18px !important; }
+            .fo-lead { font-size: 16px !important; margin-bottom: 28px !important; }
+            .fo-video { border-width: 3px !important; border-radius: 18px !important; }
+            .fo-cta-wrap { margin-top: 28px !important; align-items: stretch !important; }
+            .fo-cta-wrap > a { width: 100%; padding: 17px 20px !important; font-size: 16.5px !important; }
+            .fo-trust { grid-template-columns: 1fr 1fr !important; gap: 8px !important; margin-top: 28px !important; }
+            .fo-trust-item { padding: 10px !important; gap: 9px !important; }
+            .fo-trust-item > span:first-child { width: 32px !important; height: 32px !important; }
+            .fo-trust-sub { display: none !important; }
+            .fo-band { padding: 60px 18px 68px !important; }
+            .fo-band-text { font-size: 1.45rem !important; }
+            .fo-scrolltabs { display: flex !important; flex-wrap: nowrap !important; justify-content: flex-start !important; overflow-x: auto; scroll-snap-type: x mandatory; margin-left: -16px; margin-right: -16px; padding: 4px 16px 6px; }
+            .fo-scrolltabs > button { flex: 0 0 auto; scroll-snap-align: start; }
+            .fo-phead { padding: 22px !important; gap: 14px !important; flex-wrap: nowrap !important; align-items: flex-start !important; }
+            .fo-phead > div:last-child { min-width: 0 !important; }
+            .fo-pmeta { font-size: 13px !important; }
+            .fo-pavatar { width: 44px !important; height: 44px !important; font-size: 19px !important; border-radius: 13px !important; }
+            .fo-pquote { font-size: 1.15rem !important; }
+            .fo-ccard { padding: 22px !important; border-radius: 22px !important; }
+            .fo-barow { --fo-face-pad: 14px 16px; }
+            .fo-guar { padding: 26px 20px !important; justify-content: center; text-align: center; gap: 12px !important; }
+            .fo-seal { transform: scale(0.8); margin: -16px auto; }
+            .fo-faq { padding: 2px 18px !important; }
             .fo-split { grid-template-columns: 1fr !important; }
             .fo-split > div { border-left: none !important; padding: 26px !important; }
             .fo-barow { grid-template-columns: 1fr !important; gap: 8px !important; }
-            .fo-trust { grid-template-columns: 1fr !important; }
-            .fo-ptabs { grid-template-columns: 1fr 1fr !important; }
             .fo-sticky { display: flex; }
             .fo-footer { padding-bottom: 96px !important; }
           }
@@ -1063,7 +1115,7 @@ export default function FormationPage() {
           <div style={{ maxWidth: 1080, margin: '0 auto', height: 64, padding: '0 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
             <a href="#" aria-label="Haut de page" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
               <img src="/logo.png" alt="Ozirus" style={{ height: 28, filter: 'brightness(0)' }} />
-              <span style={{ fontSize: 12, fontWeight: 700, color: RED, padding: '3px 8px', borderRadius: 6, background: RED_TINT }}>Formation</span>
+              <span className="fo-hbadge" style={{ fontSize: 12, fontWeight: 700, color: RED, padding: '3px 8px', borderRadius: 6, background: RED_TINT }}>Formation</span>
             </a>
             <nav className="fo-nav" style={{ display: 'flex', gap: 26 }}>
               {[['#pour-qui', 'Pour qui'], ['#avant-apres', 'Avant / Après'], ['#parcours', 'Parcours'], ['#etudes-de-cas', 'Études de cas'], ['#faq', 'FAQ']].map(([href, label]) => (
@@ -1071,37 +1123,37 @@ export default function FormationPage() {
               ))}
             </nav>
             <a href="#inscription" style={{ display: 'inline-flex', alignItems: 'center', padding: '10px 18px', borderRadius: 10, background: RED, color: '#fff', fontSize: 14, fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap', boxShadow: '0 4px 16px rgba(229,19,43,0.28)' }}>
-              Réserver ma place
+              <span className="fo-long">Réserver ma place</span><span className="fo-short">Réserver</span>
             </a>
           </div>
         </header>
 
         {/* ── HERO : promesse + vidéo + CTA ── */}
-        <section style={{ position: 'relative', padding: '64px 20px 72px', overflow: 'hidden', background: `radial-gradient(ellipse 70% 55% at 50% 0%, ${RED_TINT} 0%, rgba(255,255,255,0) 70%)` }}>
+        <section className="fo-herosec" style={{ position: 'relative', padding: '64px 20px 72px', overflow: 'hidden', background: `radial-gradient(ellipse 70% 55% at 50% 0%, ${RED_TINT} 0%, rgba(255,255,255,0) 70%)` }}>
           <motion.div aria-hidden animate={{ x: [0, 60, 0], y: [0, 30, 0] }} transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }} style={{ position: 'absolute', top: 80, left: '-8%', width: 420, height: 420, borderRadius: '50%', background: 'radial-gradient(circle, rgba(229,19,43,0.14), transparent 65%)', filter: 'blur(10px)', pointerEvents: 'none' }} />
           <motion.div aria-hidden animate={{ x: [0, -50, 0], y: [0, 40, 0] }} transition={{ duration: 17, repeat: Infinity, ease: 'easeInOut' }} style={{ position: 'absolute', top: 260, right: '-10%', width: 480, height: 480, borderRadius: '50%', background: 'radial-gradient(circle, rgba(229,19,43,0.12), transparent 65%)', filter: 'blur(10px)', pointerEvents: 'none' }} />
           <div style={{ position: 'relative', maxWidth: 960, margin: '0 auto', textAlign: 'center' }}>
             <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE }}>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 99, background: '#fff', border: `1px solid ${RED_TINT}`, boxShadow: '0 6px 20px -8px rgba(229,19,43,0.3)', fontSize: 14, fontWeight: 600, marginBottom: 28 }}>
+              <span className="fo-badge" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 16px', borderRadius: 99, background: '#fff', border: `1px solid ${RED_TINT}`, boxShadow: '0 6px 20px -8px rgba(229,19,43,0.3)', fontSize: 14, fontWeight: 600, marginBottom: 28 }}>
                 <span style={{ width: 8, height: 8, borderRadius: '50%', background: RED }} />
                 Pour les salariés et indépendants qui ont déjà un métier
               </span>
-              <h1 style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 'clamp(2.4rem, 6.4vw, 5rem)', lineHeight: 1.02, letterSpacing: '-0.035em', marginBottom: 26 }}>
+              <h1 className="fo-h1" style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 'clamp(2.4rem, 6.4vw, 5rem)', lineHeight: 1.02, letterSpacing: '-0.035em', marginBottom: 26, textWrap: 'balance' }}>
                 <Words text="Transformez votre métier en" delay={0.1} />{' '}
                 <motion.span initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, ease: EASE, delay: 0.4 }} style={{ display: 'inline-block' }}>
                   <Highlight>2<sup style={{ fontSize: '0.5em' }}>e</sup> revenu</Highlight>
                 </motion.span>{' '}
                 <Words text="grâce à l'IA." delay={0.55} />
               </h1>
-              <p style={{ fontSize: 'clamp(1.05rem, 2vw, 1.25rem)', color: MUTED, lineHeight: 1.65, maxWidth: 700, margin: '0 auto 44px' }}>
+              <p className="fo-lead" style={{ fontSize: 'clamp(1.05rem, 2vw, 1.25rem)', color: MUTED, lineHeight: 1.65, maxWidth: 700, margin: '0 auto 44px' }}>
                 En 5 semaines, apprenez à transformer ce que vous savez déjà faire en <strong style={{ color: INK }}>une offre que des clients paient</strong>. Sans quitter votre emploi, même si vous ne connaissez l&apos;IA que de nom.
               </p>
             </motion.div>
 
             <VideoBlock />
 
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE, delay: 0.3 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, marginTop: 44 }}>
-              <CtaButton href="#inscription" big>Oui, je veux mon 2<sup>e</sup> revenu <ArrowRight size={20} /></CtaButton>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE, delay: 0.3 }} className="fo-cta-wrap" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, marginTop: 44 }}>
+              <CtaButton href="#inscription" big>Oui, je veux mon 2ᵉ revenu <ArrowRight size={20} /></CtaButton>
               <p style={{ fontSize: 14, color: MUTED }}>
                 <strong style={{ color: INK }}>{OFFER.prix} FCFA</strong> · payable en 3 fois · satisfait ou remboursé 14 jours
               </p>
@@ -1114,11 +1166,11 @@ export default function FormationPage() {
                 { icon: UserRound, t: 'Coaching 1:1', s: 'Une semaine en tête-à-tête' },
                 { icon: Shield, t: 'Garantie 14 jours', s: 'Remboursé sans question' },
               ].map(({ icon: Icon, t, s }, i) => (
-                <motion.div key={t} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} whileHover={{ y: -4, boxShadow: CARD_SHADOW }} transition={{ duration: 0.5, ease: EASE, delay: i * 0.08 }} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 14, borderRadius: 16, background: '#fff', border: `1px solid ${LINE}`, textAlign: 'left' }}>
+                <motion.div key={t} initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} whileHover={{ y: -4, boxShadow: CARD_SHADOW }} transition={{ duration: 0.5, ease: EASE, delay: i * 0.08 }} className="fo-trust-item" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 14, borderRadius: 16, background: '#fff', border: `1px solid ${LINE}`, textAlign: 'left' }}>
                   <span style={{ width: 38, height: 38, borderRadius: 11, flexShrink: 0, background: RED_TINT, display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon size={18} color={RED} /></span>
                   <span>
                     <span style={{ display: 'block', fontSize: 14, fontWeight: 700 }}>{t}</span>
-                    <span style={{ display: 'block', fontSize: 12.5, color: FAINT }}>{s}</span>
+                    <span className="fo-trust-sub" style={{ display: 'block', fontSize: 12.5, color: FAINT }}>{s}</span>
                   </span>
                 </motion.div>
               ))}
@@ -1127,11 +1179,11 @@ export default function FormationPage() {
         </section>
 
         {/* ── LE PROBLÈME (bandeau rouge) ── */}
-        <section style={{ position: 'relative', padding: '88px 20px', background: `linear-gradient(160deg, ${RED} 0%, ${RED_DEEP} 100%)`, color: '#fff', overflow: 'hidden' }}>
+        <section className="fo-band" style={{ position: 'relative', padding: '88px 20px', background: `linear-gradient(160deg, ${RED} 0%, ${RED_DEEP} 100%)`, color: '#fff', overflow: 'hidden' }}>
           <div aria-hidden style={{ position: 'absolute', top: -160, right: -120, width: 480, height: 480, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.16), transparent 70%)' }} />
           <motion.div {...upView()} style={{ position: 'relative', maxWidth: 860, margin: '0 auto', textAlign: 'center' }}>
             <p style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', opacity: 0.8, marginBottom: 20 }}>Soyons honnêtes</p>
-            <p style={{ fontFamily: DISPLAY, fontSize: 'clamp(1.6rem, 3.8vw, 2.7rem)', lineHeight: 1.2, fontWeight: 600 }}>
+            <p className="fo-band-text" style={{ fontFamily: DISPLAY, fontSize: 'clamp(1.6rem, 3.8vw, 2.7rem)', lineHeight: 1.2, fontWeight: 600 }}>
               Vous connaissez ChatGPT. On vous répète que l&apos;IA « va tout changer ».
               Mais personne ne vous a montré <motion.span
                 initial={{ backgroundSize: '0% 100%', color: '#FFFFFF' }}
@@ -1164,7 +1216,7 @@ export default function FormationPage() {
           <SectionHead eyebrow="Avant / Après" title={<>Ce qui change <Red>en 5 semaines</Red></>} sub="Basculez pour voir la différence. Pas de promesse de chiffre : ce que vous aurez concrètement entre les mains." />
           <BeforeAfter />
           <motion.div {...upView()} style={{ display: 'flex', justifyContent: 'center', marginTop: 48 }}>
-            <CtaButton href="#inscription">Je veux mon 2<sup>e</sup> revenu <ArrowRight size={18} /></CtaButton>
+            <CtaButton href="#inscription">Je veux mon 2ᵉ revenu <ArrowRight size={18} /></CtaButton>
           </motion.div>
         </Section>
 
@@ -1231,7 +1283,7 @@ export default function FormationPage() {
           </div>
 
           {/* garantie */}
-          <motion.div {...upView()} style={{ marginTop: 40, borderRadius: 28, padding: '36px 40px', background: '#fff', border: `2px dashed ${RED}`, display: 'flex', alignItems: 'center', gap: 34, flexWrap: 'wrap' }}>
+          <motion.div {...upView()} className="fo-guar" style={{ marginTop: 40, borderRadius: 28, padding: '36px 40px', background: '#fff', border: `2px dashed ${RED}`, display: 'flex', alignItems: 'center', gap: 34, flexWrap: 'wrap' }}>
             <GuaranteeSeal />
             <div style={{ flex: 1, minWidth: 260 }}>
               <p style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: RED, marginBottom: 8 }}>Garantie sans risque</p>
@@ -1244,13 +1296,13 @@ export default function FormationPage() {
         {/* ── FAQ ── */}
         <Section id="faq">
           <SectionHead eyebrow="FAQ" title="Questions fréquentes" />
-          <motion.div {...upView()} style={{ maxWidth: 760, margin: '0 auto', borderRadius: 24, padding: '6px 32px', background: '#fff', border: `1px solid ${LINE}`, boxShadow: CARD_SHADOW }}>
+          <motion.div {...upView()} style={{ maxWidth: 760, margin: '0 auto', borderRadius: 24, padding: '6px 32px', background: '#fff', border: `1px solid ${LINE}`, boxShadow: CARD_SHADOW }} className="fo-faq">
             {FAQS.map(f => <FaqItem key={f.q} q={f.q} a={f.a} />)}
           </motion.div>
         </Section>
 
         {/* ── DEUX CHEMINS (bandeau rouge final) ── */}
-        <section style={{ position: 'relative', padding: '96px 20px 110px', background: `linear-gradient(160deg, ${RED} 0%, ${RED_DEEP} 100%)`, color: '#fff', overflow: 'hidden' }}>
+        <section className="fo-band" style={{ position: 'relative', padding: '96px 20px 110px', background: `linear-gradient(160deg, ${RED} 0%, ${RED_DEEP} 100%)`, color: '#fff', overflow: 'hidden' }}>
           <div aria-hidden style={{ position: 'absolute', bottom: -200, left: -150, width: 560, height: 560, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.14), transparent 70%)' }} />
           <div style={{ position: 'relative', maxWidth: 960, margin: '0 auto' }}>
             <h2 style={{ fontFamily: DISPLAY, fontWeight: 700, fontSize: 'clamp(2rem, 5vw, 3.4rem)', lineHeight: 1.05, letterSpacing: '-0.03em', textAlign: 'center', marginBottom: 48 }}>
@@ -1268,7 +1320,7 @@ export default function FormationPage() {
                 <p style={{ fontSize: 16.5, lineHeight: 1.7, marginBottom: 26 }}>
                   Le {SESSION_COURTE}, vous commencez. Dans 5 semaines, vous avez une offre tirée de votre métier, un prix, un script pour la vendre et un plan sur 90 jours.
                 </p>
-                <CtaButton big>Je réserve ma place <ArrowRight size={20} /></CtaButton>
+                <div className="fo-cta-wrap"><CtaButton big>Je réserve ma place <ArrowRight size={20} /></CtaButton></div>
                 <p style={{ fontSize: 13, color: MUTED, marginTop: 14 }}>{OFFER.prix} FCFA · en 3 fois · garantie 14 jours</p>
               </motion.div>
             </div>
@@ -1291,7 +1343,7 @@ export default function FormationPage() {
         </footer>
 
         {/* ── CTA collant mobile ── */}
-        <motion.div className="fo-sticky" initial={{ y: '110%' }} animate={{ y: showSticky ? '0%' : '110%' }} transition={{ duration: 0.4, ease: EASE }} style={{ position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 60, padding: '12px 16px', gap: 12, alignItems: 'center', background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(12px)', borderTop: `1px solid ${LINE}`, boxShadow: '0 -10px 30px rgba(20,10,12,0.08)' }}>
+        <motion.div className="fo-sticky" initial={{ y: '110%' }} animate={{ y: showSticky ? '0%' : '110%' }} transition={{ duration: 0.4, ease: EASE }} style={{ position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 60, padding: '12px 16px calc(12px + env(safe-area-inset-bottom))', gap: 12, alignItems: 'center', background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(12px)', borderTop: `1px solid ${LINE}`, boxShadow: '0 -10px 30px rgba(20,10,12,0.08)' }}>
           <div style={{ flex: 1, lineHeight: 1.25 }}>
             <p style={{ fontSize: 15, fontWeight: 800 }}>{OFFER.prix} F <span style={{ fontSize: 12, fontWeight: 500, color: FAINT }}>· en 3 fois</span></p>
             <p style={{ fontSize: 12, color: RED, fontWeight: 600 }}>{PLACES_RESTANTES} places restantes</p>
