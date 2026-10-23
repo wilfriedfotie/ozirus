@@ -11,6 +11,8 @@ import {
   Layers, FileText, Award, UserRound, X, MessageCircle, MapPin, Flag, Lightbulb, Target, Wrench, Calculator,
 } from 'lucide-react';
 import { useMainSiteHref } from '@/lib/useMainSiteHref';
+import { ADMIN, inputStyle, labelStyle, primaryBtnStyle, sectionTitle } from '@/lib/adminUi';
+import { Select } from '@/components/forms/Select';
 
 /* ─── config de la session ──────────────────────────── */
 const OFFER = {
@@ -51,6 +53,8 @@ const RED_HI = '#FF3B4E';
 const RED_DEEP = '#B30F22';
 const RED_TINT = '#FDECEE';
 const DISPLAY = 'var(--font-display-loaded), Clash Display, sans-serif';
+// Police d'interface du design system, via la variable posée par next/font (app/layout.tsx).
+const SANS = 'var(--font-sans-loaded), DM Sans, sans-serif';
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const CARD_SHADOW = '0 1px 2px rgba(20,10,12,0.04), 0 18px 40px -18px rgba(20,10,12,0.14)';
 
@@ -313,11 +317,12 @@ function useIsMobile(query = '(max-width: 720px)') {
   return mobile;
 }
 
-function CtaButton({ children, href = WHATSAPP_URL, big = false }: { children: React.ReactNode; href?: string; big?: boolean }) {
-  const external = href.startsWith('http');
+function CtaButton({ children, href = WHATSAPP_URL, big = false, onClick }: { children: React.ReactNode; href?: string; big?: boolean; onClick?: () => void }) {
+  const external = href.startsWith('http') && !onClick;
   return (
     <motion.a
-      href={href}
+      href={onClick ? '#' : href}
+      onClick={onClick ? e => { e.preventDefault(); onClick(); } : undefined}
       target={external ? '_blank' : undefined}
       rel={external ? 'noreferrer' : undefined}
       whileHover={{ scale: 1.02, boxShadow: '0 18px 44px rgba(229,19,43,0.38)' }}
@@ -561,7 +566,7 @@ function GuaranteeSeal() {
         <defs><path id="fo-seal" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0" /></defs>
         <circle cx="100" cy="100" r="98" fill={RED} />
         <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5" strokeDasharray="3 5" />
-        <text fill="#fff" fontSize="13.5" fontWeight="800" letterSpacing="2.2" style={{ fontFamily: 'DM Sans, sans-serif' }}>
+        <text fill="#fff" fontSize="13.5" fontWeight="800" letterSpacing="2.2" style={{ fontFamily: SANS }}>
           <textPath href="#fo-seal">{text}</textPath>
         </text>
       </motion.svg>
@@ -829,7 +834,7 @@ function Staircase() {
                 <polygon points={b.side} fill={c.side} stroke="#fff" strokeWidth={1.5} style={{ transition: 'fill .35s' }} />
                 <polygon points={b.front} fill={c.front} stroke="#fff" strokeWidth={1.5} style={{ transition: 'fill .35s' }} />
                 <polygon points={b.top} fill={c.top} stroke="#fff" strokeWidth={1.5} style={{ transition: 'fill .35s' }} />
-                <text x={b.label[0]} y={b.label[1] + 7} textAnchor="middle" fill={c.text} fontSize={20} fontWeight={800} style={{ pointerEvents: 'none', fontFamily: 'DM Sans, sans-serif', transition: 'fill .35s' }}>
+                <text x={b.label[0]} y={b.label[1] + 7} textAnchor="middle" fill={c.text} fontSize={20} fontWeight={800} style={{ pointerEvents: 'none', fontFamily: SANS, transition: 'fill .35s' }}>
                   {b.week.n === 5 ? '1:1' : `S${b.week.n}`}
                 </text>
               </motion.g>
@@ -838,9 +843,9 @@ function Staircase() {
           <motion.g initial={{ opacity: 0, y: -10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.9 }}>
             <line x1={flag[0] + 30} y1={flag[1] - 6} x2={flag[0] + 30} y2={flag[1] - 62} stroke={INK} strokeWidth={2} />
             <polygon points={`${flag[0] + 31},${flag[1] - 62} ${flag[0] + 66},${flag[1] - 52} ${flag[0] + 31},${flag[1] - 42}`} fill={RED} />
-            <text x={flag[0] + 72} y={flag[1] - 46} fill={INK} fontSize={15} fontWeight={700} style={{ fontFamily: 'DM Sans, sans-serif' }}>2e revenu lancé</text>
+            <text x={flag[0] + 72} y={flag[1] - 46} fill={INK} fontSize={15} fontWeight={700} style={{ fontFamily: SANS }}>2e revenu lancé</text>
           </motion.g>
-          <text x={start[0]} y={start[1] + 34} textAnchor="middle" fill={FAINT} fontSize={14} fontWeight={600} style={{ fontFamily: 'DM Sans, sans-serif' }}>Aujourd&apos;hui</text>
+          <text x={start[0]} y={start[1] + 34} textAnchor="middle" fill={FAINT} fontSize={14} fontWeight={600} style={{ fontFamily: SANS }}>Aujourd&apos;hui</text>
         </svg>
         <p style={{ textAlign: 'center', fontSize: 13, color: FAINT, marginTop: 8 }}>Cliquez sur une marche pour voir la semaine.</p>
       </div>
@@ -1043,6 +1048,175 @@ function FaqItem({ q, a }: { q: string; a: string }) {
   );
 }
 
+/* ─── pré-inscription (modale « Réserver ») ─────────── */
+// Tous les « Réserver » de la page ouvrent cette modale : on garde le contact dans Firestore
+// (`formation_preinscriptions`), puis on propose de finaliser sur WhatsApp avec un message prérempli.
+// Champs = styles du backoffice /admin (lib/adminUi.ts), accent rouge de la page à la place du violet.
+const PAIEMENTS = [
+  { value: 'trois-fois', label: 'En 3 versements', description: OFFER.versements.map(v => `${v.montant} F`).join(' + ') },
+  { value: 'comptant', label: 'En une fois', description: `${OFFER.prix} FCFA à l'inscription` },
+  { value: 'indecis', label: 'Je ne sais pas encore', description: 'On en parle ensemble sur WhatsApp' },
+];
+const PAYS = [...COUNTRIES, 'Autre'].map(c => ({ value: c, label: c }));
+
+const EMPTY_PRE = { nom: '', whatsapp: '', email: '', pays: COUNTRIES[0], metier: '', paiement: 'trois-fois', website: '' };
+type PreErrors = Partial<Record<'nom' | 'whatsapp' | 'metier' | 'email' | 'form', string>>;
+
+// Version agrandie des styles admin pour la modale publique : 16px minimum (sinon iOS zoome au focus).
+const preInput: React.CSSProperties = { ...inputStyle, padding: '15px 18px', fontSize: 16, borderRadius: 12, fontFamily: 'inherit' };
+const preLabel: React.CSSProperties = { ...labelStyle, fontSize: 13, marginBottom: 8 };
+
+function PreError({ children }: { children?: string }) {
+  if (!children) return null;
+  return <p style={{ fontSize: 12.5, fontWeight: 700, color: RED_DEEP, marginTop: 7, marginLeft: 4 }}>{children}</p>;
+}
+
+function PreRegistrationModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [form, setForm] = useState(EMPTY_PRE);
+  const [status, setStatus] = useState<'idle' | 'sending' | 'done'>('idle');
+  const [errors, setErrors] = useState<PreErrors>({});
+  const set = (k: keyof typeof EMPTY_PRE, v: string) => setForm(f => ({ ...f, [k]: v }));
+
+  const close = () => {
+    onClose();
+    setErrors({});
+    // Après un envoi réussi, la prochaine ouverture repart d'un formulaire vierge.
+    if (status === 'done') { setForm(EMPTY_PRE); setStatus('idle'); }
+  };
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  });
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const digits = form.whatsapp.replace(/\D/g, '');
+    const next: PreErrors = {};
+    if (!form.nom.trim()) next.nom = 'Indiquez votre nom.';
+    if (digits.length < 8) next.whatsapp = 'Numéro invalide (indicatif compris, ex. 237 6XX XX XX XX).';
+    if (!form.metier.trim()) next.metier = 'Indiquez votre métier.';
+    if (form.email && !/^\S+@\S+\.\S+$/.test(form.email)) next.email = 'Adresse email invalide.';
+    setErrors(next);
+    if (Object.keys(next).length) return;
+    // Champ caché rempli = robot : on simule un succès sans rien écrire.
+    if (form.website) return setStatus('done');
+    setStatus('sending');
+    try {
+      // Import à la demande : Firebase ne pèse pas sur le chargement de la landing.
+      const [{ db }, { addDoc, collection, serverTimestamp }] = await Promise.all([import('@/lib/firebase'), import('firebase/firestore')]);
+      await addDoc(collection(db, 'formation_preinscriptions'), {
+        nom: form.nom.trim(),
+        whatsapp: digits,
+        email: form.email.trim() || null,
+        pays: form.pays,
+        metier: form.metier.trim(),
+        paiement: form.paiement,
+        session: SESSION_COURTE,
+        statut: 'nouveau',
+        source: window.location.href,
+        createdAt: serverTimestamp(),
+      });
+      setStatus('done');
+    } catch (err) {
+      console.error('[preinscription]', err);
+      setStatus('idle');
+      setErrors({ form: 'L\'envoi a échoué. Réessayez, ou écrivez-nous directement sur WhatsApp.' });
+    }
+  };
+
+  const waText = `Bonjour Ozirus, je viens de me pré-inscrire à la formation « Gagner de l'argent avec l'IA » (session du ${SESSION_COURTE}). Je suis ${form.nom.trim()}, ${form.metier.trim()} (${form.pays}). Paiement envisagé : ${PAIEMENTS.find(p => p.value === form.paiement)?.label.toLowerCase()}.`;
+  const primaryBtn: React.CSSProperties = { ...primaryBtnStyle, background: RED, padding: 18, fontSize: 16, borderRadius: 14, boxShadow: '0 8px 20px -6px rgba(229,19,43,0.45)' };
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          key="pre-overlay"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}
+          onClick={close}
+          style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, background: 'rgba(15,23,42,0.45)', backdropFilter: 'blur(3px)' }}
+        >
+          <motion.div
+            role="dialog" aria-modal="true" aria-label="Réserver ma place"
+            initial={{ opacity: 0, y: 16, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8 }} transition={{ duration: 0.25, ease: EASE }}
+            onClick={e => e.stopPropagation()}
+            style={{ width: '100%', maxWidth: 640, maxHeight: 'calc(100dvh - 32px)', overflowY: 'auto', background: '#FFF', borderRadius: 20, border: `1px solid ${ADMIN.border}`, boxShadow: '0 30px 80px -20px rgba(15,23,42,0.35)', fontFamily: SANS, color: ADMIN.ink }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '24px 32px', borderBottom: `1px solid ${ADMIN.border}` }}>
+              <div>
+                <p style={{ ...sectionTitle, marginBottom: 2 }}>Session du {SESSION_COURTE}</p>
+                <p style={{ fontFamily: DISPLAY, fontSize: 22, fontWeight: 600, lineHeight: 1.2 }}>{status === 'done' ? 'Pré-inscription enregistrée' : 'Réserver ma place'}</p>
+              </div>
+              <button type="button" onClick={close} aria-label="Fermer" style={{ width: 40, height: 40, borderRadius: 10, border: `1px solid ${ADMIN.border}`, background: '#FFF', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: ADMIN.muted }}>
+                <X size={18} />
+              </button>
+            </div>
+
+            {status === 'done' ? (
+              <div className="fo-prebody" style={{ padding: 32, textAlign: 'center' }}>
+                <CheckCircle2 size={52} color={RED} style={{ margin: '0 auto 12px' }} />
+                <p style={{ fontSize: 15.5, color: ADMIN.muted, lineHeight: 1.65, marginBottom: 24 }}>
+                  C&apos;est noté{form.nom.trim() ? `, ${form.nom.trim().split(' ')[0]}` : ''} ! Nous vous recontactons sur WhatsApp sous 24 h.
+                  Pour bloquer votre place dès maintenant, envoyez-nous un message.
+                </p>
+                <a href={`https://wa.me/${OFFER.whatsapp}?text=${encodeURIComponent(waText)}`} target="_blank" rel="noreferrer" style={{ ...primaryBtn, textDecoration: 'none' }}>
+                  <MessageCircle size={16} /> Finaliser sur WhatsApp
+                </a>
+              </div>
+            ) : (
+              <form onSubmit={submit} noValidate className="fo-prebody" style={{ padding: 32, display: 'flex', flexDirection: 'column', gap: 20 }}>
+                <p style={{ fontSize: 15.5, color: ADMIN.muted, lineHeight: 1.65 }}>
+                  {OFFER.prix} FCFA, payable en 3 fois. Gratuit et sans engagement à ce stade : nous vous recontactons sur WhatsApp.
+                </p>
+                <div className="fo-pregrid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
+                  <div>
+                    <label htmlFor="pre-nom" style={preLabel}>Nom complet</label>
+                    <input id="pre-nom" className="fo-field" style={{ ...preInput, borderColor: errors.nom ? RED : ADMIN.border }} value={form.nom} onChange={e => set('nom', e.target.value)} autoComplete="name" placeholder="Aïcha Ndiaye" />
+                    <PreError>{errors.nom}</PreError>
+                  </div>
+                  <div>
+                    <label htmlFor="pre-wa" style={preLabel}>Numéro WhatsApp</label>
+                    <input id="pre-wa" className="fo-field" style={{ ...preInput, borderColor: errors.whatsapp ? RED : ADMIN.border }} value={form.whatsapp} onChange={e => set('whatsapp', e.target.value)} type="tel" inputMode="tel" autoComplete="tel" placeholder="237 6XX XX XX XX" />
+                    <PreError>{errors.whatsapp}</PreError>
+                  </div>
+                  <div>
+                    <label htmlFor="pre-metier" style={preLabel}>Votre métier</label>
+                    <input id="pre-metier" className="fo-field" style={{ ...preInput, borderColor: errors.metier ? RED : ADMIN.border }} value={form.metier} onChange={e => set('metier', e.target.value)} placeholder="Comptable, RH, enseignant…" />
+                    <PreError>{errors.metier}</PreError>
+                  </div>
+                  <div>
+                    <label id="pre-pays-label" htmlFor="pre-pays" style={preLabel}>Pays</label>
+                    <Select id="pre-pays" aria-labelledby="pre-pays-label" options={PAYS} value={form.pays} onChange={v => set('pays', v)} accent={RED} style={preInput} />
+                  </div>
+                </div>
+                <div>
+                  <label htmlFor="pre-email" style={preLabel}>Email (facultatif)</label>
+                  <input id="pre-email" className="fo-field" style={{ ...preInput, borderColor: errors.email ? RED : ADMIN.border }} value={form.email} onChange={e => set('email', e.target.value)} type="email" autoComplete="email" placeholder="vous@exemple.com" />
+                  <PreError>{errors.email}</PreError>
+                </div>
+                <div>
+                  <label id="pre-paiement-label" htmlFor="pre-paiement" style={preLabel}>Comment pensez-vous payer ?</label>
+                  <Select id="pre-paiement" aria-labelledby="pre-paiement-label" options={PAIEMENTS} value={form.paiement} onChange={v => set('paiement', v)} accent={RED} style={preInput} />
+                </div>
+                {/* honeypot anti-robot, invisible pour un humain */}
+                <input aria-hidden tabIndex={-1} autoComplete="off" value={form.website} onChange={e => set('website', e.target.value)} name="website" style={{ position: 'absolute', left: -9999, width: 1, height: 1, opacity: 0 }} />
+
+                <PreError>{errors.form}</PreError>
+                <button type="submit" disabled={status === 'sending'} style={{ ...primaryBtn, opacity: status === 'sending' ? 0.7 : 1 }}>
+                  {status === 'sending' ? 'Envoi…' : <>Je réserve ma place <ArrowRight size={16} /></>}
+                </button>
+              </form>
+            )}
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 /* ─── page ──────────────────────────────────────────── */
 export default function FormationPage() {
   const siteHref = useMainSiteHref();
@@ -1050,13 +1224,18 @@ export default function FormationPage() {
   const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 30 });
   const [showSticky, setShowSticky] = useState(false);
   useMotionValueEvent(scrollY, 'change', v => setShowSticky(v > 700));
+  const [preOpen, setPreOpen] = useState(false);
+  const openPre = () => setPreOpen(true);
 
   return (
     <MotionConfig reducedMotion="user">
-      <main style={{ background: BG, color: INK, fontFamily: 'DM Sans, sans-serif', overflowX: 'clip' }}>
+      <main style={{ background: BG, color: INK, fontFamily: SANS, overflowX: 'clip' }}>
         <style>{`
           .fo-navlink { color: ${MUTED}; font-size: 14px; font-weight: 500; text-decoration: none; transition: color .15s; }
           .fo-navlink:hover { color: ${RED}; }
+          .fo-field { transition: border-color .15s, box-shadow .15s; }
+          .fo-field::placeholder { color: ${FAINT}; }
+          .fo-field:focus { border-color: ${RED} !important; box-shadow: 0 0 0 3px rgba(229,19,43,0.12); }
           .fo-sticky { display: none; }
           .fo-range { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 6px; background: rgba(255,255,255,0.3); outline: none; cursor: pointer; }
           .fo-range::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 4px 12px rgba(0,0,0,0.25); }
@@ -1100,6 +1279,8 @@ export default function FormationPage() {
             .fo-guar { padding: 26px 20px !important; justify-content: center; text-align: center; gap: 12px !important; }
             .fo-seal { transform: scale(0.8); margin: -16px auto; }
             .fo-faq { padding: 2px 18px !important; }
+            .fo-pregrid { grid-template-columns: 1fr !important; }
+            .fo-prebody { padding: 22px 20px !important; }
             .fo-split { grid-template-columns: 1fr !important; }
             .fo-split > div { border-left: none !important; padding: 26px !important; }
             .fo-barow { grid-template-columns: 1fr !important; gap: 8px !important; }
@@ -1122,9 +1303,9 @@ export default function FormationPage() {
                 <a key={href} href={href} className="fo-navlink">{label}</a>
               ))}
             </nav>
-            <a href="#inscription" style={{ display: 'inline-flex', alignItems: 'center', padding: '10px 18px', borderRadius: 10, background: RED, color: '#fff', fontSize: 14, fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap', boxShadow: '0 4px 16px rgba(229,19,43,0.28)' }}>
+            <button type="button" onClick={openPre} style={{ display: 'inline-flex', alignItems: 'center', padding: '10px 18px', borderRadius: 10, border: 'none', cursor: 'pointer', background: RED, color: '#fff', fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap', boxShadow: '0 4px 16px rgba(229,19,43,0.28)' }}>
               <span className="fo-long">Réserver ma place</span><span className="fo-short">Réserver</span>
-            </a>
+            </button>
           </div>
         </header>
 
@@ -1260,16 +1441,15 @@ export default function FormationPage() {
                   </div>
                 ))}
               </div>
-              <motion.a
-                href={WHATSAPP_URL}
-                target="_blank"
-                rel="noreferrer"
+              <motion.button
+                type="button"
+                onClick={openPre}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, background: '#fff', color: RED, padding: 18, borderRadius: 14, fontSize: 16.5, fontWeight: 800, textDecoration: 'none', boxShadow: '0 12px 30px rgba(0,0,0,0.18)' }}
+                style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, background: '#fff', color: RED, padding: 18, borderRadius: 14, fontSize: 16.5, fontWeight: 800, border: 'none', cursor: 'pointer', width: '100%', boxShadow: '0 12px 30px rgba(0,0,0,0.18)' }}
               >
-                <MessageCircle size={19} /> Réserver via WhatsApp
-              </motion.a>
+                Réserver ma place <ArrowRight size={19} />
+              </motion.button>
               <div style={{ position: 'relative', marginTop: 18 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, opacity: 0.9, marginBottom: 6 }}>
                   <span>{OFFER.placesPrises} places prises</span><span>{PLACES_RESTANTES} restantes</span>
@@ -1320,7 +1500,7 @@ export default function FormationPage() {
                 <p style={{ fontSize: 16.5, lineHeight: 1.7, marginBottom: 26 }}>
                   Le {SESSION_COURTE}, vous commencez. Dans 5 semaines, vous avez une offre tirée de votre métier, un prix, un script pour la vendre et un plan sur 90 jours.
                 </p>
-                <div className="fo-cta-wrap"><CtaButton big>Je réserve ma place <ArrowRight size={20} /></CtaButton></div>
+                <div className="fo-cta-wrap"><CtaButton big onClick={openPre}>Je réserve ma place <ArrowRight size={20} /></CtaButton></div>
                 <p style={{ fontSize: 13, color: MUTED, marginTop: 14 }}>{OFFER.prix} FCFA · en 3 fois · garantie 14 jours</p>
               </motion.div>
             </div>
@@ -1348,8 +1528,10 @@ export default function FormationPage() {
             <p style={{ fontSize: 15, fontWeight: 800 }}>{OFFER.prix} F <span style={{ fontSize: 12, fontWeight: 500, color: FAINT }}>· en 3 fois</span></p>
             <p style={{ fontSize: 12, color: RED, fontWeight: 600 }}>{PLACES_RESTANTES} places restantes</p>
           </div>
-          <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" style={{ padding: '13px 18px', borderRadius: 12, background: RED, color: '#fff', fontWeight: 700, fontSize: 14.5, textDecoration: 'none', whiteSpace: 'nowrap' }}>Réserver</a>
+          <button type="button" onClick={openPre} style={{ padding: '13px 18px', borderRadius: 12, border: 'none', cursor: 'pointer', background: RED, color: '#fff', fontWeight: 700, fontSize: 14.5, whiteSpace: 'nowrap' }}>Réserver</button>
         </motion.div>
+
+        <PreRegistrationModal open={preOpen} onClose={() => setPreOpen(false)} />
       </main>
     </MotionConfig>
   );
