@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   motion, AnimatePresence, MotionConfig, animate, useInView, useMotionValue, useScroll, useSpring, useTransform,
+  MotionValue,
 } from 'framer-motion';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
@@ -11,17 +12,36 @@ import {
   Layers, Compass, Rocket, Gift, Film, LayoutTemplate, MessageCircle, Cpu, Target, Scissors,
   Bot, Eye, ShieldCheck, Sparkles, AlertTriangle, Play,
 } from 'lucide-react';
+import BookingWidget from '@/components/booking/BookingWidget';
 
-/* ─── config de l'offre ─────────────────────────────── */
+/* ─── configuration des offres ──────────────────────── */
 const OFFER = {
   price: 5000,
-  originalPrice: 10000,
   days: 30,
   years: 5,
   whatsapp: '237694086571',
-  whatsappText: 'Bonjour Wilfried, je suis intéressé par l\'offre MVP en 30 jours à 5 000 €. Voici mon projet : ',
+  whatsappText: 'Bonjour Wilfried, je suis intéressé par l\'offre MVP en 30 jours à 5 000 € HT. Voici mon projet : ',
   email: 'info.ozirus@gmail.com',
 };
+
+const OFFERS = [
+  {
+    days: 15,
+    price: 2500,
+    name: 'Sprint MVP',
+    label: 'Pour valider une idée rapidement',
+    desc: 'Le cœur de votre produit, cadré, construit et mis entre les mains de vos premiers utilisateurs.',
+    features: ['Cadrage du produit et des priorités', 'Une livraison fonctionnelle tous les 2 jours', 'Itérations continues pendant tout le sprint', 'Prototype en ligne dès les premiers jours', 'Code source et accès remis à votre nom'],
+  },
+  {
+    days: 30,
+    price: 5000,
+    name: 'MVP complet',
+    label: 'Pour lancer et commencer à vendre',
+    desc: 'Une première version prête pour vos utilisateurs, vos premiers paiements et vos premiers apprentissages.',
+    features: ['Atelier produit et maquettes UI/UX', 'Une livraison fonctionnelle tous les 2 jours', 'MVP web, mobile ou desktop', 'Authentification, base de données et back-office', 'Itérations continues jusqu’à la mise en ligne', 'Landing page + vidéo de lancement 60 s', 'Mise en production et déploiement', 'Code source et accès remis à votre nom'],
+  },
+];
 
 // Vidéo de présentation. Renseigner `src` (fichier déposé dans public/, ex. '/videos/mvp.mp4')
 // OU `youtubeId`. Tant que les deux sont vides, l'affiche reste visible avec « Bientôt disponible ».
@@ -31,10 +51,11 @@ const VIDEO = {
   poster: '',
   photo: '',
   duration: '',
-  chapters: ['Qui je suis', 'Pourquoi un CTO cofondateur', 'Ma méthode avec l\'IA', 'L\'offre à 5 000 €'],
+  chapters: ['Qui je suis', 'Pourquoi un CTO', 'Ma méthode avec l\'IA', 'Les deux formats'],
 };
 
-const WHATSAPP_URL = `https://wa.me/${OFFER.whatsapp}?text=${encodeURIComponent(OFFER.whatsappText)}`;
+const whatsappUrl = (days: number, price: number) => `https://wa.me/${OFFER.whatsapp}?text=${encodeURIComponent(`Bonjour Wilfried, je suis intéressé par l'offre MVP en ${days} jours à ${price} € HT. Voici mon projet : `)}`;
+const WHATSAPP_URL = whatsappUrl(OFFER.days, OFFER.price);
 // Formatage fr-FR fait à la main : la méthode Intl dépend de l'ICU du moteur (Node et le
 // navigateur n'emploient pas toujours la même espace insécable), d'où des erreurs d'hydratation.
 const frNum = (n: number) => Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '\u202F');
@@ -62,7 +83,7 @@ const PLATFORMS = [
 
 const COMPARISON = [
   { freelance: 'Exécute un cahier des charges', cto: 'Challenge le cahier des charges avant d\'écrire une ligne' },
-  { freelance: 'Facture chaque fonctionnalité ajoutée', cto: 'Coupe ce qui ne sert pas votre premier client' },
+  { freelance: 'Compteur de fonctionnalités et devis qui grossit', cto: 'Fait évoluer le produit par itérations rapides' },
   { freelance: 'Choisit la stack qu\'il connaît', cto: 'Choisit l\'architecture qui tiendra à 10 000 utilisateurs' },
   { freelance: 'Livre un code, puis disparaît', cto: 'Livre un produit, et pense déjà à la V2 avec vous' },
   { freelance: 'Parle technique', cto: 'Parle utilisateurs, revenus et levée de fonds' },
@@ -76,11 +97,13 @@ const CTO_POINTS = [
 ];
 
 const TIMELINE = [
-  { days: 'Jours 1 à 5', title: 'Cadrage & design', desc: 'Atelier produit, parcours utilisateur, périmètre verrouillé, maquettes validées ensemble.' },
-  { days: 'Jours 6 à 20', title: 'Développement', desc: 'Sprints courts, démo chaque semaine. Vous voyez le produit avancer, vous n\'attendez pas la fin.' },
+  { days: 'Jours 1 à 5', title: 'Cadrage & design', desc: 'Atelier produit, parcours utilisateur, priorités claires et premières maquettes validées ensemble.' },
+  { days: 'Jours 6 à 20', title: 'Itérations rapides', desc: 'Une version fonctionnelle tous les 2 jours. Vous testez, vous demandez, on ajuste immédiatement.' },
   { days: 'Jours 21 à 26', title: 'Tests & finitions', desc: 'Recette, corrections, performance, mise en production sur vos comptes.' },
   { days: 'Jours 27 à 30', title: 'Lancement', desc: 'Landing page en ligne, vidéo motion livrée, MVP prêt pour vos premiers utilisateurs.' },
 ];
+
+const REVISION_PROMISE = 'Pas de quota de fonctionnalités : pendant le sprint, on avance par itérations. Tous les 2 jours, vous recevez une nouvelle version, vous testez et nous priorisons la suite ensemble.';
 
 const INCLUDED = [
   'Atelier de cadrage produit avec le CTO',
@@ -103,7 +126,7 @@ const AI_METHOD = [
   { icon: Bot, title: 'L\'IA écrit le code répétitif', desc: 'Formulaires, écrans, tests, documentation : des agents IA les produisent en quelques minutes au lieu de quelques jours.' },
   { icon: Eye, title: 'Je relis chaque ligne', desc: 'Rien n\'arrive en production sans avoir été relu, compris et validé. L\'IA propose, le CTO décide.' },
   { icon: ShieldCheck, title: 'La sécurité ne se délègue pas', desc: 'Données, paiements, accès : tout ce qui peut coûter cher est vérifié à la main, pas laissé à un modèle.' },
-  { icon: Sparkles, title: 'Le temps gagné va au produit', desc: 'Ce que l\'IA fait gagner sert à affiner votre produit et à livrer en 30 jours, pas à gonfler la facture.' },
+  { icon: Sparkles, title: 'Le temps gagné va au produit', desc: 'Ce que l\'IA fait gagner sert à affiner votre produit et à intégrer vos retours, pas à gonfler la facture.' },
 ];
 
 const TERMINAL_LINES = [
@@ -130,24 +153,28 @@ const FAQS = [
     a: 'Pour un prototype, vous pouvez. L\'IA vous emmène vite à 80 % ; les 20 % restants (sécurité, paiements, mise en production, publication sur les stores, bugs) demandent de savoir lire et corriger ce qu\'elle produit. Et votre temps de fondateur vaut plus sur la vente que sur le débogage.',
   },
   {
-    q: 'Un MVP en 30 jours, c\'est vraiment possible ?',
-    a: 'Oui, parce que le périmètre est verrouillé dès la première semaine. Un MVP n\'est pas votre produit final : c\'est la plus petite version capable de prouver que des utilisateurs en veulent. Le rôle du CTO est justement de trouver ce périmètre avec vous.',
+    q: 'Un MVP en 15 ou 30 jours, c\'est vraiment possible ?',
+    a: 'Oui. Le produit avance par cycles courts : tous les 2 jours, une nouvelle version est livrée. Vous testez, vous demandez les changements souhaités et nous priorisons ensemble ce qui apporte le plus de valeur dans le temps disponible.',
   },
   {
     q: 'Qu\'est-ce qui change concrètement avec un CTO cofondateur ?',
     a: 'Vous n\'achetez pas des heures de développement, vous gagnez quelqu\'un qui raisonne comme un associé : il challenge vos idées, coupe le superflu, choisit une architecture qui tiendra la croissance et vous aide à présenter le produit à vos premiers clients ou investisseurs.',
   },
   {
-    q: 'Pourquoi 5 000 € au lieu de 10 000 € ?',
-    a: 'C\'est une offre de lancement, sur un nombre limité de projets, pour construire avec des fondateurs motivés. Le prix inclut le MVP complet, la landing page et la vidéo motion promo.',
+    q: 'Comment fonctionnent les itérations tous les 2 jours ?',
+    a: `${REVISION_PROMISE} Chaque cycle sert à faire avancer le produit : nouvelle fonctionnalité, amélioration, correction ou détail d\'expérience.`,
   },
   {
     q: 'À qui appartient le code ?',
     a: 'À vous. Le code source, les comptes d\'hébergement et les accès sont remis à votre nom à la livraison.',
   },
   {
-    q: 'Et après les 30 jours ?',
-    a: 'Vous êtes libre. Beaucoup de fondateurs continuent avec nous pour la V2, en accompagnement CTO ou en développement continu, mais rien ne vous y oblige.',
+    q: 'Est-ce que vous prenez des parts dans ma société ?',
+    a: 'Non. Ozirus fonctionne au forfait : aucune prise de participation, aucun equity et aucun pourcentage sur votre société. Vous gardez 100 % de votre capital, de votre code et de vos comptes.',
+  },
+  {
+    q: 'Et après les 15 ou 30 jours ?',
+    a: 'Vous repartez avec votre code, vos accès et une version en ligne. Vous êtes libre de continuer seul, avec votre équipe ou avec Ozirus pour la V2.',
   },
   {
     q: 'Mon idée est encore floue, est-ce trop tôt ?',
@@ -414,44 +441,144 @@ function MacBookPro14({ play, delay, children }: { play: boolean; delay: number;
   );
 }
 
-// iPhone 17 Pro Max : 78 × 163,4 mm, cadre aluminium, Dynamic Island, boutons latéraux.
-const PHONE_W = 290;
+// iPhone Duo : deux écrans reliés par une charnière, fermé au premier regard puis
+// déplié progressivement quand le mockup entre dans le viewport au scroll.
+const PHONE_W = 238;
 const PHONE_H = Math.round(PHONE_W * 163.4 / 78);
+const HINGE_W = 12;
+const DUO_W = PHONE_W * 2 + HINGE_W;
+// Écran : cadre métal 3 px + bordure noire 6 px de chaque côté. Les cotes de la zone sûre suivent
+// un iPhone 15 (393 pt de large, île 126×37 à 11 pt du haut, barre d'état 54 pt) ramenées à l'échelle.
+const PHONE_BEZEL = 6;
+const SCREEN_W = PHONE_W - 2 * (3 + PHONE_BEZEL);
+const IOS_SCALE = SCREEN_W / 393;
+const ISLAND = { w: Math.round(126 * IOS_SCALE), h: Math.round(37 * IOS_SCALE), top: Math.round(11 * IOS_SCALE) };
+const SAFE_TOP = Math.round(54 * IOS_SCALE);
 
-function IPhone17ProMax({ play, delay, children }: { play: boolean; delay: number; children: React.ReactNode }) {
+// Icônes de la barre d'état iOS (réseau, Wi-Fi, batterie) dessinées en SVG pour rester nettes.
+function StatusIcons() {
+  return (
+    <span style={{ display: 'flex', alignItems: 'center', gap: 3.5 }}>
+      <svg width="14" height="9.5" viewBox="0 0 15 10" aria-hidden>
+        {[0, 1, 2, 3].map(i => <rect key={i} x={i * 4} y={7 - i * 2.2} width="2.8" height={3 + i * 2.2} rx="0.8" fill={INK} />)}
+      </svg>
+      <svg width="12" height="9.5" viewBox="0 0 13 10" aria-hidden>
+        <path d="M6.5 2.2c1.9 0 3.6.7 4.9 1.9l1-1A8.3 8.3 0 0 0 6.5.7 8.3 8.3 0 0 0 .6 3.1l1 1a6.9 6.9 0 0 1 4.9-1.9Z" fill={INK} />
+        <path d="M6.5 5.1c1.1 0 2.1.4 2.9 1.1l1-1A5.6 5.6 0 0 0 6.5 3.6c-1.5 0-2.9.6-3.9 1.6l1 1a4.1 4.1 0 0 1 2.9-1.1Z" fill={INK} />
+        <path d="M6.5 6.6c-.6 0-1.2.2-1.6.7L6.5 9l1.6-1.7a2.3 2.3 0 0 0-1.6-.7Z" fill={INK} />
+      </svg>
+      <svg width="21" height="10.5" viewBox="0 0 22 11" aria-hidden>
+        <rect x="0.6" y="0.6" width="18.6" height="9.8" rx="3" fill="none" stroke={INK} strokeOpacity="0.4" strokeWidth="1.1" />
+        <rect x="2.2" y="2.2" width="13.4" height="6.6" rx="1.6" fill={INK} />
+        <path d="M20.4 3.7v3.6c.8-.3 1.2-1 1.2-1.8s-.4-1.5-1.2-1.8Z" fill={INK} fillOpacity="0.45" />
+      </svg>
+    </span>
+  );
+}
+
+// Barre d'état : heure centrée dans l'« oreille » gauche, icônes dans la droite, île au milieu.
+// `inset` annule le padding horizontal du conteneur : les oreilles prennent toute la largeur d'écran.
+function IOSStatusBar({ inset = 0 }: { inset?: number }) {
+  const ear: React.CSSProperties = { flex: 1, height: ISLAND.h, display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: 1 };
+  return (
+    <div style={{ position: 'relative', height: SAFE_TOP, flexShrink: 0, display: 'flex', alignItems: 'flex-start', margin: `0 ${-inset}px`, paddingTop: ISLAND.top, color: INK }}>
+      <span style={{ ...ear, paddingLeft: 8, fontSize: 12.5, fontWeight: 600, letterSpacing: '-0.01em', fontVariantNumeric: 'tabular-nums' }}>9:41</span>
+      <span style={{ width: ISLAND.w + 8, flexShrink: 0 }} />
+      <span style={{ ...ear, paddingRight: 8 }}><StatusIcons /></span>
+    </div>
+  );
+}
+
+function DynamicIsland() {
+  return (
+    <div aria-hidden style={{ position: 'absolute', top: ISLAND.top, left: '50%', width: ISLAND.w, height: ISLAND.h, marginLeft: -ISLAND.w / 2, borderRadius: ISLAND.h, background: '#000', zIndex: 3 }}>
+      {/* lentille de la caméra frontale, côté droit de l'île */}
+      <span style={{ position: 'absolute', right: ISLAND.h * 0.32, top: '50%', width: ISLAND.h * 0.42, height: ISLAND.h * 0.42, marginTop: -ISLAND.h * 0.21, borderRadius: '50%', background: 'radial-gradient(circle at 35% 35%, #2B3350, #0A0B10 65%)' }} />
+    </div>
+  );
+}
+
+function DuoSidePanel() {
+  return (
+    <div style={{ position: 'relative', height: '100%', padding: '0 16px 22px', background: '#F7F7F8', color: INK, textAlign: 'left' }}>
+      {/* Second écran sans île : date à gauche et poignée multitâche « ••• » centrée, comme sur iPadOS. */}
+      <div style={{ position: 'relative', height: SAFE_TOP, paddingTop: ISLAND.top + 1 }}>
+        <span style={{ height: ISLAND.h, display: 'flex', alignItems: 'center', fontSize: 11, fontWeight: 600, color: MUTED }}>lun. 23 oct.</span>
+        <span aria-hidden style={{ position: 'absolute', top: ISLAND.top + 1, left: '50%', height: ISLAND.h, display: 'flex', alignItems: 'center', gap: 3, transform: 'translateX(-50%)' }}>
+          {[0, 1, 2].map(i => <span key={i} style={{ width: 4, height: 4, borderRadius: '50%', background: 'rgba(14,14,16,0.28)' }} />)}
+        </span>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '6px 0 16px' }}>
+        <div>
+          <p style={{ fontSize: 11, color: FAINT }}>Votre prochaine étape</p>
+          <p style={{ fontSize: 21, fontWeight: 700, marginTop: 3, letterSpacing: '-0.03em' }}>V2 prête</p>
+        </div>
+        <span style={{ width: 32, height: 32, borderRadius: '50%', background: ACCENT_SOFT, display: 'grid', placeItems: 'center', color: ACCENT_INK, fontSize: 12, fontWeight: 800 }}>02</span>
+      </div>
+      <div style={{ padding: 14, borderRadius: 18, background: '#fff', border: `1px solid ${LINE}`, marginBottom: 12 }}>
+        <p style={{ fontSize: 11, color: FAINT, marginBottom: 8 }}>Signal produit</p>
+        <p style={{ fontSize: 18, fontWeight: 700 }}>+28 %</p>
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 5, height: 48, marginTop: 12 }}>
+          {[30, 42, 36, 58, 51, 72, 86].map((height, i) => <span key={i} style={{ flex: 1, height: `${height}%`, borderRadius: 4, background: i === 6 ? ACCENT : '#E6E4F5' }} />)}
+        </div>
+      </div>
+      <div style={{ display: 'grid', gap: 8 }}>
+        {['Feedbacks triés', 'V2 priorisée', 'Roadmap partagée'].map((label, i) => <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '9px 10px', borderRadius: 10, background: i === 0 ? ACCENT_SOFT : '#fff', border: `1px solid ${LINE}`, fontSize: 11, fontWeight: 600 }}><CheckCircle2 size={13} color={i === 0 ? ACCENT_INK : GREEN} />{label}</div>)}
+      </div>
+    </div>
+  );
+}
+
+function IPhoneDuo({ play, delay, foldAngle, children }: { play: boolean; delay: number; foldAngle: MotionValue<number>; children: React.ReactNode }) {
   const metal = 'linear-gradient(90deg, #8E9097, #E4E5E9 30%, #B9BBC2 60%, #7C7E85)';
   const btn = (side: 'left' | 'right', top: number, h: number) => (
     <span aria-hidden style={{ position: 'absolute', [side]: -4, top, width: 5, height: h, borderRadius: side === 'left' ? '3px 0 0 3px' : '0 3px 3px 0', background: 'linear-gradient(180deg, #C9CBD1, #8B8D94)' }} />
   );
   return (
-    <div style={{ position: 'absolute', left: SCENE_W - PHONE_W - 30, top: SCENE_H - PHONE_H - 14, width: PHONE_W, height: PHONE_H, perspective: 1600 }}>
+    <div style={{ position: 'absolute', left: SCENE_W - DUO_W - 12, top: SCENE_H - PHONE_H - 14, width: DUO_W, height: PHONE_H, perspective: 3600 }}>
       <motion.div
         initial={{ opacity: 0, x: 220, y: 40, rotateY: -70, rotateZ: 10 }}
-        animate={play ? { opacity: 1, x: 0, y: 0, rotateY: -18, rotateZ: 0 } : {}}
+        animate={play ? { opacity: 1, x: 0, y: 0, rotateY: -8, rotateZ: 0 } : {}}
         transition={{ duration: 1.5, ease: EASE, delay }}
-        style={{ width: '100%', height: '100%', transformStyle: 'preserve-3d' }}
+        style={{ position: 'relative', width: '100%', height: '100%', transformStyle: 'preserve-3d' }}
       >
         <motion.div
           animate={{ y: [0, -12, 0], rotateX: [0, 3, 0] }}
           transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-          style={{ position: 'relative', width: '100%', height: '100%', transformStyle: 'preserve-3d' }}
+          style={{ position: 'absolute', inset: 0, transformStyle: 'preserve-3d' }}
         >
-          {/* tranche (épaisseur réelle visible en 3D) */}
-          <span aria-hidden style={{ position: 'absolute', top: 54, bottom: 54, right: 0, width: 16, transformOrigin: '100% 50%', transform: 'rotateY(90deg)', background: metal, borderRadius: 8 }} />
-          {btn('left', 128, 26)}
-          {btn('left', 178, 50)}
-          {btn('left', 240, 50)}
-          {btn('right', 196, 78)}
-          {btn('right', 330, 44)}
-          <div style={{ position: 'absolute', inset: 0, borderRadius: 52, padding: 3, background: metal, boxShadow: '0 50px 90px -20px rgba(16,16,20,0.45), 0 18px 30px -12px rgba(16,16,20,0.3)' }}>
-            <div style={{ width: '100%', height: '100%', borderRadius: 49, padding: 9, background: '#050506' }}>
-              <div style={{ position: 'relative', width: '100%', height: '100%', borderRadius: 40, overflow: 'hidden', background: '#fff' }}>
+          {/* Une seule machine : coins arrondis à l'extérieur, angles serrés côté charnière. */}
+          <div style={{ position: 'absolute', left: 0, top: 0, width: PHONE_W, height: PHONE_H, borderRadius: '44px 12px 12px 44px', padding: 3, background: metal, boxShadow: '0 50px 90px -20px rgba(16,16,20,0.45), 0 18px 30px -12px rgba(16,16,20,0.3)', transformStyle: 'preserve-3d' }}>
+            {btn('left', 128, 26)}
+            {btn('left', 178, 50)}
+            {btn('left', 240, 50)}
+            <div style={{ width: '100%', height: '100%', borderRadius: '41px 10px 10px 41px', padding: PHONE_BEZEL, background: '#050506' }}>
+              <div style={{ position: 'relative', width: '100%', height: '100%', borderRadius: '35px 5px 5px 35px', overflow: 'hidden', background: '#fff' }}>
                 {children}
-                <div aria-hidden style={{ position: 'absolute', top: 11, left: '50%', width: 88, height: 26, marginLeft: -44, borderRadius: 20, background: '#000' }} />
+                <DynamicIsland />
                 <div aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: 'linear-gradient(120deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 35%)' }} />
               </div>
             </div>
           </div>
+
+          {/* charnière : cylindre entre les deux moitiés, sur toute la hauteur utile */}
+          <span aria-hidden style={{ position: 'absolute', left: PHONE_W - 2, top: 18, width: HINGE_W + 4, height: PHONE_H - 36, borderRadius: HINGE_W, background: 'linear-gradient(90deg, #6C6E75, #E4E5E9 45%, #9C9EA5 70%, #5E6067)', boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.12)' }} />
+
+          {/* Seconde moitié : pivote autour de la charnière, vers l'arrière, et finit à plat (0°). */}
+          <motion.div
+            style={{ position: 'absolute', left: PHONE_W + HINGE_W, top: 0, width: PHONE_W, height: PHONE_H, transformOrigin: `${-HINGE_W / 2}px 50%`, rotateY: foldAngle, transformStyle: 'preserve-3d' }}
+          >
+            {btn('right', 196, 78)}
+            {btn('right', 330, 44)}
+            <div style={{ position: 'absolute', inset: 0, borderRadius: '12px 44px 44px 12px', padding: 3, background: metal, boxShadow: '0 50px 90px -20px rgba(16,16,20,0.35)', backfaceVisibility: 'hidden' }}>
+              <div style={{ width: '100%', height: '100%', borderRadius: '10px 41px 41px 10px', padding: PHONE_BEZEL, background: '#050506' }}>
+                <div style={{ position: 'relative', width: '100%', height: '100%', borderRadius: '5px 35px 35px 5px', overflow: 'hidden', background: '#fff' }}>
+                  <DuoSidePanel />
+                  <div aria-hidden style={{ position: 'absolute', inset: 0, pointerEvents: 'none', background: 'linear-gradient(120deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 35%)' }} />
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </motion.div>
       </motion.div>
     </div>
@@ -462,6 +589,11 @@ function ProductMock({ ready }: { ready: boolean }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const inView = useInView(rootRef, { once: true, amount: 0.3 });
   const scale = useFitScale(rootRef, SCENE_W);
+  const { scrollYProgress: duoScroll } = useScroll({ target: rootRef, offset: ['start end', 'center center'] });
+  // Angle positif = la moitié droite part vers l'arrière (au-delà de 90°, sa face est masquée :
+  // l'appareil paraît fermé) ; 0° en fin de course pour que les deux écrans soient alignés.
+  const duoFoldTarget = useTransform(duoScroll, [0, 0.62, 1], [120, 40, 0]);
+  const duoFold = useSpring(duoFoldTarget, { stiffness: 120, damping: 24, mass: 0.7 });
   const play = ready && inView && scale > 0;
   const base = 0.15;
   const screenOn = base + 1.5;
@@ -590,7 +722,7 @@ function ProductMock({ ready }: { ready: boolean }) {
             </div>
           </MacBookPro14>
 
-          <IPhone17ProMax play={play} delay={base + 0.9}>
+          <IPhoneDuo play={play} delay={base + 0.9} foldAngle={duoFold}>
             {/* Fond d'écran vivant : c'est lui que le verre réfracte. */}
             <div aria-hidden style={{ position: 'absolute', inset: 0, overflow: 'hidden', background: '#F3F3F5' }}>
               <span className="mvp-blob" style={{ position: 'absolute', width: 260, height: 260, left: -70, top: 40, borderRadius: '50%', background: '#DCDCE2', filter: 'blur(28px)' }} />
@@ -599,18 +731,14 @@ function ProductMock({ ready }: { ready: boolean }) {
             </div>
 
             <div style={{ position: 'relative', height: '100%', display: 'flex', flexDirection: 'column', padding: '0 12px', textAlign: 'left', color: INK }}>
-              <div style={{ height: 48, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 12px 0', fontSize: 13, fontWeight: 600 }}>
-                <span>9:41</span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  {[5, 7, 9, 11].map(h => <span key={h} style={{ width: 3, height: h, borderRadius: 1, background: INK }} />)}
-                  <span style={{ width: 22, height: 11, marginLeft: 4, borderRadius: 3, border: `1.5px solid ${INK}`, padding: 1 }}>
-                    <span style={{ display: 'block', width: '75%', height: '100%', borderRadius: 1, background: INK }} />
-                  </span>
-                </span>
-              </div>
+              <IOSStatusBar inset={12} />
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '8px 2px 12px' }}>
-                <p style={{ fontSize: 24, fontWeight: 700, letterSpacing: '-0.02em' }}>Mon espace</p>
+              {/* même gabarit (surtitre + titre) que l'en-tête du second écran, pour aligner les deux titres */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '6px 2px 12px' }}>
+                <div>
+                  <p style={{ fontSize: 11, color: '#6B6B75' }}>Bonjour Awa</p>
+                  <p style={{ fontSize: 21, fontWeight: 700, marginTop: 3, letterSpacing: '-0.03em' }}>Mon espace</p>
+                </div>
                 <span className="mvp-glass" style={{ width: 36, height: 36, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <span style={{ width: 20, height: 20, borderRadius: '50%', background: '#D9D9DE' }} />
                 </span>
@@ -621,7 +749,7 @@ function ProductMock({ ready }: { ready: boolean }) {
                 animate={play ? { opacity: 1, scale: 1 } : {}}
                 transition={{ duration: 0.8, ease: EASE, delay: base + 1.7 }}
                 className="mvp-glass"
-                style={{ borderRadius: 24, padding: 16, marginBottom: 10 }}
+                style={{ borderRadius: 24, padding: '13px 16px', marginBottom: 10 }}
               >
                 <p style={{ fontSize: 11, color: '#3A3A44' }}>Ce mois-ci</p>
                 <p style={{ fontSize: 28, fontWeight: 700, marginTop: 2, letterSpacing: '-0.02em' }}>
@@ -631,13 +759,14 @@ function ProductMock({ ready }: { ready: boolean }) {
               </motion.div>
 
               <div className="mvp-glass" style={{ borderRadius: 24, padding: '4px 14px' }}>
-                {[0, 1, 2, 3, 4].map(n => (
+                {/* 3 lignes : au-delà, la liste repousse la barre d'onglets sur l'indicateur d'accueil */}
+                {[0, 1, 2].map(n => (
                   <motion.div
                     key={n}
                     initial={{ opacity: 0, x: 16 }}
                     animate={play ? { opacity: 1, x: 0 } : {}}
                     transition={{ duration: 0.6, ease: EASE, delay: base + 1.9 + n * 0.1 }}
-                    style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderBottom: n < 4 ? '1px solid rgba(14,14,16,0.06)' : 'none' }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0', borderBottom: n < 2 ? '1px solid rgba(14,14,16,0.06)' : 'none' }}
                   >
                     <span style={{ width: 28, height: 28, borderRadius: '50%', background: n === 0 ? '#E8E5FA' : '#E4E4E8', boxShadow: 'inset 0 0 0 1.5px rgba(255,255,255,0.7)' }} />
                     <div style={{ flex: 1, display: 'grid', gap: 5 }}>
@@ -663,9 +792,10 @@ function ProductMock({ ready }: { ready: boolean }) {
                   <span style={{ width: 18, height: 18, borderRadius: '50%', border: '2.5px solid rgba(14,14,16,0.75)' }} />
                 </span>
               </div>
-              <span style={{ position: 'absolute', bottom: 8, left: '50%', width: 120, height: 5, marginLeft: -60, borderRadius: 3, background: INK }} />
+              {/* indicateur d'accueil : 134×5 pt sur iPhone, à 8 pt du bas */}
+              <span style={{ position: 'absolute', bottom: Math.round(8 * IOS_SCALE) + 2, left: '50%', width: Math.round(134 * IOS_SCALE), height: 4, marginLeft: -Math.round(134 * IOS_SCALE) / 2, borderRadius: 3, background: INK }} />
             </div>
-          </IPhone17ProMax>
+          </IPhoneDuo>
         </motion.div>
       </div>
 
@@ -796,20 +926,6 @@ function FaqItem({ q, a, index }: { q: string; a: string; index: number }) {
   );
 }
 
-function StruckPrice({ play, delay, size }: { play: boolean; delay: number; size: number }) {
-  return (
-    <span style={{ position: 'relative', display: 'inline-block', fontSize: size, color: FAINT }}>
-      {eur(OFFER.originalPrice)}
-      <motion.span
-        initial={{ scaleX: 0 }}
-        animate={play ? { scaleX: 1 } : {}}
-        transition={{ duration: 0.5, ease: EASE, delay }}
-        style={{ position: 'absolute', left: -4, right: -4, top: '52%', height: 2, background: RED, transformOrigin: 'left', borderRadius: 2 }}
-      />
-    </span>
-  );
-}
-
 function AgentTerminal() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.4 });
@@ -922,9 +1038,9 @@ function VideoPosterArt() {
       <div className="mvp-hide-sm" style={{ position: 'absolute', top: '9%', left: '6%', right: '6%' }}>
         <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', marginBottom: 14 }}>Ozirus · Offre MVP</p>
         <p style={{ fontFamily: DISPLAY, fontWeight: 600, fontSize: 'clamp(20px, 4vw, 44px)', lineHeight: 1.05, letterSpacing: '-0.03em' }}>
-          Votre MVP en {OFFER.days} jours,
+          Votre MVP en {OFFERS[0].days} ou {OFFERS[1].days} jours,
           <br />
-          <span style={{ color: 'rgba(255,255,255,0.45)' }}>avec un CTO cofondateur.</span>
+          <span style={{ color: 'rgba(255,255,255,0.45)' }}>avec un CTO qui pilote.</span>
         </p>
       </div>
       <div style={{ position: 'absolute', left: '6%', bottom: '9%', display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -935,7 +1051,7 @@ function VideoPosterArt() {
         )}
         <div>
           <p style={{ fontSize: 14, fontWeight: 600 }}>Wilfried Fotie</p>
-          <p className="mvp-hide-sm" style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>CTO cofondateur · {OFFER.years} ans d&apos;expérience</p>
+          <p className="mvp-hide-sm" style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>CTO · {OFFER.years} ans d&apos;expérience</p>
         </div>
       </div>
     </motion.div>
@@ -954,12 +1070,27 @@ function VideoSection() {
   };
 
   return (
-    <Section id="video">
-      <SectionHead
-        eyebrow="En vidéo"
-        title={[{ text: 'Je vous explique tout,' }, { text: 'en quelques minutes.', muted: true }]}
-        sub={`Qui je suis, comment je travaille avec l'IA, et ce que vous obtenez en ${OFFER.days} jours.`}
-      />
+    // Suite directe du hero (prix → vidéo) : pas de <Section> (bordure, eyebrow), un simple pont.
+    <div id="video" style={{ position: 'relative', paddingTop: 56, scrollMarginTop: 90 }}>
+      <div style={{ textAlign: 'center', maxWidth: 680, margin: '0 auto 40px' }}>
+        <motion.span
+          aria-hidden
+          initial={{ scaleY: 0 }}
+          whileInView={{ scaleY: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.9, ease: EASE }}
+          style={{ display: 'block', width: 1, height: 56, margin: '0 auto 24px', background: `linear-gradient(to bottom, transparent, ${FAINT})`, transformOrigin: 'top' }}
+        />
+        <motion.p {...upView(0.1)} style={{ fontSize: 12, fontWeight: 600, color: FAINT, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 14 }}>
+          Avant de réserver
+        </motion.p>
+        <h2 style={{ fontFamily: DISPLAY, fontWeight: 600, fontSize: 'clamp(1.7rem, 3.4vw, 2.4rem)', lineHeight: 1.12, letterSpacing: '-0.025em', color: INK, marginBottom: 14 }}>
+          <Words segments={[{ text: 'Regardez comment' }, { text: 'on construit votre MVP.', muted: true }]} />
+        </h2>
+        <motion.p {...upView(0.25)} style={{ fontSize: 16, lineHeight: 1.65, color: MUTED, margin: 0 }}>
+          Qui je suis, comment l&apos;IA et le CTO se partagent le travail, et lequel des deux formats vous correspond.
+        </motion.p>
+      </div>
 
       <motion.div
         initial={{ opacity: 0, y: 40, scale: 0.96 }}
@@ -1060,7 +1191,7 @@ function VideoSection() {
           ))}
         </div>
       )}
-    </Section>
+    </div>
   );
 }
 
@@ -1073,7 +1204,6 @@ export default function MvpOfferPage() {
   const heroRef = useRef<HTMLElement>(null);
   const offerRef = useRef<HTMLDivElement>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
-  const offerInView = useInView(offerRef, { once: true, margin: '-120px' });
 
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.3 });
@@ -1130,7 +1260,7 @@ export default function MvpOfferPage() {
                 <img src="/logo.png" alt="Ozirus" style={{ height: 24, filter: 'brightness(0)' }} />
               </a>
               <nav className="mvp-hide-sm" style={{ display: 'flex', gap: 22 }}>
-                {[['video', 'Vidéo'], ['methode', 'Méthode'], ['ia', 'Et Claude ?'], ['offre', 'Offre'], ['faq', 'FAQ']].map(([id, label]) => (
+                {[['video', 'Vidéo'], ['methode', 'Méthode'], ['offre', 'Offre'], ['faq', 'FAQ']].map(([id, label]) => (
                   <button key={id} className="mvp-navlink" onClick={() => scrollTo(id)}>{label}</button>
                 ))}
               </nav>
@@ -1153,8 +1283,8 @@ export default function MvpOfferPage() {
                 onClick={() => scrollTo('offre')}
                 style={{ display: 'inline-flex', alignItems: 'center', gap: 10, padding: '5px 12px 5px 5px', borderRadius: 999, background: '#fff', border: `1px solid ${LINE}`, boxShadow: '0 1px 2px rgba(16,16,20,0.04)', fontSize: 13, fontWeight: 500, color: INK, marginBottom: 28, cursor: 'pointer' }}
               >
-                <span style={{ padding: '3px 9px', borderRadius: 999, background: INK, color: '#fff', fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap' }}>Offre -50 %</span>
-                <span style={{ whiteSpace: 'nowrap' }}>{OFFER.days} jours chrono<span className="mvp-hide-sm"> · {OFFER.years} ans d&apos;expérience</span></span>
+                <span style={{ padding: '3px 9px', borderRadius: 999, background: INK, color: '#fff', fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap' }}>2 formats</span>
+                <span style={{ whiteSpace: 'nowrap' }}>15 ou 30 jours<span className="mvp-hide-sm"> · une version tous les 2 jours</span></span>
                 <ArrowRight size={13} color={FAINT} />
               </motion.button>
 
@@ -1164,21 +1294,20 @@ export default function MvpOfferPage() {
                   delay={0.1}
                   stagger={0.07}
                   segments={[
-                    { text: `Votre MVP en ${OFFER.days} jours,`, br: true },
-                    { text: 'avec un' },
-                    { text: 'CTO cofondateur', pill: true },
+                    { text: 'Votre MVP en', br: true },
+                    { text: '15 ou 30 jours,', pill: true },
+                    { text: 'avec un CTO qui pilote.', br: true },
                   ]}
                 />
               </h1>
 
               <motion.p {...heroItem(0.55)} style={{ fontSize: 'clamp(16px, 2vw, 18px)', lineHeight: 1.7, color: MUTED, maxWidth: 640, margin: '0 auto 36px' }}>
-                SaaS, application mobile, desktop ou produit IA : je construis votre MVP comme si c&apos;était le mien.
-                Pas un prestataire de plus, <strong style={{ color: INK, fontWeight: 600 }}>un associé technique pendant {OFFER.days} jours</strong>, avec {OFFER.years} ans
-                de produits livrés et une méthode augmentée par l&apos;IA.
+                SaaS, application mobile, desktop ou produit IA : on cadre le bon périmètre, on le construit et vous pouvez demander des ajustements jusqu&apos;à la mise en ligne.
+                <strong style={{ color: INK, fontWeight: 600 }}> Une version tous les 2 jours, itérations continues, délai fixe et prix clair — sans prise de participation.</strong>
               </motion.p>
 
               <motion.div {...heroItem(0.7)} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: 12, marginBottom: 40 }}>
-                <CtaButton big>
+                <CtaButton big href="#reserver">
                   <Sparkles size={17} /> Réserver mon MVP
                 </CtaButton>
                 <SecondaryButton onClick={() => scrollTo('offre')}>
@@ -1188,22 +1317,16 @@ export default function MvpOfferPage() {
 
               <motion.div {...heroItem(0.85)} style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', gap: 16 }}>
                 <span style={{ fontFamily: DISPLAY, fontSize: 'clamp(2.2rem, 5vw, 3.2rem)', fontWeight: 600, letterSpacing: '-0.02em', minWidth: '4.6em', textAlign: 'right' }}>
-                  <CountUp from={OFFER.originalPrice} to={OFFER.price} format={eur} duration={1.6} delay={1.1} play={ready} />
+                À partir de {eur(OFFERS[0].price)}
                 </span>
-                <StruckPrice play={ready} delay={2.5} size={21} />
-                <motion.span
-                  initial={{ opacity: 0, scale: 0.6 }}
-                  animate={ready ? { opacity: 1, scale: 1 } : {}}
-                  transition={{ type: 'spring', stiffness: 380, damping: 16, delay: 2.8 }}
-                  style={{ padding: '5px 11px', borderRadius: 8, background: '#DCFCE7', color: GREEN, fontSize: 13, fontWeight: 700 }}
-                >
-                  -50 %
-                </motion.span>
               </motion.div>
               <motion.p {...heroItem(1)} style={{ fontSize: 14, color: FAINT, marginTop: 10 }}>
-                + Landing page et vidéo motion promo offertes
+                Sprint 15 jours : {eur(OFFERS[0].price)} HT · MVP complet 30 jours : {eur(OFFERS[1].price)} HT
               </motion.p>
             </motion.div>
+
+            {/* Vidéo de présentation directement sous le prix dans le hero. */}
+            <VideoSection />
 
             <div style={{ position: 'relative', maxWidth: 1060, margin: '80px auto 0', perspective: 1400 }}>
               <motion.div style={{ rotateX: mockTilt, scale: mockScale, transformOrigin: 'center top' }}>
@@ -1212,7 +1335,7 @@ export default function MvpOfferPage() {
             </div>
           </section>
 
-          {/* ── CHIFFRES & STACK ── */}
+          {/* ── CHIFFRES ── */}
           <section style={{ padding: '56px 24px 64px', borderTop: `1px solid ${LINE}` }}>
             <div style={{ maxWidth: 1000, margin: '0 auto 56px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
               {[
@@ -1227,22 +1350,7 @@ export default function MvpOfferPage() {
                 </SpotCard>
               ))}
             </div>
-            <p style={{ textAlign: 'center', fontSize: 13, color: FAINT, marginBottom: 22 }}>Des technologies éprouvées, choisies pour votre produit</p>
-            <div className="mvp-marquee" style={{ overflow: 'hidden' }}>
-              <motion.div
-                animate={{ x: ['0%', '-50%'] }}
-                transition={{ duration: 40, repeat: Infinity, ease: 'linear' }}
-                style={{ display: 'flex', width: 'max-content', gap: 56 }}
-              >
-                {[...STACK, ...STACK].map((tech, i) => (
-                  <span key={i} style={{ fontFamily: DISPLAY, fontSize: 21, fontWeight: 600, letterSpacing: '-0.01em', color: '#B4B4BC', whiteSpace: 'nowrap' }}>{tech}</span>
-                ))}
-              </motion.div>
-            </div>
           </section>
-
-          {/* ── VIDÉO ── */}
-          <VideoSection />
 
           {/* ── POURQUOI UN CTO ── */}
           <Section>
@@ -1267,7 +1375,7 @@ export default function MvpOfferPage() {
                 <p style={{ padding: '16px 20px', fontSize: 12, fontWeight: 700, color: FAINT, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Un prestataire classique</p>
                 <p style={{ padding: '16px 20px', fontSize: 12, fontWeight: 700, color: ACCENT_INK, textTransform: 'uppercase', letterSpacing: '0.06em', background: ACCENT_SOFT }}>Un CTO cofondateur</p>
               </div>
-              {COMPARISON.map((row, i) => (
+              {COMPARISON.slice(0, 3).map((row, i) => (
                 <div key={row.cto} className="mvp-compare-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', borderTop: `1px solid ${LINE}` }}>
                   <motion.p
                     initial={{ opacity: 0, x: -16 }}
@@ -1310,7 +1418,7 @@ export default function MvpOfferPage() {
             />
             <div style={{ maxWidth: 1040, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 40, alignItems: 'center' }}>
               <div style={{ display: 'grid', gap: 22 }}>
-                {AI_METHOD.map((m, i) => (
+                {AI_METHOD.slice(0, 2).map((m, i) => (
                   <motion.div key={m.title} {...upView(i * 0.1)} style={{ display: 'flex', gap: 16 }}>
                     <div style={{ width: 42, height: 42, flexShrink: 0, borderRadius: 12, background: '#fff', border: `1px solid ${LINE}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <m.icon size={19} color={INK} />
@@ -1326,52 +1434,12 @@ export default function MvpOfferPage() {
             </div>
           </Section>
 
-          {/* ── ET CLAUDE ? ── */}
-          <Section id="ia">
-            <SectionHead
-              eyebrow="La question qu'on me pose"
-              title={[{ text: 'Pourquoi ne pas juste' }, { text: 'le faire avec Claude ?', muted: true }]}
-              sub="Claude est excellent : je l'utilise tous les jours. Mais un outil qui écrit du code ne remplace pas quelqu'un qui sait quoi construire, et comment le mettre en production."
-            />
-            <div style={{ maxWidth: 820, margin: '0 auto' }}>
-              <motion.div {...upView()} style={{ ...card, padding: 'clamp(24px, 4vw, 40px)', marginBottom: 40 }}>
-                <ProgressRace />
-              </motion.div>
-
-              <motion.p {...upView()} style={{ textAlign: 'center', fontSize: 14, fontWeight: 600, color: MUTED, marginBottom: 18 }}>
-                Les 20 % où les projets meurent
-              </motion.p>
-              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 10, marginBottom: 48 }}>
-                {LAST_20.map((item, i) => (
-                  <motion.span
-                    key={item}
-                    initial={{ opacity: 0, scale: 0.85, y: 10 }}
-                    whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                    viewport={{ once: true, margin: '-40px' }}
-                    transition={{ type: 'spring', stiffness: 260, damping: 20, delay: i * 0.07 }}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '9px 15px', borderRadius: 999, background: '#fff', border: `1px solid ${LINE}`, boxShadow: '0 1px 2px rgba(16,16,20,0.04)', fontSize: 14, color: INK }}
-                  >
-                    <AlertTriangle size={14} color={AMBER} /> {item}
-                  </motion.span>
-                ))}
-              </div>
-
-              <motion.div {...upView()} style={{ ...card, borderLeft: `3px solid ${INK}`, padding: '28px 32px' }}>
-                <p style={{ fontSize: 13, fontWeight: 600, color: FAINT, marginBottom: 10 }}>Mon conseil honnête</p>
-                <p style={{ fontSize: 'clamp(16px, 2vw, 19px)', lineHeight: 1.7, color: MUTED }}>
-                  Pour tester une idée en un week-end, lancez-vous seul avec Claude. Pour un produit que de vrais clients vont payer,
-                  {' '}<strong style={{ color: INK, fontWeight: 600 }}>entourez-vous de quelqu&apos;un qui sait lire, corriger et assumer ce que l&apos;IA produit.</strong>
-                </p>
-              </motion.div>
-            </div>
-          </Section>
-
           {/* ── PLATEFORMES ── */}
           <Section>
             <SectionHead
               eyebrow="Ce qu'on construit"
               title={[{ text: 'SaaS, mobile, desktop.' }, { text: 'Même délai.', muted: true }]}
-              sub="Le format suit votre marché, pas l'inverse. Dans tous les cas, votre produit est en ligne en 30 jours."
+              sub="Le format suit votre marché, pas l'inverse. Choisissez un sprint de 15 jours pour lancer une première version, ou 30 jours pour multiplier les itérations et aller plus loin."
             />
             <div style={{ maxWidth: 1000, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
               {PLATFORMS.map((p, i) => (
@@ -1422,82 +1490,37 @@ export default function MvpOfferPage() {
 
           {/* ── OFFRE ── */}
           <Section id="offre" style={{ padding: '104px 24px' }}>
-            <SectionHead eyebrow="L'offre" title={[{ text: 'Tout ce qu\'il faut' }, { text: 'pour lancer.', muted: true }]} />
+            <SectionHead eyebrow="Deux formats, un même engagement" title={[{ text: 'Choisissez votre' }, { text: 'vitesse de lancement.', muted: true }]} sub={REVISION_PROMISE} />
 
-            <motion.div
-              ref={offerRef}
-              initial={{ opacity: 0, y: 40, scale: 0.98 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={{ once: true, margin: '-80px' }}
-              transition={{ duration: 0.9, ease: EASE }}
-              style={{ ...card, maxWidth: 760, margin: '0 auto', borderRadius: 28, padding: 'clamp(28px, 5vw, 48px)', boxShadow: '0 2px 4px rgba(16,16,20,0.04), 0 30px 80px rgba(16,16,20,0.1)' }}
-            >
-              <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'baseline', justifyContent: 'space-between', gap: 16, marginBottom: 8 }}>
-                <h3 style={{ fontFamily: DISPLAY, fontSize: 28, fontWeight: 600, letterSpacing: '-0.02em' }}>MVP en {OFFER.days} jours</h3>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
-                  <StruckPrice play={offerInView} delay={0.5} size={18} />
-                  <motion.span
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={offerInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.6, ease: EASE, delay: 0.85 }}
-                    style={{ fontFamily: DISPLAY, fontSize: 44, fontWeight: 600, letterSpacing: '-0.02em' }}
-                  >
-                    {eur(OFFER.price)}
-                  </motion.span>
-                </div>
-              </div>
-              <p style={{ fontSize: 14, color: FAINT, marginBottom: 32 }}>Forfait unique, HT. Prix de lancement, nombre de projets limité.</p>
+            <div ref={offerRef} style={{ maxWidth: 1040, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 18 }}>
+              {OFFERS.map((offer, index) => (
+                <motion.div
+                  key={offer.name}
+                  initial={{ opacity: 0, y: 40, scale: 0.98 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true, margin: '-80px' }}
+                  transition={{ duration: 0.7, ease: EASE, delay: index * 0.12 }}
+                  style={{ ...card, position: 'relative', borderRadius: 24, padding: 'clamp(26px, 4vw, 38px)', borderColor: index === 1 ? ACCENT : LINE, boxShadow: index === 1 ? '0 18px 55px rgba(91,71,245,0.14)' : card.boxShadow }}
+                >
+                  {index === 1 && <span style={{ position: 'absolute', top: 18, right: 18, padding: '5px 10px', borderRadius: 999, background: ACCENT_SOFT, color: ACCENT_INK, fontSize: 11, fontWeight: 700 }}>Le plus choisi</span>}
+                  <p style={{ fontSize: 12, fontWeight: 700, color: index === 1 ? ACCENT_INK : FAINT, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>{offer.days} jours</p>
+                  <h3 style={{ fontFamily: DISPLAY, fontSize: 30, fontWeight: 600, letterSpacing: '-0.02em', marginBottom: 8 }}>{offer.name}</h3>
+                  <p style={{ fontSize: 15, fontWeight: 600, color: INK, marginBottom: 8 }}>{offer.label}</p>
+                  <p style={{ minHeight: 50, fontSize: 14, lineHeight: 1.6, color: MUTED, marginBottom: 22 }}>{offer.desc}</p>
+                  <p style={{ fontFamily: DISPLAY, fontSize: 42, fontWeight: 600, letterSpacing: '-0.02em', marginBottom: 4 }}>{eur(offer.price)}</p>
+                  <p style={{ fontSize: 12, color: FAINT, marginBottom: 12 }}>Forfait fixe, HT · nombre de projets limité</p>
+                  <p style={{ fontSize: 13, lineHeight: 1.5, color: INK, fontWeight: 700, marginBottom: 24 }}>0 % de prise de participation<br /><span style={{ color: MUTED, fontWeight: 500 }}>Vous gardez 100 % de votre capital.</span></p>
+                  <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 28px', display: 'grid', gap: 13 }}>
+                    {offer.features.map(item => <li key={item} style={{ display: 'flex', gap: 10, fontSize: 14, lineHeight: 1.5 }}><CheckCircle2 size={17} color={GREEN} style={{ flexShrink: 0, marginTop: 2 }} /> {item}</li>)}
+                  </ul>
+                  <CtaButton big href={whatsappUrl(offer.days, offer.price)}><MessageCircle size={18} /> Parler de ce format</CtaButton>
+                </motion.div>
+              ))}
+            </div>
 
-              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px', display: 'grid', gap: 14 }}>
-                {INCLUDED.map((item, i) => (
-                  <motion.li
-                    key={item}
-                    initial={{ opacity: 0, x: -12 }}
-                    animate={offerInView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ duration: 0.5, ease: EASE, delay: 0.5 + i * 0.08 }}
-                    style={{ display: 'flex', gap: 12, fontSize: 15, lineHeight: 1.5 }}
-                  >
-                    <CheckCircle2 size={18} color={GREEN} style={{ flexShrink: 0, marginTop: 2 }} /> {item}
-                  </motion.li>
-                ))}
-              </ul>
-
-              <div style={{ borderTop: `1px dashed ${LINE}`, paddingTop: 28, marginBottom: 36 }}>
-                <p style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 14, fontWeight: 600, color: INK, marginBottom: 16 }}>
-                  <motion.span
-                    animate={offerInView ? { rotate: [0, -14, 12, -8, 0] } : {}}
-                    transition={{ duration: 0.8, delay: 1.3 }}
-                    style={{ display: 'flex' }}
-                  >
-                    <Gift size={16} color={AMBER} />
-                  </motion.span>
-                  Bonus offerts
-                </p>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 14 }}>
-                  {BONUSES.map((b, i) => (
-                    <motion.div
-                      key={b.title}
-                      initial={{ opacity: 0, y: 16 }}
-                      animate={offerInView ? { opacity: 1, y: 0 } : {}}
-                      transition={{ duration: 0.6, ease: EASE, delay: 1.2 + i * 0.12 }}
-                      whileHover={{ y: -3 }}
-                      style={{ position: 'relative', borderRadius: 16, padding: 20, background: '#FFFBF0', border: '1px solid #FDE7B0' }}
-                    >
-                      <span style={{ position: 'absolute', top: 14, right: 14, padding: '3px 8px', borderRadius: 6, background: '#FEF3C7', color: '#B45309', fontSize: 11, fontWeight: 600 }}>Offert</span>
-                      <b.icon size={21} color={AMBER} style={{ marginBottom: 12 }} />
-                      <p style={{ fontSize: 16, fontWeight: 600, marginBottom: 6 }}>{b.title}</p>
-                      <p style={{ fontSize: 13, lineHeight: 1.6, color: MUTED }}>{b.desc}</p>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-                <CtaButton big>
-                  <MessageCircle size={18} /> Réserver mon MVP sur WhatsApp
-                </CtaButton>
-                <SecondaryButton onClick={openContact}>Écrire un message</SecondaryButton>
-              </div>
+            <motion.div {...upView(0.2)} style={{ maxWidth: 1040, margin: '22px auto 0', padding: '18px 22px', borderRadius: 16, background: '#FFFBF0', border: '1px solid #FDE7B0', display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+              <Gift size={18} color={AMBER} style={{ flexShrink: 0, marginTop: 2 }} />
+              <p style={{ fontSize: 14, lineHeight: 1.6, color: MUTED }}><strong style={{ color: INK }}>Dans les deux formats :</strong> une version tous les 2 jours, accès direct au CTO, itérations priorisées ensemble, propriété du code et mise en ligne sur vos comptes. La landing page et la vidéo motion promo sont incluses dans le format 30 jours.</p>
             </motion.div>
           </Section>
 
@@ -1505,28 +1528,38 @@ export default function MvpOfferPage() {
           <Section id="faq">
             <SectionHead eyebrow="Questions" title={[{ text: 'Avant de' }, { text: 'vous lancer.', muted: true }]} />
             <div style={{ maxWidth: 760, margin: '0 auto' }}>
-              {FAQS.map((f, i) => <FaqItem key={f.q} index={i} {...f} />)}
+              {FAQS.slice(0, 4).map((f, i) => <FaqItem key={f.q} index={i} {...f} />)}
             </div>
           </Section>
 
           {/* ── CTA FINAL ── */}
-          <Section style={{ padding: '120px 24px', textAlign: 'center' }}>
+          <Section id="reserver" style={{ padding: '120px 24px', textAlign: 'center' }}>
             <div style={{ maxWidth: 760, margin: '0 auto' }}>
               <h2 style={{ fontFamily: DISPLAY, fontWeight: 600, fontSize: 'clamp(2.2rem, 5vw, 3.6rem)', lineHeight: 1.06, letterSpacing: '-0.03em', marginBottom: 20 }}>
-                <Words segments={[{ text: `Dans ${OFFER.days} jours,` }, { text: 'votre produit est en ligne.', muted: true }]} />
+                <Words segments={[{ text: 'Dans 15 ou 30 jours,' }, { text: 'votre produit est en ligne.', muted: true }]} />
               </h2>
               <motion.p {...upView(0.4)} style={{ fontSize: 17, lineHeight: 1.7, color: MUTED, marginBottom: 34 }}>
-                Parlez-moi de votre idée. On voit ensemble si elle tient en {OFFER.days} jours, et ce que doit contenir votre MVP.
-              </motion.p>
-              <motion.div {...upView(0.55)}>
-                <CtaButton big>
-                  Démarrer mon MVP à {eur(OFFER.price)} <ArrowRight size={18} />
-                </CtaButton>
-              </motion.div>
-              <motion.p {...upView(0.7)} style={{ fontSize: 13, color: FAINT, marginTop: 18 }}>
-                Ou par email : <a href={`mailto:${OFFER.email}`} style={{ color: INK }}>{OFFER.email}</a>
+                Parlez-moi de votre idée. On choisit le bon format, on lance les premières priorités et vous gardez la main sur les itérations jusqu&apos;à la mise en ligne.
               </motion.p>
             </div>
+            {/* Réservation de l'appel découverte : page `mvp-appel` gérée dans /admin/bookings.
+                Si elle n'existe pas ou est désactivée, on retombe sur le CTA WhatsApp. */}
+            <motion.div {...upView(0.55)} style={{ maxWidth: 980, margin: '0 auto', textAlign: 'left' }}>
+              <BookingWidget
+                slug="mvp-appel"
+                source="landing-mvp"
+                fallback={(
+                  <div style={{ textAlign: 'center' }}>
+                    <CtaButton big>
+                      Choisir mon format <ArrowRight size={18} />
+                    </CtaButton>
+                  </div>
+                )}
+              />
+            </motion.div>
+            <motion.p {...upView(0.7)} style={{ fontSize: 13, color: FAINT, marginTop: 22, textAlign: 'center' }}>
+              Plutôt par écrit ? <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" style={{ color: INK }}>WhatsApp</a> ou <a href={`mailto:${OFFER.email}`} style={{ color: INK }}>{OFFER.email}</a>
+            </motion.p>
           </Section>
 
           <footer style={{ padding: '32px 24px', borderTop: `1px solid ${LINE}`, textAlign: 'center' }}>

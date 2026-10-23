@@ -355,7 +355,7 @@ function MvpRoadmapContent() {
 
       {/* ─── RIGHT PANEL: DOCUMENT ─── */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '60px 0', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <div ref={sheetRef} style={{ width: 794, background: '#FFF', boxShadow: '0 20px 60px rgba(0,0,0,0.12)', borderRadius: 4, padding: '56px 56px 64px', boxSizing: 'border-box', color: '#0F172A', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+        <div ref={sheetRef} style={{ width: 794, background: '#FFF', boxShadow: '0 20px 60px rgba(0,0,0,0.12)', borderRadius: 4, padding: '56px 56px 64px', boxSizing: 'border-box', color: '#0F172A', fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif' }}>
           <p style={{ fontSize: 11, fontWeight: 800, color: PRIMARY, letterSpacing: '0.15em', margin: 0 }}>OZIRUS AGENCY · USAGE INTERNE</p>
           <h1 style={{ fontSize: 30, fontWeight: 800, margin: '8px 0 6px' }}>Roadmap marketing — Offre MVP</h1>
           <p style={{ fontSize: 13, color: '#64748B', margin: '0 0 24px' }}>{OFFER.name} · {fmt(OFFER.price)} € au lieu de {fmt(OFFER.originalPrice)} € · {OFFER.url.replace('https://', '')}</p>

@@ -401,22 +401,22 @@ function BriefPreview({
       borderRadius: 4, padding: '64px 60px', boxSizing: 'border-box', fontFamily: 'Georgia, serif',
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 6 }}>
-        <p style={{ fontSize: 11, fontWeight: 800, color: PRIMARY, letterSpacing: '0.15em', margin: 0, fontFamily: 'system-ui, sans-serif' }}>OZIRUS AGENCY</p>
+        <p style={{ fontSize: 11, fontWeight: 800, color: PRIMARY, letterSpacing: '0.15em', margin: 0, fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif' }}>OZIRUS AGENCY</p>
         <span style={{
           fontSize: 10.5, fontWeight: 800, color: clientStatus.color, background: `${clientStatus.color}15`,
-          padding: '4px 10px', borderRadius: 20, fontFamily: 'system-ui, sans-serif', textTransform: 'uppercase', letterSpacing: '0.05em',
+          padding: '4px 10px', borderRadius: 20, fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif', textTransform: 'uppercase', letterSpacing: '0.05em',
         }}>
           {clientStatus.label}
         </span>
       </div>
-      <h1 style={{ fontSize: 30, fontWeight: 800, color: '#0F172A', margin: '0 0 18px', fontFamily: 'system-ui, sans-serif' }}>Fiche de collecte — Brief Client</h1>
+      <h1 style={{ fontSize: 30, fontWeight: 800, color: '#0F172A', margin: '0 0 18px', fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif' }}>Fiche de collecte — Brief Client</h1>
 
-      <div style={{ display: 'flex', gap: 24, fontSize: 12.5, color: '#64748B', marginBottom: 10, fontFamily: 'system-ui, sans-serif' }}>
+      <div style={{ display: 'flex', gap: 24, fontSize: 12.5, color: '#64748B', marginBottom: 10, fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif' }}>
         <span>Référence : <b style={{ color: '#0F172A' }}>{docNumber || '—'}</b></span>
         <span>Date : <b style={{ color: '#0F172A' }}>{date ? new Intl.DateTimeFormat('fr-FR').format(new Date(date)) : '—'}</b></span>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingBottom: 14, marginBottom: 24, borderBottom: `2px solid ${projectType.color}`, fontFamily: 'system-ui, sans-serif' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingBottom: 14, marginBottom: 24, borderBottom: `2px solid ${projectType.color}`, fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif' }}>
         <span style={{ fontSize: 12.5, color: '#64748B' }}>Type de projet :</span>
         <span style={{ fontSize: 13, fontWeight: 800, color: projectType.color }}>{projectType.label}</span>
       </div>
@@ -425,14 +425,14 @@ function BriefPreview({
         <div key={group.id} style={{ marginBottom: 26 }}>
           <p style={{
             fontSize: 11, fontWeight: 800, color: PRIMARY, letterSpacing: '0.08em', textTransform: 'uppercase',
-            margin: '0 0 10px', paddingBottom: 6, borderBottom: '1px solid #E2E8F0', fontFamily: 'system-ui, sans-serif',
+            margin: '0 0 10px', paddingBottom: 6, borderBottom: '1px solid #E2E8F0', fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif',
           }}>
             {group.title}
           </p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {group.fields.map(field => (
               <div key={field.id} style={{ display: 'flex', gap: 14, fontSize: 12.5, lineHeight: 1.6 }}>
-                <span style={{ width: 190, flexShrink: 0, color: '#94A3B8', fontFamily: 'system-ui, sans-serif', fontWeight: 600 }}>{field.label}</span>
+                <span style={{ width: 190, flexShrink: 0, color: '#94A3B8', fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif', fontWeight: 600 }}>{field.label}</span>
                 <span style={{ color: '#0F172A', flex: 1 }}>{formatAnswer(field)}</span>
               </div>
             ))}
@@ -440,7 +440,7 @@ function BriefPreview({
         </div>
       ))}
 
-      <p style={{ fontSize: 10.5, color: '#94A3B8', fontStyle: 'italic', marginTop: 40, fontFamily: 'system-ui, sans-serif' }}>
+      <p style={{ fontSize: 10.5, color: '#94A3B8', fontStyle: 'italic', marginTop: 40, fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif' }}>
         Document généré par Ozirus Admin — usage interne
       </p>
     </div>

@@ -658,7 +658,7 @@ function SectorsPanel() {
 /* ─── page ───────────────────────────────────────────── */
 export default function HomePage() {
   return (
-    <main className="bg-white text-[#111]" style={{ fontFamily: 'DM Sans, sans-serif', overflowX: 'hidden' }}>
+    <main className="bg-white text-[#111]" style={{ fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif', overflowX: 'hidden' }}>
 
       {/* ══ HERO ═════════════════════════════════════════ */}
       <section style={{ position: 'relative', overflow: 'hidden', background: '#fff' }}>

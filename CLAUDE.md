@@ -11,13 +11,32 @@ Site Next.js (App Router) de l'agence Ozirus + backoffice `/admin`.
 ## Landings sur sous-domaine
 
 `lib/subdomains.ts` (`SUBDOMAIN_ROUTES`) est la source unique : `mvp.ozirus.agency` → `/mvp`,
-`formation.ozirus.agency` → `/formation-ia`. `next.config.ts` en génère les rewrites (seul `/`
+`formation.ozirus.agency` → `/formation-ia`, `resto.ozirus.agency` → `/resto`. `next.config.ts` en génère les rewrites (seul `/`
 est réécrit). Sur un sous-domaine, un lien relatif vers `/` resservirait la landing : les liens
 vers le site principal passent par `useMainSiteHref()` (`lib/useMainSiteHref.ts`). Chaque
 landing a son propre header autonome (ancres de la page + CTA, aucun lien vers le reste du site) :
 `SharedNav` se masque pour ces routes, détectées via `useSelectedLayoutSegment` (la route rendue),
 pas via `pathname` (qui vaut `/` sur le sous-domaine). Ajouter un sous-domaine = une entrée dans `SUBDOMAIN_ROUTES` + le
 domaine dans Vercel (Settings → Domains). Test local : `http://<sub>.localhost:<port>/`.
+
+`/resto` est la landing reprise du projet `whatsapp-resto-saas` (classes Tailwind, pas de styles
+inline comme `/mvp`). Le reset `* { margin:0; padding:0 }` de `globals.css` est hors `@layer` et
+écrase les utilitaires Tailwind (`mx-auto`, `px-6`…) : la page est enveloppée dans `.resto-landing`,
+exclue de ce reset. Ses CTA « essai gratuit » ouvrent WhatsApp (l'onboarding vit dans l'autre projet).
+
+## Styles de formulaire (`lib/adminUi.ts`)
+
+`inputStyle`, `labelStyle`, `tabBtn`, `segmented`, `primaryBtnStyle`, `sectionTitle` : copie conforme des
+styles du backoffice (`app/admin/page.tsx`). Tout nouveau formulaire (admin ou public) les importe au lieu
+d'inventer un style ; une page d'une autre couleur ne surcharge que l'accent (cf. modale de
+`app/formation-ia/page.tsx`, en rouge).
+
+Listes déroulantes : `components/forms/Select.tsx` (jamais de `<select>` natif). Déclencheur au style
+`inputStyle`, liste en portal (pas rognée par une modale), clavier complet, prop `accent`.
+
+Police : DM Sans (300 → 800) et Clash Display sont chargées par `next/font` dans `app/layout.tsx`.
+Référencer `var(--font-sans-loaded)` / `var(--font-display-loaded)`, jamais `system-ui` (hors design
+system). Toute graisse utilisée doit être chargée, sinon le navigateur synthétise un faux gras.
 
 ## Structure `/admin`
 
@@ -34,7 +53,7 @@ Le hub `/admin` (app/admin/page.tsx) liste les outils sous forme de cartes cliqu
 
 Client Firebase partagé dans `lib/firebase.ts` (`db`), config via `NEXT_PUBLIC_FIREBASE_*`.
 Collections utilisées : `documents`, `marketing`, `campaigns`, `prospects`,
-`lead_scores`, `lead_messages`.
+`lead_scores`, `lead_messages`, `formation_preinscriptions` (formulaire public de la landing formation).
 
 `firestore.rules` à la racine reflète les règles de la console Firebase. Il doit
 lister **toutes** les collections ci-dessus : déployer un fichier partiel révoque
@@ -160,3 +179,17 @@ Cette bascule est dupliquée à l'identique dans `page.tsx` (aperçu live) et
 `exportDocx.ts` (export Word) — les deux doivent rester synchronisés si on ajoute un
 groupe. Tout nouveau `ProjectTypeDef` dans `PROJECT_TYPES` doit définir `paidGroups`
 (le champ est obligatoire dans l'interface, pas optionnel).
+
+## Système de réservation (`lib/booking/`, `/book/<slug>`, `/admin/bookings`)
+
+Calendly maison, générique : une **page de réservation** (`booking_pages`) porte toute la config
+(type `meeting` = rendez-vous, ou `table` = capacité en unités/couverts pour un resto), horaires
+hebdo dans le fuseau de la page, préavis, tampon, jours fermés, questions, confirmation auto/manuelle.
+- `lib/booking/slots.ts` — calcul pur des créneaux (Intl, gère les changements d'heure).
+- `lib/booking/service.ts` — Firestore. Toute prise de créneau passe par une transaction sur
+  `booking_days/{pageId}__{YYYY-MM-DD}` (verrou anti double-réservation, chevauchements inclus).
+- `app/api/booking/[slug]` (créneaux + création, validée serveur) et `app/api/booking/manage/[id]`
+  (lien d'annulation à jeton remis au client).
+- `components/booking/BookingWidget.tsx` — widget réutilisable (landing MVP : page `mvp-appel`,
+  repli WhatsApp si la page n'existe pas) ; `/book/<slug>?embed=1` pour l'iframe sur un site tiers.
+- Pas encore d'email de notification : le client peut prévenir via WhatsApp depuis la confirmation.

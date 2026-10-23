@@ -4,6 +4,7 @@
   --color-primary:       #7967FF;
   --color-primary-light: #F0EEFF;
   --color-primary-mid:   #C4BCFF;
+  --color-primary-dark:  #6654F0;
 
   --color-bg:            #FFFFFF;
   --color-bg-2:          #FAFAFA;
@@ -20,12 +21,14 @@
   --font-sans:    var(--font-sans-loaded), 'DM Sans', sans-serif;
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* Hors @layer, ce reset écrase les utilitaires Tailwind (mx-auto, px-6…). La landing resto
+   (app/resto), écrite en classes Tailwind, en est exclue : le preflight de Tailwind lui suffit. */
+:where(*:not(.resto-landing *)), :where(*:not(.resto-landing *))::before, :where(*:not(.resto-landing *))::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-sans-loaded), 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   background: #FFFFFF;
   color: #0A0A0F;
   -webkit-font-smoothing: antialiased;
@@ -71,6 +74,18 @@ h1, h2, h3, h4, h5, h6 {
 .animate-slide-up    { animation: slide-up 0.6s ease forwards; }
 .animate-fade-in     { animation: fade-in 0.5s ease forwards; }
 .animate-glow-pulse  { animation: glow-pulse 2.5s ease-in-out infinite; }
+
+/* Landing resto (app/resto) : orbite et cartes « étapes » de ProductStory */
+@keyframes orbit {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+@keyframes hero-step {
+  0%, 100% { transform: translateY(0) scale(1); box-shadow: 0 18px 48px rgba(10,10,15,0.10); }
+  12%, 28% { transform: translateY(-8px) scale(1.03); box-shadow: 0 22px 58px rgba(121,103,255,0.20); }
+}
+.hero-orbit { animation: orbit 18s linear infinite; }
+.hero-step  { animation: hero-step 4.2s ease-in-out infinite; }
 
 hr { border: none; border-top: 1px solid #E8E6FF; }
 

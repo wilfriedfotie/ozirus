@@ -211,7 +211,7 @@ function DocumentsContent() {
   if (isAuthorized === null || isAuthorized === false) return null;
 
   return (
-    <div style={{ display: 'flex', height: '100vh', background: '#F8FAFC', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+    <div style={{ display: 'flex', height: '100vh', background: '#F8FAFC', fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif' }}>
       {/* ─── PANNEAU GAUCHE : LISTE ─── */}
       <div style={{ width: 480, flexShrink: 0, background: '#FFF', borderRight: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column' }}>
         <div style={{ padding: '20px 24px', borderBottom: '1px solid #E2E8F0' }}>

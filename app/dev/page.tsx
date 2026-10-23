@@ -497,7 +497,7 @@ const appSafeBottom = 26;
 
 function AppShell({ children, tint = '#007AFF', bg = appBg, color = appText }: { children: React.ReactNode; tint?: string; bg?: string; color?: string }) {
   return (
-    <div style={{ position: 'relative', background: bg, height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'DM Sans,sans-serif', padding: `48px 13px ${appSafeBottom}px`, overflow: 'hidden', color }}>
+    <div style={{ position: 'relative', background: bg, height: '100%', display: 'flex', flexDirection: 'column', fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif', padding: `48px 13px ${appSafeBottom}px`, overflow: 'hidden', color }}>
       <div style={{ position: 'absolute', inset: 0, background: bg, pointerEvents: 'none' }} />
       <div style={{ position: 'relative', zIndex: 1, height: '100%', display: 'flex', flexDirection: 'column', gap: 7, minHeight: 0 }}>
         {children}
@@ -837,7 +837,7 @@ function SaasFrame({ children, slug, isMobile }: { children: React.ReactNode; sl
             </div>
             <div style={{ flex: 1, background: '#fff', border: '1px solid #E4E1DC', borderRadius: 6, padding: '4px 10px', display: 'flex', alignItems: 'center', gap: 5 }}>
               <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#16a34a' }} />
-              <span style={{ fontSize: 8, color: '#8A867D', fontFamily: 'DM Sans, sans-serif' }}>{slug}</span>
+              <span style={{ fontSize: 8, color: '#8A867D', fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif' }}>{slug}</span>
             </div>
           </div>
           <div style={{ flex: 1, overflow: 'hidden' }}>{children}</div>
@@ -1588,7 +1588,7 @@ function StatsGrid() {
 /* ═══════════════════════════════════════════════════ */
 export default function DevPage() {
   return (
-    <main style={{ background: '#fff', color: '#111', fontFamily: 'DM Sans, sans-serif', overflowX: 'hidden' }}>
+    <main style={{ background: '#fff', color: '#111', fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif', overflowX: 'hidden' }}>
 
       {/* ── HERO ─────────────────────────────────── */}
       <section style={{ position: 'relative', overflow: 'hidden', background: '#fff' }}>

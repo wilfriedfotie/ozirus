@@ -12,7 +12,7 @@ import {
   Layout, ListChecks, Database, Zap,
   Globe, Smartphone, Mail,
   Target, Rocket, X, Users, TrendingUp,
-  BarChart2, Home, ClipboardList, RefreshCw, Save, FolderOpen, CalendarDays
+  BarChart2, Home, ClipboardList, RefreshCw, Save, FolderOpen, CalendarDays, CalendarCheck
 } from 'lucide-react';
 import { documentsService, DocumentKind, DocumentStatus, DOCUMENT_STATUS_LABELS } from './documents/documentsService';
 
@@ -813,6 +813,15 @@ function AdminContent() {
         color: '#14B8A6',
         action: () => router.push('/admin/planning'),
         tags: ['Contrats signés', 'Éditeur', 'Firebase', 'PDF'],
+      },
+      {
+        id: 'bookings',
+        label: 'Réservations',
+        description: 'Agenda des rendez-vous et réservations (appels MVP, restaurants…) et configuration des pages de réservation publiques.',
+        icon: <CalendarCheck size={28} color="#0EA5E9" />,
+        color: '#0EA5E9',
+        action: () => router.push('/admin/bookings'),
+        tags: ['Agenda', 'Créneaux', 'Widget', 'Restaurant'],
       },
       {
         id: 'core',

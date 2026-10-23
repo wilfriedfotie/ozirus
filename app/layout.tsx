@@ -7,7 +7,8 @@ import './globals.css';
 const dmSans = DM_Sans({
   subsets: ['latin'],
   variable: '--font-sans-loaded',
-  weight: ['300', '400', '500', '600', '700'],
+  // 800 est utilisé partout (landings, admin) : sans lui, le navigateur synthétise un faux gras.
+  weight: ['300', '400', '500', '600', '700', '800'],
   display: 'swap',
 });
 

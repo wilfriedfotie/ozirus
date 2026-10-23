@@ -317,7 +317,7 @@ function AgentAvatar({ avatar, size = 20, style = {} }: { avatar: string; size?:
 export default function CorePage() {
   return (
     <Suspense fallback={
-      <div style={{ height: '100vh', background: C.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'system-ui', fontSize: 13, color: C.muted }}>
+      <div style={{ height: '100vh', background: C.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif', fontSize: 13, color: C.muted }}>
         Chargement...
       </div>
     }>
@@ -337,7 +337,7 @@ function CoreRoot() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#F8FAFC', overflow: 'hidden', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#F8FAFC', overflow: 'hidden', fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif' }}>
 
       {/* ── TOP BAR ─────────────────────────────────────────────────── */}
       <div style={{
@@ -485,7 +485,7 @@ function SectorOnboarding({ onSelect, onBack }: { onSelect: (id: SectorId) => vo
         radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.05) 0px, transparent 50%),
         radial-gradient(at 0% 100%, rgba(245, 158, 11, 0.05) 0px, transparent 50%)
       `,
-      fontFamily: 'system-ui, -apple-system, sans-serif',
+      fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif',
       display: 'flex',
       flexDirection: 'column',
       position: 'relative',
@@ -1322,7 +1322,7 @@ function DeliverableCard({ deliverable: d, isSelected, onClick }: { deliverable:
 
       <div style={{ flex: 1 }}>
         <h4 style={{
-          fontFamily: 'DM Sans, system-ui, -apple-system, sans-serif',
+          fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif',
           fontSize: 14, fontWeight: 800, color: C.ink,
           margin: '0 0 6px', lineHeight: 1.35, letterSpacing: 0
         }}>{d.name}</h4>
@@ -1376,7 +1376,7 @@ function DeliverableDetail({ deliverable: d, sector, onClose, onSimulate }: { de
             boxShadow: '0 4px 12px rgba(121, 103, 255, 0.1)'
           }}><d.icon size={28} color={C.primary} /></div>
           <div style={{ flex: 1 }}>
-            <h3 style={{ fontFamily: 'DM Sans, system-ui, -apple-system, sans-serif', fontSize: 18, fontWeight: 800, color: C.ink, margin: '0 0 8px', lineHeight: 1.3, letterSpacing: 0 }}>{d.name}</h3>
+            <h3 style={{ fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif', fontSize: 18, fontWeight: 800, color: C.ink, margin: '0 0 8px', lineHeight: 1.3, letterSpacing: 0 }}>{d.name}</h3>
             <div style={{ display: 'flex', gap: 6 }}>
               <span style={{ fontSize: 10, fontWeight: 800, padding: '3px 8px', borderRadius: 6, background: es.bg, color: es.color, textTransform: 'uppercase' }}>{d.effort}</span>
               <span style={{ fontSize: 10, color: C.faint, background: C.surface, border: `1px solid ${C.border}`, padding: '3px 8px', borderRadius: 6, display: 'flex', alignItems: 'center', gap: 4, fontWeight: 600 }}><Clock size={10} />{d.timeline}</span>
@@ -1459,7 +1459,7 @@ function EmptyDetail({ sector, total }: { sector: SectorData; total: number }) {
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             margin: '0 auto 20px', boxShadow: '0 8px 16px rgba(121, 103, 255, 0.1)'
           }}><sector.icon size={32} color={C.primary} /></div>
-          <h3 style={{ fontFamily: 'DM Sans, system-ui, -apple-system, sans-serif', fontSize: 20, fontWeight: 800, color: C.ink, margin: '0 0 8px', letterSpacing: 0 }}>{sector.name}</h3>
+          <h3 style={{ fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif', fontSize: 20, fontWeight: 800, color: C.ink, margin: '0 0 8px', letterSpacing: 0 }}>{sector.name}</h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 12 }}>
             <div style={{ padding: '16px', background: '#FFF', borderRadius: 16, border: `1px solid ${C.border}` }}>
               <p style={{ fontSize: 32, fontWeight: 950, color: C.primary, margin: 0, lineHeight: 1 }}>{total}</p>

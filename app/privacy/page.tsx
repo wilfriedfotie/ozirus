@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export default function PrivacyPage() {
   return (
-    <main style={{ background: '#fff', color: '#111', fontFamily: 'DM Sans, sans-serif', padding: '80px 24px' }}>
+    <main style={{ background: '#fff', color: '#111', fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif', padding: '80px 24px' }}>
       <div style={{ maxWidth: 800, margin: '0 auto' }}>
         <Link href="/" style={{ color: '#7967FF', textDecoration: 'none', fontSize: 14, fontWeight: 600 }}>← Retour à l'accueil</Link>
         

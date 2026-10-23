@@ -18,6 +18,11 @@ const nextConfig = {
     }
   },
 
+  // Photos de plats et de restaurants de démo de la landing resto (app/resto).
+  images: {
+    remotePatterns: [{ protocol: 'https' as const, hostname: 'images.unsplash.com' }],
+  },
+
   typescript: {
     // Ignore les erreurs TypeScript pendant le build
     ignoreBuildErrors: true,

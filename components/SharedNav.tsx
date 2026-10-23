@@ -115,7 +115,7 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
 
   // `segment` suit la route rendue (et non l'URL) : sur mvp.ozirus.agency, l'URL est `/`
   // mais la page rendue est `/mvp`. Les landings sur sous-domaine ont leur propre header.
-  if (pathname.startsWith('/admin') || segment === 'mvp' || segment === 'formation-ia') return null;
+  if (pathname.startsWith('/admin') || segment === 'mvp' || segment === 'formation-ia' || segment === 'resto' || segment === 'book') return null;
 
   /* ── theme tokens ── */
   const textColor     = dark ? 'rgba(255,255,255,0.6)' : '#555';

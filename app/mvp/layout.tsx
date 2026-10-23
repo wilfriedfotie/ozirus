@@ -1,24 +1,24 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'MVP en 30 jours — 5 000 € avec un CTO cofondateur | Ozirus',
+  title: 'MVP en 15 ou 30 jours — à partir de 2 500 € | Ozirus',
   description:
-    'Offre spéciale : votre MVP SaaS, mobile ou desktop livré en 30 jours chrono pour 5 000 € au lieu de 10 000 €. Landing page et vidéo motion promo offertes. 5 ans d\'expérience, une méthode augmentée par l\'IA, un CTO cofondateur à vos côtés.',
+    'Deux formats pour lancer votre MVP : 15 jours à partir de 2 500 € ou 30 jours à 5 000 € HT. Retours illimités, prix fixe, code à votre nom et mise en ligne incluse.',
   alternates: { canonical: 'https://mvp.ozirus.agency' },
   openGraph: {
-    title: 'Votre MVP en 30 jours chrono — 5 000 € au lieu de 10 000 €',
+    title: 'Votre MVP en 15 ou 30 jours — retours illimités',
     description:
-      'Un CTO cofondateur pour construire votre SaaS, app mobile ou desktop. Landing page + vidéo motion promo offertes.',
+      'Un MVP cadré, construit et mis en ligne avec un CTO. 15 jours à 2 500 € ou 30 jours à 5 000 € HT.',
     url: 'https://mvp.ozirus.agency',
     siteName: 'Ozirus Agency',
-    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Ozirus — MVP en 30 jours' }],
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Ozirus — MVP en 15 ou 30 jours' }],
     locale: 'fr_FR',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Votre MVP en 30 jours chrono — 5 000 €',
-    description: 'Un CTO cofondateur, 5 ans d\'expérience. Landing page + vidéo motion promo offertes.',
+    title: 'Votre MVP en 15 ou 30 jours — retours illimités',
+    description: 'Deux formats, prix fixe, retours illimités et code à votre nom.',
     images: ['/og-image.jpg'],
   },
 };

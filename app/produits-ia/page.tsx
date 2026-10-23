@@ -473,7 +473,7 @@ function SectorsChips() {
 
 export default function ProduitsPage() {
   return (
-    <main style={{ background: '#fff', color: '#111', fontFamily: 'DM Sans, sans-serif' }}>
+    <main style={{ background: '#fff', color: '#111', fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif' }}>
 
       {/* HERO */}
       <section style={{ position: 'relative', overflow: 'hidden', background: '#fff' }}>

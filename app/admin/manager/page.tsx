@@ -175,7 +175,7 @@ const statusMeta: Record<OrderStatus, { label: string; color: string; bg: string
 
 export default function ManagerPage() {
   return (
-    <Suspense fallback={<div style={{ height: '100vh', background: C.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'system-ui', fontSize: 13, color: C.muted }}>Chargement...</div>}>
+    <Suspense fallback={<div style={{ height: '100vh', background: C.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif', fontSize: 13, color: C.muted }}>Chargement...</div>}>
       <ManagerDashboard />
     </Suspense>
   );
@@ -198,7 +198,7 @@ function ManagerDashboard() {
   const totalFiltered = orders.reduce((s, o) => s + o.amount, 0);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: C.bg, overflow: 'hidden', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: C.bg, overflow: 'hidden', fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif' }}>
 
       {/* ── TOP BAR ──────────────────────────────────────────────────── */}
       <div style={{ background: C.panel, borderBottom: `1px solid ${C.border}`, padding: '0 28px', height: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0, zIndex: 20, boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>

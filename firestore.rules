@@ -32,6 +32,24 @@ service cloud.firestore {
       allow read, write: if true;
     }
 
+    // Pré-inscriptions de la landing formation.ozirus.agency (formulaire public).
+    match /formation_preinscriptions/{docId} {
+      allow read, write: if true;
+    }
+
+    // Système de réservation (/admin/bookings, /book/<slug>, /api/booking).
+    // `booking_pages` : configuration ; `bookings` : réservations (données client) ;
+    // `booking_days` : occupation par jour, verrou anti double-réservation.
+    match /booking_pages/{docId} {
+      allow read, write: if true;
+    }
+    match /bookings/{docId} {
+      allow read, write: if true;
+    }
+    match /booking_days/{docId} {
+      allow read, write: if true;
+    }
+
     // Module Leads IA (/admin/leads).
     match /campaigns/{docId} {
       allow read, write: if true;

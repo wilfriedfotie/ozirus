@@ -139,7 +139,7 @@ export default function Services() {
                     style={{
                       background: 'none', border: 'none', cursor: 'pointer',
                       fontSize: '0.8125rem', fontWeight: 700,
-                      color: service.color, fontFamily: 'DM Sans, sans-serif',
+                      color: service.color, fontFamily: 'var(--font-sans-loaded), "DM Sans", sans-serif',
                       display: 'flex', alignItems: 'center', gap: 4, padding: 0,
                       transition: 'gap 0.2s', textDecoration: 'none'
                     }}
