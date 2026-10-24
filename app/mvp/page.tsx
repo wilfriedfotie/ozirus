@@ -1233,6 +1233,21 @@ export default function MvpOfferPage() {
     else target.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // Lien partageable (ex. mvp.ozirus.agency/#calendrier) : le saut natif du navigateur part
+  // avant la fin du loader et le chargement du widget, on le rejoue une fois la page prête.
+  useEffect(() => {
+    if (!ready) return;
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    if (!id || !document.getElementById(id)) return;
+    const timer = window.setTimeout(() => {
+      const target = document.getElementById(id);
+      if (!target) return;
+      if (lenisRef.current) lenisRef.current.scrollTo(target, { offset: -90, immediate: true });
+      else target.scrollIntoView({ block: 'start' });
+    }, 600);
+    return () => window.clearTimeout(timer);
+  }, [ready]);
+
   const heroItem = (delay: number) => ({
     initial: { opacity: 0, y: 24, filter: 'blur(8px)' },
     animate: ready ? { opacity: 1, y: 0, filter: 'blur(0px)' } : {},
@@ -1544,7 +1559,7 @@ export default function MvpOfferPage() {
             </div>
             {/* Réservation de l'appel découverte : page `mvp-appel` gérée dans /admin/bookings.
                 Si elle n'existe pas ou est désactivée, on retombe sur le CTA WhatsApp. */}
-            <motion.div {...upView(0.55)} style={{ maxWidth: 980, margin: '0 auto', textAlign: 'left' }}>
+            <motion.div id="calendrier" {...upView(0.55)} style={{ maxWidth: 980, margin: '0 auto', textAlign: 'left', scrollMarginTop: 90 }}>
               <BookingWidget
                 slug="mvp-appel"
                 source="landing-mvp"
