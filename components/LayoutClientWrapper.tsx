@@ -9,8 +9,10 @@ import ContactModal from '@/components/ContactModal';
 
 export default function LayoutClientWrapper({ children }: { children: React.ReactNode }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // Les pages /book/* sont faites pour être intégrées (iframe) : pas de loader plein écran.
-  const isBookingPage = useSelectedLayoutSegment() === 'book';
+  // Pas de loader plein écran sur les pages /book/* (intégrées en iframe), ni sur la landing /mvp :
+  // son hero est rendu côté serveur et s'anime en CSS, le loader ne ferait que le masquer.
+  const segment = useSelectedLayoutSegment();
+  const noLoader = segment === 'book' || segment === 'mvp';
 
   React.useEffect(() => {
     const openContactModal = () => setIsModalOpen(true);
@@ -21,7 +23,7 @@ export default function LayoutClientWrapper({ children }: { children: React.Reac
 
   return (
     <>
-      {!isBookingPage && <GlobalLoader />}
+      {!noLoader && <GlobalLoader />}
       <Analytics />
       <SharedNav onContactClick={() => setIsModalOpen(true)} />
       {children}

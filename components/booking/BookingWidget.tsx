@@ -37,6 +37,14 @@ interface Props {
   onBooked?: (result: Result) => void;
   /** Affiché à la place du widget si la page est introuvable/inactive (ex. lien WhatsApp). */
   fallback?: React.ReactNode;
+  /** Optionnels, pour l'analytics ou un habillage externe (modale de la landing MVP). */
+  onLoaded?: (page: PublicBookingPage) => void;
+  onStepChange?: (step: Step) => void;
+  onSubmitStart?: () => void;
+  /** Fuseau affiché par défaut à la place de celui du navigateur (ex. 'Europe/Paris'). */
+  timezone?: string;
+  /** false = aucune mention ni bouton WhatsApp (landing MVP : contact par email uniquement). */
+  whatsapp?: boolean;
 }
 
 const monthKey = (key: string) => key.slice(0, 7);
@@ -65,7 +73,7 @@ function LocationIcon({ type, size = 15 }: { type: string; size?: number }) {
   return <MapPin size={size} />;
 }
 
-export default function BookingWidget({ slug, page: pageProp, preview = false, apiBase = '', source, onBooked, fallback }: Props) {
+export default function BookingWidget({ slug, page: pageProp, preview = false, apiBase = '', source, onBooked, fallback, onLoaded, onStepChange, onSubmitStart, timezone, whatsapp = true }: Props) {
   const [page, setPage] = useState<PublicBookingPage | null>(pageProp ?? null);
   const [loadError, setLoadError] = useState('');
   const [browserZone, setBrowserZone] = useState('Europe/Paris');
@@ -87,17 +95,26 @@ export default function BookingWidget({ slug, page: pageProp, preview = false, a
 
   useEffect(() => { if (pageProp) setPage(pageProp); }, [pageProp]);
 
+  // Callbacks lus via ref : un parent qui les recrée à chaque rendu ne relance pas les effets.
+  const callbacks = React.useRef({ onLoaded, onStepChange });
+  callbacks.current = { onLoaded, onStepChange };
+  useEffect(() => { if (page) callbacks.current.onLoaded?.(page); }, [page]);
+  useEffect(() => { callbacks.current.onStepChange?.(step); }, [step]);
+
   useEffect(() => {
     try { setBrowserZone(Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Paris'); } catch { /* fuseau par défaut */ }
   }, []);
 
+  // Le conteneur n'existe qu'une fois la page chargée (avant, seul le loader est rendu) :
+  // l'observateur doit s'attacher à ce moment-là, sinon la mise en page étroite ne s'active jamais.
+  const rendered = Boolean(page && month);
   useEffect(() => {
     const element = containerRef.current;
     if (!element) return;
-    const observer = new ResizeObserver(([entry]) => setNarrow(entry.contentRect.width < 720));
+    const observer = new ResizeObserver(([entry]) => { if (entry.contentRect.width > 0) setNarrow(entry.contentRect.width < 720); });
     observer.observe(element);
     return () => observer.disconnect();
-  }, []);
+  }, [rendered]);
 
   // Chargement de la configuration (mode API).
   useEffect(() => {
@@ -114,7 +131,7 @@ export default function BookingWidget({ slug, page: pageProp, preview = false, a
   }, [slug, pageProp, apiBase]);
 
   const onsite = page?.location.type === 'onsite';
-  const displayZone = onsite || !page ? (page?.timezone ?? browserZone) : (zone ?? browserZone);
+  const displayZone = onsite || !page ? (page?.timezone ?? browserZone) : (zone ?? timezone ?? browserZone);
   const units = page?.partySize.enabled ? partySize : 1;
 
   useEffect(() => {
@@ -174,6 +191,7 @@ export default function BookingWidget({ slug, page: pageProp, preview = false, a
     if (missing) { setError(`Choisissez une réponse pour « ${missing.label} ».`); return; }
     if (preview) { setError('Aperçu : la réservation est désactivée ici.'); return; }
     setSubmitting(true);
+    onSubmitStart?.();
     try {
       const response = await fetch(`${apiBase}/api/booking/${encodeURIComponent(page.slug)}`, {
         method: 'POST',
@@ -341,7 +359,7 @@ export default function BookingWidget({ slug, page: pageProp, preview = false, a
         <input required value={form.name} onChange={event => setForm({ ...form, name: event.target.value })} style={inputBase} autoComplete="name" />
       </label>
       {contactField('email', 'Email', 'email')}
-      {contactField('phone', 'Téléphone / WhatsApp', 'tel')}
+      {contactField('phone', whatsapp ? 'Téléphone / WhatsApp' : 'Téléphone', 'tel')}
       {page.fields.map(field => (
         <label key={field.id} style={fieldLabel}>
           {field.label}{field.required && ' *'}
@@ -392,7 +410,7 @@ export default function BookingWidget({ slug, page: pageProp, preview = false, a
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 8 }}>
           <a href={googleUrl} target="_blank" rel="noreferrer" style={linkBtn}><CalendarPlus size={15} /> Google Agenda</a>
           <a href={`data:text/calendar;charset=utf-8,${encodeURIComponent(ics)}`} download="reservation.ics" style={linkBtn}><CalendarDays size={15} /> Fichier .ics</a>
-          {page.whatsapp && <a href={`https://wa.me/${page.whatsapp}?text=${encodeURIComponent(whatsappText)}`} target="_blank" rel="noreferrer" style={{ ...linkBtn, background: '#25D366', borderColor: '#25D366', color: '#fff' }}><MessageCircle size={15} /> Prévenir sur WhatsApp</a>}
+          {whatsapp && page.whatsapp && <a href={`https://wa.me/${page.whatsapp}?text=${encodeURIComponent(whatsappText)}`} target="_blank" rel="noreferrer" style={{ ...linkBtn, background: '#25D366', borderColor: '#25D366', color: '#fff' }}><MessageCircle size={15} /> Prévenir sur WhatsApp</a>}
         </div>
         <p style={{ fontSize: 12.5, color: FAINT, margin: '6px 0 0', maxWidth: 420, lineHeight: 1.5 }}>
           Un empêchement ? <a href={result.manageUrl} target="_blank" rel="noreferrer" style={{ color: MUTED }}>Gérer ou annuler ma réservation</a> — gardez ce lien.
