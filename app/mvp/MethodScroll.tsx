@@ -9,6 +9,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { animate, motion, useInView, useMotionValue, useMotionValueEvent, useTransform, type MotionValue } from 'framer-motion';
 import { Check, CheckCircle2, Globe, KeyRound, Rocket, Sparkles } from 'lucide-react';
 import { clamp01, useMedia, usePinned, useStepped, useTrackProgress } from './scroll';
+import { sfx, useCrossing } from './sound';
 import { ACCENT, ACCENT_INK, ACCENT_SOFT, DISPLAY, FAINT, GREEN, INK, LINE, MUTED } from './theme';
 
 // Le déroulé réel du format 30 jours, nommé par verbe d'action.
@@ -271,9 +272,17 @@ export default function MethodScroll() {
   // ne glisse, la dernière reste à l'écran avant de rendre la main.
   const last = PHASES.length - 1;
   const phase = useTransform(progress, v => ((v - 0.2) / 0.7) * last);
+  // Fin de la frise horizontale : la dernière phase est en place.
+  useCrossing(progress, 0.92, 0.75, sfx.arrive);
   const x = useTransform(phase, v => -clamp01(v / last) * distance);
   const bar = useTransform(phase, v => `${clamp01(v / last) * 100}%`);
   const current = useStepped(phase, v => Math.min(last, Math.max(0, Math.round(v))));
+  // Déclic quand une nouvelle phase arrive au centre (pas au montage).
+  const shownPhase = useRef(current);
+  useEffect(() => {
+    if (shownPhase.current !== current) sfx.step();
+    shownPhase.current = current;
+  }, [current]);
 
   // Distance horizontale à parcourir : largeur de la rangée moins la largeur visible.
   useEffect(() => {

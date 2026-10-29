@@ -24,14 +24,14 @@ const sfMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'MVP en 15 ou 30 jours — à partir de 3 000 € | Ozirus',
+  title: 'MVP en 15 ou 30 jours — à partir de 3 000 € HT | Ozirus',
   description:
-    'Deux formats pour lancer votre MVP : 15 jours à partir de 3 000 € ou 30 jours à 5 000 € HT. Retours illimités, prix fixe, code à votre nom et mise en ligne incluse.',
+    'Votre MVP avec un CTO partenaire : 15 jours à partir de 3 000 € HT ou 30 jours à 5 000 € HT. Une version testable tous les 2 jours, prix fixe, code à votre nom.',
   alternates: { canonical: 'https://mvp.ozirus.agency' },
   openGraph: {
-    title: 'Votre MVP en 15 ou 30 jours — retours illimités',
+    title: 'Votre MVP en 15 ou 30 jours, avec un CTO partenaire',
     description:
-      'Un MVP cadré, construit et mis en ligne avec un CTO. 15 jours à 3 000 € ou 30 jours à 5 000 € HT.',
+      'Un MVP cadré, construit et mis en ligne. Une version testable tous les 2 jours, ajustements inclus jusqu\'à la mise en ligne. 15 jours à 3 000 € HT ou 30 jours à 5 000 € HT.',
     url: 'https://mvp.ozirus.agency',
     siteName: 'Ozirus Agency',
     images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Ozirus — MVP en 15 ou 30 jours' }],
@@ -40,8 +40,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Votre MVP en 15 ou 30 jours — retours illimités',
-    description: 'Deux formats, prix fixe, retours illimités et code à votre nom.',
+    title: 'Votre MVP en 15 ou 30 jours, avec un CTO partenaire',
+    description: 'Deux formats, prix fixe, une version testable tous les 2 jours et code à votre nom.',
     images: ['/og-image.jpg'],
   },
 };

@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
+    "@mux/mux-player-react": "3.14.0",
     "@types/three": "^0.180.0",
     "@vercel/analytics": "^2.0.1",
     "docx": "^9.7.1",

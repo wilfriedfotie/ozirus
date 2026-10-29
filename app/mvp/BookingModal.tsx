@@ -13,6 +13,7 @@ import { ArrowLeft, ArrowRight, CalendarDays, Clock, Mail, Video, X } from 'luci
 import BookingWidget from '@/components/booking/BookingWidget';
 import { LOCATION_LABELS, type PublicBookingPage } from '@/lib/booking/types';
 import { trackMvp } from './analytics';
+import { sfx } from './sound';
 import { ACCENT_INK, ACCENT_SOFT, BOOKING_SLUG, DISPLAY, EASE, FAINT, INK, LINE, MUTED, OFFER } from './theme';
 
 import { OPEN_BOOKING_EVENT as OPEN_EVENT } from './bookingEvents';
@@ -36,16 +37,19 @@ export default function BookingModal({ lenis, onOpenChange, initialSource }: { l
   const [page, setPage] = useState<PublicBookingPage | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
+  const initialHandled = useRef(false);
 
   useEffect(() => {
     const openFrom = (source: string) => {
       returnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
       setMounted(true);
       setOpen(true);
+      sfx.open();
       trackMvp('booking_opened', { source });
     };
-    // Le clic qui a déclenché le chargement de la modale a eu lieu avant son montage.
-    if (initialSource) openFrom(initialSource);
+    // Le clic qui a déclenché le chargement de la modale a eu lieu avant son montage. Garde : en
+    // développement, React rejoue les effets une seconde fois (son et analytics en double).
+    if (initialSource && !initialHandled.current) { initialHandled.current = true; openFrom(initialSource); }
     const onOpen = (event: Event) => openFrom((event as CustomEvent<{ source?: string }>).detail?.source ?? 'unknown');
     window.addEventListener(OPEN_EVENT, onOpen);
     return () => window.removeEventListener(OPEN_EVENT, onOpen);
@@ -166,7 +170,7 @@ export default function BookingModal({ lenis, onOpenChange, initialSource }: { l
             onLoaded={setPage}
             onStepChange={onWidgetStep}
             onSubmitStart={() => trackMvp('qualification_submitted')}
-            onBooked={() => trackMvp('booking_confirmed')}
+            onBooked={() => { trackMvp('booking_confirmed'); sfx.success(); }}
             timezone="Europe/Paris"
             whatsapp={false}
             fallback={(

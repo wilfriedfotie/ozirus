@@ -72,15 +72,25 @@ export function useStepped(mv: MotionValue<number>, map: (v: number) => number) 
   return value;
 }
 
+type NetworkInfo = { saveData?: boolean; effectiveType?: string };
+const connection = () => (typeof navigator === 'undefined' ? undefined : (navigator as Navigator & { connection?: NetworkInfo }).connection);
+
 /**
- * Connexion à économiser : mode « économie de données » du navigateur, ou réseau 2G / 3G lent
- * (Network Information API, Chrome / Android). Dans ce cas la landing passe en version légère :
- * pas d'épinglage, pas de Lenis, pas de scroll par blocs, pas de préchargement.
+ * Connexion à économiser absolument : mode « économie de données » du navigateur, ou vraie 2G
+ * (Network Information API, Chrome / Android). La landing passe alors en version légère : pas
+ * d'épinglage, pas de Lenis, pas de scroll par blocs, pas de préchargement.
+ * La « 3g » n'en fait pas partie : Chrome l'annonce dès que la latence dépasse ~300 ms, y compris
+ * sur des connexions tout à fait correctes, et l'expérience complète y reste fluide.
  */
 export function isLiteNetwork() {
-  if (typeof navigator === 'undefined') return false;
-  const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
-  return Boolean(connection?.saveData) || /(^|-)2g$|^3g$/.test(connection?.effectiveType ?? '');
+  const c = connection();
+  return Boolean(c?.saveData) || /(^|-)2g$/.test(c?.effectiveType ?? '');
+}
+
+/** Connexion modeste (3G ou moins, ou économie de données) : on évite seulement les préchargements. */
+export function isSlowNetwork() {
+  const c = connection();
+  return isLiteNetwork() || c?.effectiveType === '3g';
 }
 
 /** Séquences épinglées actives : grand écran, mouvement non réduit, et connexion non bridée. */

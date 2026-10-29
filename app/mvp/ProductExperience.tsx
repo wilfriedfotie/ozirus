@@ -30,6 +30,7 @@ import {
 } from './sfSymbols';
 import { trackMvp } from './analytics';
 import { openMvpBooking } from './bookingEvents';
+import { sfx, useCrossing } from './sound';
 import { clamp01, trackScrollY, useMedia, usePinned, useStepped, useTrackProgress } from './scroll';
 import { ACCENT, ACCENT_INK, ACCENT_SOFT, DISPLAY, EASE, FAINT, GREEN, INK, LINE, MUTED } from './theme';
 
@@ -1029,6 +1030,7 @@ function ChoiceCard({ p, compact, onChoose, customCursor }: { p: typeof PRODUCTS
       type="button"
       data-choice={p.id}
       onClick={() => onChoose(p.id)}
+      onMouseEnter={() => sfx.hover()}
       initial="rest"
       animate="rest"
       whileHover="hover"
@@ -1133,6 +1135,8 @@ function PinnedChooser({ onChoose, trackRef }: { onChoose: (id: Product) => void
   const raw = useTrackProgress(trackRef, true);
   const p = useSpring(raw, { stiffness: 140, damping: 30, mass: 0.4 });
   const cover = useTransform(raw, [0, 0.22], [100, 0]);
+  // Son d'arrivée quand le bleu recouvre tout l'écran.
+  useCrossing(raw, 0.22, 0.08, sfx.arrive);
   const clip = useTransform(cover, v => `inset(${v}% 0 0 0)`);
   const contentY = useTransform(p, [0.2, 0.38], [90, 0]);
   const contentOpacity = useTransform(p, [0.2, 0.32], [0, 1]);
@@ -1343,6 +1347,7 @@ export default function ProductExperience({ scrollToY }: { scrollToY: ScrollToY 
     setActiveStep(0);
     story.set(0);
     trackMvp('product_type_selected', { product: id });
+    sfx.select();
     // L'expérience démarre exactement là où était l'écran de choix, puis se joue toute seule une
     // fois l'appareil entré en scène.
     stopAuto();
@@ -1351,11 +1356,20 @@ export default function ProductExperience({ scrollToY }: { scrollToY: ScrollToY 
   };
 
   const backToChooser = () => {
+    sfx.open();
     stopAuto();
     setProduct(null);
     // Grand écran : on revient au moment où le bloc de choix est plein écran.
     window.requestAnimationFrame(() => scrollToY(sectionTop() + (pinned ? window.innerHeight * 0.45 : 0)));
   };
+
+  // Petit déclic à chaque changement d'étape (pas au démarrage d'une démo, déjà sonorisé par le choix).
+  const lastStep = useRef<string | null>(null);
+  useEffect(() => {
+    const key = product ? `${product}-${activeStep}` : null;
+    if (key && lastStep.current && lastStep.current.split('-')[0] === product && lastStep.current !== key) sfx.step();
+    lastStep.current = key;
+  }, [product, activeStep]);
 
   useEffect(() => {
     if (!product) return;

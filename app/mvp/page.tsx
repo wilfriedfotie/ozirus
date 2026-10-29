@@ -6,16 +6,19 @@ import {
 } from 'framer-motion';
 import Lenis from 'lenis';
 import 'lenis/dist/lenis.css';
+import type { MuxPlayerRefAttributes } from '@mux/mux-player-react';
 import {
   ArrowRight, CheckCircle2, X, ChevronDown, Layers, Compass, Rocket, Gift, Film, LayoutTemplate, Mail,
   Target, Scissors, Bot, Eye, ShieldCheck, Sparkles, AlertTriangle, Play, CalendarDays, KeyRound, Percent, RotateCcw,
+  Volume2, VolumeX,
 } from 'lucide-react';
 import { useMainSiteHref } from '@/lib/useMainSiteHref';
 import dynamic from 'next/dynamic';
 import { OPEN_BOOKING_EVENT, openMvpBooking } from './bookingEvents';
 import MethodScroll from './MethodScroll';
 import { trackMvp } from './analytics';
-import { PIN_QUERY, isLiteNetwork, usePinned } from './scroll';
+import { setSoundEnabled, sfx, useCrossing, useSoundEnabled } from './sound';
+import { PIN_QUERY, isLiteNetwork, isSlowNetwork, usePinned } from './scroll';
 
 // Chargés à la demande (faible débit) : la modale au premier clic sur un CTA, la Product
 // Experience quand on approche de sa section. Rien de tout cela n'est utile au premier affichage.
@@ -44,11 +47,19 @@ const OFFERS = [
   },
 ];
 
-// Vidéo de présentation. Renseigner `src` (fichier déposé dans public/, ex. '/videos/mvp.mp4')
-// OU `youtubeId`. Tant que les deux sont vides, l'affiche reste visible avec « Bientôt disponible ».
+// Lecteur Mux (streaming adaptatif HLS) : chargé seulement au clic sur « Play », hors du bundle initial.
+const MuxPlayer = dynamic(() => import('@mux/mux-player-react'), { ssr: false });
+
+// Vidéo de présentation. Renseigner `muxPlaybackId` (recommandé : la qualité s'adapte au réseau,
+// démarrage rapide même en 3G), OU `src` (MP4, ex. '/videos/mvp.mp4'), OU `youtubeId`. Tant que
+// tout est vide, l'affiche reste visible avec « Bientôt disponible ».
+// Mux : dashboard.mux.com → Assets → importer la vidéo (sous-titres à ajouter sur l'asset), puis
+// copier le « Playback ID » d'une politique **public**.
 const VIDEO = {
+  muxPlaybackId: '',
   src: '',
   youtubeId: '',
+  // Vide + Mux : la vignette de l'asset Mux est utilisée.
   poster: '',
   // Sous-titres WebVTT (ex. '/videos/mvp.fr.vtt'), utilisés par le lecteur natif.
   captions: '',
@@ -100,7 +111,9 @@ const OWNERSHIP = [
 ];
 
 
-const REVISION_PROMISE = 'Pas de quota de fonctionnalités : pendant le sprint, on avance par itérations. Tous les 2 jours, vous recevez une nouvelle version, vous testez et nous priorisons la suite ensemble.';
+// Ajustements encadrés par le périmètre validé au cadrage (et non « illimités ») : attractif, sans
+// exposer le forfait aux demandes sans fin.
+const REVISION_PROMISE = 'Ajustements inclus jusqu\'à la mise en ligne. Tous les 2 jours, vous testez la nouvelle version et demandez des modifications dans le périmètre validé au cadrage. Une nouvelle fonctionnalité hors périmètre est chiffrée à part, ou remplace une fonctionnalité prévue : pas de surprise sur le prix.';
 
 const INCLUDED = [
   'Atelier de cadrage produit avec le CTO',
@@ -154,8 +167,8 @@ const FAQS = [
     a: 'Oui. Le produit avance par cycles courts : tous les 2 jours, une nouvelle version est livrée. Vous testez, vous demandez les changements souhaités et nous priorisons ensemble ce qui apporte le plus de valeur dans le temps disponible.',
   },
   {
-    q: 'Qu\'est-ce qui change concrètement avec un CTO cofondateur ?',
-    a: 'Vous n\'achetez pas des heures de développement, vous gagnez quelqu\'un qui raisonne comme un associé : il challenge vos idées, coupe le superflu, choisit une architecture qui tiendra la croissance et vous aide à présenter le produit à vos premiers clients ou investisseurs.',
+    q: 'Qu\'est-ce qui change concrètement avec un CTO partenaire ?',
+    a: 'Vous n\'achetez pas des heures de développement, vous gagnez quelqu\'un qui s\'engage sur votre produit comme si c\'était le sien : il challenge vos idées, coupe le superflu, choisit une architecture qui tiendra la croissance et vous aide à présenter le produit à vos premiers clients ou investisseurs.',
   },
   {
     q: 'Comment fonctionnent les itérations tous les 2 jours ?',
@@ -612,11 +625,13 @@ function VideoSection() {
   const trackRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const muxRef = useRef<MuxPlayerRefAttributes>(null);
   const [playing, setPlaying] = useState(false);
   const [ended, setEnded] = useState(false);
   const [soon, setSoon] = useState(false);
   const [stage, setStage] = useState({ w: 1200, h: 800 });
-  const hasVideo = Boolean(VIDEO.src || VIDEO.youtubeId);
+  const hasVideo = Boolean(VIDEO.muxPlaybackId || VIDEO.src || VIDEO.youtubeId);
+  const poster = VIDEO.poster || (VIDEO.muxPlaybackId ? `https://image.mux.com/${VIDEO.muxPlaybackId}/thumbnail.webp?width=1600&time=1` : '');
   const inView = useInView(trackRef, { amount: 0.05 });
 
   // Progression qui démarre dès que la section entre par le bas de l'écran (avant l'épinglage) :
@@ -644,6 +659,8 @@ function VideoSection() {
   // défilement (elle ne rétrécit qu'en remontant).
   const grow = useTransform(progress, [0.15, 1], [0, 1]);
   const size = useTransform([grow, held], ([g, h]: number[]) => Math.max(g, h));
+  // Son d'arrivée quand la vidéo atteint sa grande taille au scroll.
+  useCrossing(grow, 0.98, 0.6, sfx.arrive);
   // Taille finale : 86 % de l'écran au plus, en 16:9 (la vidéo n'est jamais rognée).
   const smallW = Math.min(920, stage.w - 48, ((stage.h - 200) * 16) / 9);
   const bigW = Math.max(smallW, Math.min(stage.w * 0.86, ((stage.h * 0.86) * 16) / 9));
@@ -671,6 +688,7 @@ function VideoSection() {
   useEffect(() => {
     if (inView) return;
     videoRef.current?.pause();
+    muxRef.current?.pause();
     setPlaying(false);
   }, [inView]);
 
@@ -685,7 +703,21 @@ function VideoSection() {
       <AnimatePresence mode="wait">
         {playing ? (
           <motion.div key="player" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} style={{ position: 'absolute', inset: 0 }}>
-            {VIDEO.youtubeId ? (
+            {VIDEO.muxPlaybackId ? (
+              <MuxPlayer
+                ref={muxRef}
+                playbackId={VIDEO.muxPlaybackId}
+                streamType="on-demand"
+                autoPlay
+                playsInline
+                poster={poster || undefined}
+                accentColor={ACCENT}
+                metadata={{ video_title: 'Présentation de l\'offre MVP', player_name: 'landing-mvp' }}
+                onPlay={() => setEnded(false)}
+                onEnded={() => { setEnded(true); setPlaying(false); trackMvp('video_completed'); }}
+                style={{ width: '100%', height: '100%', ['--media-object-fit' as string]: 'contain', background: '#000' }}
+              />
+            ) : VIDEO.youtubeId ? (
               <iframe
                 src={`https://www.youtube-nocookie.com/embed/${VIDEO.youtubeId}?autoplay=1&rel=0&modestbranding=1&cc_load_policy=1`}
                 title="Présentation de l'offre MVP"
@@ -708,7 +740,7 @@ function VideoSection() {
                 {VIDEO.captions && <track kind="subtitles" src={VIDEO.captions} srcLang="fr" label="Français" default />}
               </video>
             )}
-            <button type="button" onClick={() => { videoRef.current?.pause(); setPlaying(false); }} style={{ position: 'absolute', top: 'max(16px, 2.5vh)', right: 16, display: 'inline-flex', alignItems: 'center', gap: 6, padding: '9px 14px', borderRadius: 999, border: '1px solid rgba(255,255,255,0.25)', background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(10px)', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+            <button type="button" onClick={() => { videoRef.current?.pause(); muxRef.current?.pause(); setPlaying(false); }} style={{ position: 'absolute', top: 'max(16px, 2.5vh)', right: 16, display: 'inline-flex', alignItems: 'center', gap: 6, padding: '9px 14px', borderRadius: 999, border: '1px solid rgba(255,255,255,0.25)', background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(10px)', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
               <X size={14} /> Réduire
             </button>
           </motion.div>
@@ -724,8 +756,8 @@ function VideoSection() {
             exit={{ opacity: 0 }}
             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', padding: 0, border: 'none', background: 'transparent', cursor: 'pointer', textAlign: 'left' }}
           >
-            {VIDEO.poster
-              ? <img src={VIDEO.poster} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+            {poster
+              ? <img src={poster} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
               : <VideoPosterArt />}
 
             <span style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -963,12 +995,13 @@ function useBlockSnap(lenisRef: React.RefObject<Lenis | null>, enabled: boolean)
       // longue, évite cet effet brutal.
       const touchesVideo = target === pts[1] || Math.abs(y - pts[1]) < 4;
       const up = direction < 0;
+      sfx.jump(direction);
       lenis.scrollTo(target, {
         duration: up ? (touchesVideo ? 1.4 : 1.2) : (touchesVideo ? 1.3 : 1),
         easing: up ? (t: number) => -(Math.cos(Math.PI * t) - 1) / 2 : (t: number) => 1 - Math.pow(1 - t, 4),
         lock: true,
         force: true,
-        onComplete: () => { animating = false; window.clearTimeout(safetyTimer); drain(); },
+        onComplete: () => { animating = false; window.clearTimeout(safetyTimer); sfx.land(); drain(); },
       });
       return true;
     };
@@ -1096,6 +1129,23 @@ function useImmersive() {
   return immersive;
 }
 
+// Interrupteur du sound design (sons d'interface synthétisés, cf. sound.ts), mémorisé par navigateur.
+function SoundToggle() {
+  const on = useSoundEnabled();
+  return (
+    <button
+      type="button"
+      onClick={() => setSoundEnabled(!on)}
+      aria-pressed={on}
+      aria-label={on ? 'Couper le son' : 'Activer le son'}
+      title={on ? 'Couper le son' : 'Activer le son'}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 7, height: 34, padding: '0 12px', borderRadius: 999, border: `1px solid ${LINE}`, background: '#fff', color: on ? INK : MUTED, fontSize: 13, cursor: 'pointer' }}
+    >
+      {on ? <Volume2 size={15} /> : <VolumeX size={15} />} {on ? 'Son activé' : 'Son coupé'}
+    </button>
+  );
+}
+
 // Liens partageables qui menaient au calendrier intégré : ils ouvrent désormais la modale.
 const BOOKING_HASHES = ['calendrier', 'reserver'];
 
@@ -1117,9 +1167,9 @@ export default function MvpOfferPage() {
     return () => window.removeEventListener(OPEN_BOOKING_EVENT, onOpen);
   }, [bookingSource]);
   // Connexion confortable : on précharge le code de la modale quand le navigateur est inactif,
-  // pour que le premier clic l'ouvre sans attente. Connexion bridée : rien n'est préchargé.
+  // pour que le premier clic l'ouvre sans attente. Connexion modeste (3G ou moins) : rien n'est préchargé.
   useEffect(() => {
-    if (isLiteNetwork()) return;
+    if (isSlowNetwork()) return;
     const idle = (window as Window & { requestIdleCallback?: (cb: () => void) => number }).requestIdleCallback;
     const warm = () => { void import('./BookingModal'); };
     const id = idle ? idle(warm) : window.setTimeout(warm, 2500);
@@ -1134,6 +1184,18 @@ export default function MvpOfferPage() {
   const heroFade = useTransform(heroProgress, [0, 0.5], [1, 0.35]);
 
   const ctaInView = useAnyInView(['hero', 'experience', 'offre', 'reserver']);
+  // Son d'arrivée sur le CTA final, une fois par passage.
+  const finalSeen = useMotionValue(0);
+  useEffect(() => {
+    const update = () => {
+      const r = document.getElementById('reserver')?.getBoundingClientRect();
+      finalSeen.set(r ? Math.max(0, Math.min(1, (window.innerHeight - r.top) / (r.height * 0.6))) : 0);
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    return () => window.removeEventListener('scroll', update);
+  }, [finalSeen]);
+  useCrossing(finalSeen, 1, 0.3, sfx.arrive);
   const immersive = useImmersive();
   useBlockSnap(lenisRef, !bookingOpen);
   const showFloating = ready && !ctaInView && !bookingOpen;
@@ -1304,7 +1366,7 @@ export default function MvpOfferPage() {
             <motion.div {...upView()} style={{ maxWidth: 900, margin: '0 auto', borderRadius: 20, overflow: 'hidden', background: '#fff', border: `1px solid ${LINE}`, boxShadow: card.boxShadow }}>
               <div className="mvp-compare-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', background: '#FAFAFB' }}>
                 <p style={{ padding: '16px 20px', fontSize: 12, fontWeight: 700, color: FAINT, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Un prestataire classique</p>
-                <p style={{ padding: '16px 20px', fontSize: 12, fontWeight: 700, color: ACCENT_INK, textTransform: 'uppercase', letterSpacing: '0.06em', background: ACCENT_SOFT }}>Un CTO cofondateur</p>
+                <p style={{ padding: '16px 20px', fontSize: 12, fontWeight: 700, color: ACCENT_INK, textTransform: 'uppercase', letterSpacing: '0.06em', background: ACCENT_SOFT }}>Un CTO partenaire</p>
               </div>
               {COMPARISON.slice(0, 3).map((row, i) => (
                 <div key={row.cto} className="mvp-compare-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', borderTop: `1px solid ${LINE}` }}>
@@ -1496,10 +1558,11 @@ export default function MvpOfferPage() {
               </a>
               <p style={{ fontSize: 12, color: FAINT, marginTop: 10 }}>© {new Date().getFullYear()} Ozirus Agency</p>
             </div>
-            <nav aria-label="Liens utiles" style={{ display: 'flex', flexWrap: 'wrap', gap: '8px 20px', fontSize: 13 }}>
+            <nav aria-label="Liens utiles" style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px 20px', fontSize: 13 }}>
               <a href={`mailto:${OFFER.email}`} style={{ color: MUTED }}>{OFFER.email}</a>
               <a href={mainHref('/terms')} style={{ color: MUTED }}>Conditions</a>
               <a href={mainHref('/privacy')} style={{ color: MUTED }}>Confidentialité</a>
+              <SoundToggle />
             </nav>
           </footer>
         </div>
