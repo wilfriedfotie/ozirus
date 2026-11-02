@@ -81,7 +81,7 @@ export default function HomePage() {
   // Le header fixe suit la page affichée (couleur), et ses liens d'ancre passent par le même
   // saut animé que la molette en mode paginé.
   useEffect(() => {
-    window.dispatchEvent(new CustomEvent('ozirus:nav-theme', { detail: page.nav }));
+    window.dispatchEvent(new CustomEvent('ozirus:nav-theme', { detail: { ...page.nav, activeId: page.id } }));
   }, [page]);
   useEffect(() => () => { window.dispatchEvent(new CustomEvent('ozirus:nav-theme', { detail: null })); }, []);
   useEffect(() => {

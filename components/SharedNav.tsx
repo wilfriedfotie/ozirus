@@ -1,14 +1,20 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { usePathname, useSelectedLayoutSegment } from 'next/navigation';
-import { ChevronDown, X, Menu } from 'lucide-react';
 import { useMainSiteHref } from '@/lib/useMainSiteHref';
 
 interface NavAnchor { label: string; href: string }
 
 /** Thème imposé par la page affichée (événement `ozirus:nav-theme`). */
-export interface NavTheme { dark: boolean; bg: string; ctaBg?: string; ctaColor?: string; accent?: string }
+export interface NavTheme {
+  dark: boolean;
+  bg: string;
+  ctaBg?: string;
+  ctaColor?: string;
+  accent?: string;
+  activeId?: string;
+}
 
 interface Props {
   anchors?: NavAnchor[];
@@ -18,60 +24,40 @@ interface Props {
   onContactClick?: () => void;
 }
 
-const PAGES = [
-  { href: '/',             label: 'Accueil' },
-  // { href: '/produits-ia',  label: 'Produits IA' }, // masqué pour l'instant
-  { href: '/dev',          label: 'Studio Dev' },
+const LANDING_ANCHORS: NavAnchor[] = [
+  { label: 'Services', href: '#services' },
+  { label: 'Produits', href: '#produits' },
+  { label: 'Résultats', href: '#realisations' },
 ];
 
 export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel, ctaHref: propCtaHref, dark: propDark = false, onContactClick }: Props) {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [anchorsOpen, setAnchorsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [isTablet, setIsTablet] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const segment = useSelectedLayoutSegment();
   const siteHref = useMainSiteHref();
   // Route réellement rendue (sur un sous-domaine, `pathname` vaut `/` quelle que soit la page).
   const route = segment ? `/${segment}` : pathname;
+  const isLanding = route === '/';
 
   /* ── auto-config based on route ── */
   const config = {
-    anchors: propAnchors,
     ctaLabel: propCtaLabel || 'Obtenir mon diagnostic gratuit',
     ctaHref: propCtaHref || '#contact',
     dark: propDark,
   };
 
-  if (!propAnchors) {
-    if (route === '/') {
-      config.anchors = [
-        { label: 'Secteurs', href: '#secteurs' },
-        { label: 'Services', href: '#services' },
-        { label: 'Produits', href: '#produits' },
-        { label: 'Résultats', href: '#realisations' },
-        { label: 'Contact', href: '#contact' },
-      ];
-    } else if (route === '/produits-ia') {
-      config.anchors = [
-        { label: 'Produits IA', href: '#produits' },
-        { label: 'Contact',     href: '#contact' },
-      ];
-    } else if (route === '/dev') {
-      config.anchors = [
-        { label: 'Offres', href: '#offres' },
-        { label: 'Processus', href: '#processus' },
-        { label: 'Réalisations', href: '#realisations' },
-        { label: 'Contact', href: '#contact' },
-      ];
-      config.ctaLabel = 'Démarrer un projet';
-      config.ctaHref = '#contact';
-    }
-  }
+  const { ctaLabel, ctaHref } = config;
 
-  const { anchors, ctaLabel, ctaHref } = config;
+  // Sur la landing page, exactement 3 ancres de la page courante
+  const navLinks = isLanding
+    ? (propAnchors ?? LANDING_ANCHORS)
+    : [
+        { label: 'Accueil', href: siteHref('/') },
+        { label: 'Services', href: siteHref('/#services') },
+        { label: 'Produits', href: siteHref('/#produits') },
+        { label: 'Résultats', href: siteHref('/#realisations') },
+      ];
 
   // Une page peut piloter la couleur de la nav (ex. la home : la nav prend la couleur de la page
   // affichée) via l'événement `ozirus:nav-theme`. Réinitialisé à chaque changement de route.
@@ -82,13 +68,14 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
     window.addEventListener('ozirus:nav-theme', onTheme);
     return () => window.removeEventListener('ozirus:nav-theme', onTheme);
   }, [route]);
+
   const dark = pageTheme ? pageTheme.dark : config.dark;
+  const activeId = pageTheme?.activeId;
 
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href === '#contact' && onContactClick) {
       e.preventDefault();
       onContactClick();
-      setDropdownOpen(false);
       setMenuOpen(false);
       return;
     }
@@ -97,7 +84,6 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
     if (href.startsWith('#')) {
       const evt = new CustomEvent('ozirus:goto-anchor', { detail: href.slice(1), cancelable: true });
       if (!window.dispatchEvent(evt)) e.preventDefault();
-      setDropdownOpen(false);
       setMenuOpen(false);
     }
   };
@@ -105,9 +91,7 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
   /* ── responsive detection ── */
   useEffect(() => {
     const check = () => {
-      const w = window.innerWidth;
-      setIsMobile(w < 768);
-      setIsTablet(w >= 768 && w < 1024);
+      setIsMobile(window.innerWidth < 768);
     };
     check();
     window.addEventListener('resize', check);
@@ -116,24 +100,12 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
 
   /* close menu on resize to desktop */
   useEffect(() => {
-    if (!isMobile && !isTablet) setMenuOpen(false);
-  }, [isMobile, isTablet]);
-
-  /* close dropdown on outside click */
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, []);
+    if (!isMobile) setMenuOpen(false);
+  }, [isMobile]);
 
   /* lock body scroll when mobile menu is open */
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
-    if (menuOpen) setAnchorsOpen(false);
     return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
 
@@ -142,16 +114,12 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
   if (pathname.startsWith('/admin') || segment === 'mvp' || segment === 'formation-ia' || segment === 'resto' || segment === 'cdc' || segment === 'book') return null;
 
   /* ── theme tokens ── */
-  const textColor     = dark ? 'rgba(255,255,255,0.6)' : '#555';
+  const textColor     = dark ? 'rgba(255,255,255,0.65)' : '#555';
   const borderColor   = dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
   const bgColor       = pageTheme ? pageTheme.bg : dark ? 'rgba(10,10,15,0.92)' : 'rgba(255,255,255,0.92)';
   const ctaBg         = pageTheme?.ctaBg ?? '#7967FF';
   const accent        = pageTheme?.accent ?? '#7967FF'; // lien actif / survol de la barre
   const ctaColor      = pageTheme?.ctaColor ?? '#fff';
-  const dropdownBg    = dark ? '#1A1A2E' : '#fff';
-  const dropdownBorder = dark ? 'rgba(121,103,255,0.25)' : '#EDEAFF';
-  const dropdownItemColor = dark ? 'rgba(255,255,255,0.7)' : '#444';
-  const separatorColor = dark ? 'rgba(255,255,255,0.1)' : '#E8E6FF';
   const logoFilter    = dark
     ? 'brightness(0) invert(1)'
     : 'brightness(0) saturate(100%) invert(43%) sepia(91%) saturate(2126%) hue-rotate(224deg) brightness(101%) contrast(101%)';
@@ -165,10 +133,9 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
   const drawerBg = dark ? '#0A0A0F' : '#fff';
   const drawerBorder = dark ? 'rgba(255,255,255,0.06)' : '#E4E8EF';
   const drawerLinkColor = dark ? 'rgba(255,255,255,0.7)' : '#475569';
-  const drawerActiveLinkColor = dark ? '#fff' : '#0F172A';
   const drawerSectionLabel = dark ? 'rgba(255,255,255,0.3)' : '#bbb';
 
-  const showBurger = isMobile || isTablet;
+  const showBurger = isMobile;
 
   return (
     <>
@@ -183,71 +150,31 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
           display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 24px',
         }}>
           {/* logo */}
-          <a href={siteHref('/')} style={{ flexShrink: 0 }}>
+          <a
+            href={isLanding ? '#accueil' : siteHref('/')}
+            onClick={e => {
+              if (isLanding) handleAnchorClick(e, '#accueil');
+            }}
+            style={{ flexShrink: 0 }}
+          >
             <img src="/logo.png" alt="Ozirus" style={{ height: 30, filter: logoFilter }} />
           </a>
 
-          {/* desktop / tablet nav (hidden on mobile) */}
+          {/* desktop nav (hidden on mobile) */}
           {!isMobile && (
-            <nav style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
+            <nav style={{ display: 'flex', gap: 26, alignItems: 'center' }}>
+              {navLinks.map(({ href, label }) => {
+                const isAnchor = href.startsWith('#');
+                const anchorId = isAnchor ? href.slice(1) : null;
+                const isActive = anchorId ? activeId === anchorId : false;
 
-              {/* dropdown "Sur cette page" — always shown on tablet and desktop */}
-              {anchors && anchors.length > 0 && (
-                <div ref={dropdownRef} style={{ position: 'relative' }}>
-                  <button
-                    onClick={() => setDropdownOpen(!dropdownOpen)}
-                    style={{
-                      display: 'inline-flex', alignItems: 'center', gap: 4,
-                      background: 'none', border: 'none', cursor: 'pointer',
-                      fontSize: 14, fontWeight: 500, color: textColor,
-                      transition: 'color 0.15s', padding: 0,
-                    }}
-                    onMouseEnter={e => (e.currentTarget.style.color = accent)}
-                    onMouseLeave={e => (e.currentTarget.style.color = dropdownOpen ? accent : textColor)}
-                  >
-                    Sur cette page
-                    <ChevronDown size={14} style={{ transition: 'transform 0.2s', transform: dropdownOpen ? 'rotate(180deg)' : 'rotate(0)' }} />
-                  </button>
-
-                  {dropdownOpen && (
-                    <div style={{
-                      position: 'absolute', top: 'calc(100% + 10px)', left: '50%', transform: 'translateX(-50%)',
-                      background: dropdownBg, border: `1.5px solid ${dropdownBorder}`, borderRadius: 12,
-                      boxShadow: '0 8px 32px rgba(121,103,255,0.12)',
-                      minWidth: 200, padding: '6px 0', zIndex: 100,
-                    }}>
-                      {anchors.map(a => (
-                        <a
-                          key={a.href}
-                          href={a.href}
-                          onClick={(e) => handleAnchorClick(e, a.href)}
-                          style={{
-                            display: 'block', padding: '9px 18px',
-                            fontSize: 13, fontWeight: 500, color: dropdownItemColor,
-                            textDecoration: 'none', transition: 'background 0.12s, color 0.12s',
-                          }}
-                          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(121,103,255,0.1)'; (e.currentTarget as HTMLElement).style.color = '#7967FF'; }}
-                          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = dropdownItemColor; }}
-                        >
-                          {a.label}
-                        </a>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {anchors && anchors.length > 0 && !isTablet && (
-                <span style={{ width: 1, height: 16, background: separatorColor }} />
-              )}
-
-              {/* page links — hidden on tablet (too many) */}
-              {!isTablet && PAGES.map(({ href, label }) => {
-                const isActive = route === href;
                 return (
                   <a
                     key={href}
-                    href={siteHref(href)}
+                    href={href}
+                    onClick={e => {
+                      if (isAnchor) handleAnchorClick(e, href);
+                    }}
                     style={{
                       color: isActive ? accent : textColor,
                       textDecoration: 'none', fontSize: 14,
@@ -271,9 +198,9 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
             </nav>
           )}
 
-          {/* right side: CTA (desktop only) + burger (mobile & tablet) */}
+          {/* right side: CTA (desktop only) + burger (mobile) */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-            {/* CTA desktop — hidden on mobile/tablet */}
+            {/* CTA desktop */}
             {!showBurger && (
               <a
                 href={ctaHref}
@@ -290,7 +217,7 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
               </a>
             )}
 
-            {/* burger button — mobile & tablet */}
+            {/* burger button — mobile */}
             {showBurger && (
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
@@ -326,7 +253,7 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
         </div>
       </header>
 
-      {/* ── Mobile / Tablet full-screen drawer ── */}
+      {/* ── Mobile full-screen drawer ── */}
       {showBurger && menuOpen && (
         <>
           {/* backdrop */}
@@ -347,71 +274,27 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
             overflowY: 'auto',
             display: 'flex', flexDirection: 'column',
           }}>
-            <div style={{ flex: 1, padding: '24px 24px 32px', display: 'flex', flexDirection: 'column', gap: 0 }}>
-
-              {/* section "Sur cette page" — collapsible on mobile */}
-              {anchors && anchors.length > 0 && (
-                <div style={{ marginBottom: 24 }}>
-                  <button
-                    onClick={() => setAnchorsOpen(!anchorsOpen)}
-                    style={{
-                      width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                      background: 'none', border: 'none', padding: 0, marginBottom: 8, cursor: 'pointer',
-                    }}
-                  >
-                    <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: drawerSectionLabel, margin: 0 }}>
-                      Sur cette page
-                    </p>
-                    <ChevronDown size={14} color={drawerSectionLabel} style={{ transition: 'transform 0.2s', transform: anchorsOpen ? 'rotate(180deg)' : 'rotate(0)' }} />
-                  </button>
-                  <div style={{
-                    display: 'flex', flexDirection: 'column', gap: 2,
-                    overflow: 'hidden', transition: 'max-height 0.3s ease-in-out, opacity 0.2s',
-                    maxHeight: anchorsOpen ? 500 : 0,
-                    opacity: anchorsOpen ? 1 : 0,
-                  }}>
-                    {anchors.map(a => (
-                      <a
-                        key={a.href}
-                        href={a.href}
-                        onClick={(e) => {
-                          handleAnchorClick(e, a.href);
-                          if (a.href !== '#contact') setMenuOpen(false);
-                        }}
-                        style={{
-                          display: 'block', padding: '12px 14px',
-                          fontSize: 15, fontWeight: 500, color: drawerLinkColor,
-                          textDecoration: 'none', borderRadius: 8,
-                          transition: 'background 0.12s, color 0.12s',
-                        }}
-                        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(121,103,255,0.08)'; (e.currentTarget as HTMLElement).style.color = '#7967FF'; }}
-                        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = drawerLinkColor; }}
-                      >
-                        {a.label}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* separator */}
-              {anchors && anchors.length > 0 && (
-                <div style={{ height: 1, background: drawerBorder, marginBottom: 24 }} />
-              )}
+            <div style={{ flex: 1, padding: '24px 24px 32px', display: 'flex', flexDirection: 'column' }}>
 
               {/* pages navigation */}
               <div style={{ marginBottom: 24 }}>
-                <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: drawerSectionLabel, marginBottom: 8 }}>
-                  Pages
+                <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: drawerSectionLabel, marginBottom: 12 }}>
+                  Sur cette page
                 </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  {PAGES.map(({ href, label }) => {
-                    const isActive = route === href;
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {navLinks.map(({ href, label }) => {
+                    const isAnchor = href.startsWith('#');
+                    const anchorId = isAnchor ? href.slice(1) : null;
+                    const isActive = anchorId ? activeId === anchorId : false;
+
                     return (
                       <a
                         key={href}
-                        href={siteHref(href)}
-                        onClick={() => setMenuOpen(false)}
+                        href={href}
+                        onClick={(e) => {
+                          if (isAnchor) handleAnchorClick(e, href);
+                          setMenuOpen(false);
+                        }}
                         style={{
                           display: 'block', padding: '12px 14px',
                           fontSize: 15, fontWeight: isActive ? 600 : 500,
@@ -419,18 +302,6 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
                           textDecoration: 'none', borderRadius: 8,
                           background: isActive ? 'rgba(121,103,255,0.08)' : 'transparent',
                           transition: 'background 0.12s, color 0.12s',
-                        }}
-                        onMouseEnter={e => {
-                          if (!isActive) {
-                            (e.currentTarget as HTMLElement).style.background = 'rgba(121,103,255,0.06)';
-                            (e.currentTarget as HTMLElement).style.color = drawerActiveLinkColor;
-                          }
-                        }}
-                        onMouseLeave={e => {
-                          if (!isActive) {
-                            (e.currentTarget as HTMLElement).style.background = 'transparent';
-                            (e.currentTarget as HTMLElement).style.color = drawerLinkColor;
-                          }
                         }}
                       >
                         {label}
@@ -448,14 +319,14 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
               </div>
 
               {/* separator before CTA */}
-              <div style={{ height: 1, background: drawerBorder, marginBottom: 24 }} />
+              <div style={{ height: 1, background: drawerBorder, marginBottom: 24, marginTop: 'auto' }} />
 
               {/* CTA */}
               <a
                 href={ctaHref}
                 onClick={(e) => {
                   handleAnchorClick(e, ctaHref);
-                  if (ctaHref !== '#contact') setMenuOpen(false);
+                  setMenuOpen(false);
                 }}
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -465,8 +336,6 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
                   boxShadow: '0 4px 20px rgba(121,103,255,0.3)',
                   transition: 'background 0.15s',
                 }}
-                onMouseEnter={e => (e.currentTarget.style.background = '#6654F0')}
-                onMouseLeave={e => (e.currentTarget.style.background = '#7967FF')}
               >
                 {ctaLabel}
               </a>
