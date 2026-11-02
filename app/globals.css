@@ -428,6 +428,7 @@ li[data-done] .ozh-step-n { background: #F4F2FF; border-color: #F4F2FF; color: #
 }
 .ozh-step-nav button[data-primary] { background: #7967FF; border-color: #7967FF; color: #fff; }
 .ozh-step-nav button:disabled { opacity: .35; cursor: default; }
+.ozh-step-dots { display: none; }
 
 /* Résultats : grille de cartes (bento), primaire Ozirus */
 .ozh-res-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px 40px; flex-wrap: wrap; margin-bottom: clamp(24px, 4vh, 40px); }
@@ -482,12 +483,37 @@ li[data-done] .ozh-step-n { background: #F4F2FF; border-color: #F4F2FF; color: #
   .ozh-step { grid-template-columns: 1fr; }
   .ozh-step-stage { height: auto; clip-path: none; display: flex; justify-content: center; }
   .ozh-step-stage::after { display: none; }
-  .ozh-step-phone { --phone-scale: 1.1; position: relative; top: auto; right: auto; }
+  /* Mobile : une seule « frame » = titre, appareil recadré, stepper compact (étape active + points).
+     .ozh-step-side s'efface (display: contents) pour placer l'intro au-dessus de l'appareil. */
+  .ozh-step { gap: 18px; }
+  .ozh-step-side { display: contents; }
+  .ozh-step-intro { order: -1; }
+  .ozh-step-intro .ozh-h2 { font-size: clamp(1.9rem, 8vw, 2.4rem) !important; margin-bottom: 6px; }
+  .ozh-step-intro .ozh-lead { font-size: 15px; }
+  .ozh-step-stage {
+    order: 0; height: min(400px, 47svh); margin: 0 -24px; overflow: hidden; display: flex; justify-content: center; align-items: center;
+    -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent); mask-image: linear-gradient(to bottom, #000 82%, transparent);
+    touch-action: pan-y;
+  }
+  /* téléphone : haut de l'écran visible (conversation + début du clavier), le bas s'efface */
+  .ozh-step-phone { --phone-scale: 1.12; position: absolute; top: 8px; right: auto; left: calc(50% - 119px * var(--phone-scale)); }
   /* le MacBook garde l'effet : plus large que l'écran, il déborde à gauche */
-  .ozh-step-mac { position: relative; top: auto; right: auto; width: 150%; margin-left: -50%; flex-shrink: 0; }
-  .ozh-step-3d { transform: rotateY(14deg) rotateX(3deg); }
+  .ozh-step-mac { position: relative; top: auto; right: auto; width: 128%; margin-left: -14%; flex-shrink: 0; perspective: 1400px; }
+  .ozh-step-3d { transform: rotateY(12deg) rotateX(3deg); }
+  .ozh-step-list { order: 1; min-height: 132px; }
+  .ozh-step-list li { border: 0 !important; }
+  .ozh-step-list li:not([data-active]) { display: none; }
+  .ozh-step-head { pointer-events: none; padding-top: 0; }
+  .ozh-step-body { padding-bottom: 0; }
+  .ozh-step-nav { order: 2; margin-top: 0; justify-content: space-between; }
+  .ozh-step-count { display: none; }
+  .ozh-step-dots { display: flex; gap: 6px; align-items: center; }
+  .ozh-step-dots button { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 99px; background: #E4E4E7; cursor: pointer; transition: width .3s, background .3s; }
+  .ozh-step-dots button[data-done] { background: #C4BCFF; }
+  .ozh-step-dots button[aria-current] { width: 26px; background: #7967FF; }
   .ozh-split { grid-template-columns: 1fr; }
 }
+@media (max-width: 360px) { .ozh-step-phone { --phone-scale: 1; } }
 @media (max-width: 760px) {
   .ozh-res-grid { grid-template-columns: 1fr; }
   .ozh-car { --card-w: calc(100vw - 48px); }

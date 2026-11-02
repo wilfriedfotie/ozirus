@@ -18,26 +18,16 @@ import {
   Check,
   ChevronLeft,
   Clock,
-  HeartHandshake,
-  Inbox,
-  Mic,
-  Package,
-  Phone,
-  Sparkles,
-  Users,
-  Wallet,
-  Landmark,
-  Megaphone,
   Store,
   ChevronsUpDown,
   Plus,
-  Settings,
   ShoppingBag,
   ArrowUpRight,
 } from 'lucide-react';
-import { IPhone, IOSStatusBar, SAFE_TOP, PHONE_W, PHONE_H } from '@/app/mvp/devices';
+import { IPhone, PHONE_W, PHONE_H } from '@/app/mvp/devices';
 import { CHANNELS, SECTORS, channelById, formatMoney, type ChannelId, type Sector } from './osData';
 import { STORY } from './sectorStory';
+import ChannelPhone from './ChannelPhone';
 
 /* Direction artistique Ozirus OS : logiciel sobre, niveau international.
    DM Sans (interface) + Clash Display (titres, chiffres) ; primaire #7967FF seul accent ;
@@ -56,13 +46,6 @@ const C = {
 };
 const DISPLAY = 'var(--font-display-loaded), var(--font-sans-loaded), sans-serif';
 const SANS = 'var(--font-sans-loaded), sans-serif';
-
-const glass: React.CSSProperties = {
-  background: 'rgba(255,255,255,0.62)',
-  backdropFilter: 'blur(25px) saturate(180%)',
-  WebkitBackdropFilter: 'blur(25px) saturate(180%)',
-  boxShadow: 'inset 0 1.5px 0 rgba(255,255,255,0.9), inset 0 -1.5px 0 rgba(255,255,255,0.35), 0 0 0 1px rgba(0,0,0,0.05), 0 14px 40px rgba(16,16,20,0.1)',
-};
 
 type Device = 'phone' | 'mac';
 const STEPS: { title: string; body: string; device: Device }[] = [
@@ -87,11 +70,20 @@ export default function OsStepper({ sectorId, business, intro }: { sectorId: str
 
   const device = STEPS[step].device;
   const go = (i: number) => setStep(Math.max(0, Math.min(STEPS.length - 1, i)));
+  // mobile : balayer l'appareil pour changer d'étape
+  const [touchX, setTouchX] = useState<number | null>(null);
+  const onTouchStart = (e: React.TouchEvent) => setTouchX(e.touches[0].clientX);
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 40) go(step + (dx < 0 ? 1 : -1));
+    setTouchX(null);
+  };
 
   return (
     <div className="ozh-step">
       {/* appareil : très grand, il déborde de l'écran à gauche (et le téléphone sort par le bas) */}
-      <div className="ozh-step-stage">
+      <div className="ozh-step-stage" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         <AnimatePresence mode="wait">
             {device === 'phone' ? (
               <motion.div
@@ -104,7 +96,7 @@ export default function OsStepper({ sectorId, business, intro }: { sectorId: str
               >
                 <div style={{ width: PHONE_W, height: PHONE_H, transform: 'scale(var(--phone-scale))', transformOrigin: 'top left' }}>
                   <IPhone>
-                    <PhoneScreen sector={sector} channel={channel} step={step} />
+                    <ChannelPhone sector={sector} channel={channel} step={step} last={LAST} />
                   </IPhone>
                 </div>
               </motion.div>
@@ -176,8 +168,14 @@ export default function OsStepper({ sectorId, business, intro }: { sectorId: str
       </ol>
       <div className="ozh-step-nav">
           <button onClick={() => go(step - 1)} disabled={step === 0} aria-label="Étape précédente"><ArrowLeft size={16} /></button>
-          <span>
+          <span className="ozh-step-count">
             Étape {step + 1} / {STEPS.length}
+          </span>
+          {/* mobile : progression compacte (la liste n'affiche que l'étape active) */}
+          <span className="ozh-step-dots" role="group" aria-label="Étapes">
+            {STEPS.map((s, i) => (
+              <button key={s.title} onClick={() => go(i)} aria-label={`Étape ${i + 1} : ${s.title}`} aria-current={i === step ? 'step' : undefined} data-done={i < step ? '' : undefined} />
+            ))}
           </span>
           <button onClick={() => go(step + 1)} disabled={step === STEPS.length - 1} aria-label="Étape suivante" data-primary>
             <ArrowRight size={16} />
@@ -219,125 +217,7 @@ function useAfter(ms: number, key: unknown) {
   return on;
 }
 
-/* ═══ iPhone : ce que vit le client ═══ */
-
-function PhoneScreen({ sector, channel, step }: { sector: Sector; channel: ChannelId; step: number }) {
-  const ch = channelById(channel);
-  const t = sector.thread;
-  const amount = sector.events.find(e => e.amount)?.amount ?? 25;
-  const seg = sector.loyalty.segments[0];
-  // étape 1 : la conversation se déroule ; étapes suivantes : elle est déjà là
-  const live = step === 0;
-  const s1 = useAfter(live ? 1100 : 0, `${step}-${channel}-${sector.id}`);
-  const s2 = useAfter(live ? 2300 : 0, `${step}-${channel}-${sector.id}`);
-  const paid = useAfter(1700, `${step}-pay`);
-
-  return (
-    <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', background: '#F2F2F7', color: '#1C1C1E', fontFamily: SANS }}>
-      {/* barre de navigation en verre : l'app du canal choisi */}
-      <div style={{ position: 'absolute', top: SAFE_TOP, left: 16, right: 16, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'space-between', zIndex: 3 }}>
-        <span style={{ ...glass, width: 44, height: 44, borderRadius: '50%', display: 'grid', placeItems: 'center' }}><ChevronLeft size={22} /></span>
-        <span style={{ ...glass, height: 44, padding: '0 16px 0 6px', borderRadius: 999, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ width: 32, height: 32, borderRadius: '50%', background: C.violet, color: '#fff', display: 'grid', placeItems: 'center', fontFamily: DISPLAY, fontSize: 14, fontWeight: 600 }}>
-            {sector.business.charAt(0)}
-          </span>
-          <span style={{ lineHeight: 1.15 }}>
-            <span style={{ display: 'block', fontSize: 15, fontWeight: 600 }}>{sector.business}</span>
-            <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: '#6E6E73' }}>
-              <span style={{ width: 6, height: 6, borderRadius: 99, background: ch.color }} /> {ch.label}
-            </span>
-          </span>
-        </span>
-        <span style={{ ...glass, width: 44, height: 44, borderRadius: '50%', display: 'grid', placeItems: 'center' }}><Phone size={18} /></span>
-      </div>
-
-      <div style={{ position: 'absolute', top: SAFE_TOP + 64, left: 16, right: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <div style={{ alignSelf: 'center', fontSize: 12, color: '#8E8E93', fontWeight: 500, marginBottom: 4 }}>Aujourd’hui 21:47</div>
-        <Bubble me text={t.msgs[0].text} />
-        {live && !s1 && <Typing />}
-        {s1 && <Bubble ai text={t.msgs[1].text} />}
-        {s2 && t.msgs[2] && <Bubble me text={t.msgs[2].text} />}
-
-        {step >= 1 && (
-          <motion.div
-            initial={{ opacity: 0, y: 14, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.45, delay: step === 1 ? 0.2 : 0, ease: [0.22, 1, 0.36, 1] }}
-            style={{ alignSelf: 'flex-start', width: '84%', background: '#fff', borderRadius: 24, padding: 16, boxShadow: '0 1px 0 rgba(0,0,0,0.04), 0 12px 30px rgba(16,16,20,0.08)' }}
-          >
-            <div style={{ fontSize: 13, color: '#8E8E93', fontWeight: 500 }}>{sector.deal.charAt(0).toUpperCase() + sector.deal.slice(1)} · {sector.business}</div>
-            <div style={{ fontFamily: DISPLAY, fontSize: 30, fontWeight: 600, margin: '4px 0 12px' }}>{formatMoney(amount, 'XAF')}</div>
-            <div style={{ height: 48, borderRadius: 999, background: paid || step > 1 ? C.green : '#1C1C1E', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, fontSize: 16, fontWeight: 600, transition: 'background .4s' }}>
-              {paid || step > 1 ? <><Check size={18} strokeWidth={3} /> Payé</> : 'Payer avec Mobile Money'}
-            </div>
-          </motion.div>
-        )}
-        {step === LAST && t.msgs[3] && <Bubble ai text={t.msgs[3].text} />}
-      </div>
-
-      {/* bannière système en verre : fidélité */}
-      <AnimatePresence>
-        {step === LAST && (
-          <motion.div
-            initial={{ y: -110, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -110, opacity: 0 }}
-            transition={{ type: 'spring', stiffness: 260, damping: 26, delay: 0.6 }}
-            style={{ ...glass, position: 'absolute', left: 10, right: 10, top: SAFE_TOP + 2, minHeight: 68, padding: '10px 14px', borderRadius: 26, display: 'flex', alignItems: 'center', gap: 12, zIndex: 6 }}
-          >
-            <Mark size={40} />
-            <div style={{ minWidth: 0 }}>
-              <div style={{ fontSize: 15, fontWeight: 600 }}>{sector.business}</div>
-              <div style={{ fontSize: 13, color: '#3C3C43', lineHeight: 1.3 }}>+120 points · {seg.action}</div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div style={{ position: 'absolute', left: 16, right: 16, bottom: 30, display: 'flex', gap: 10, zIndex: 3 }}>
-        <span style={{ ...glass, flex: 1, height: 48, borderRadius: 999, display: 'flex', alignItems: 'center', padding: '0 18px', fontSize: 16, color: '#8E8E93' }}>Message</span>
-        <span style={{ ...glass, width: 48, height: 48, borderRadius: '50%', display: 'grid', placeItems: 'center' }}><Mic size={20} /></span>
-      </div>
-      <IOSStatusBar />
-    </div>
-  );
-}
-
-function Bubble({ text, me, ai }: { text: string; me?: boolean; ai?: boolean }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10, scale: 0.96 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      style={{
-        alignSelf: me ? 'flex-end' : 'flex-start',
-        maxWidth: '80%',
-        padding: '10px 14px',
-        borderRadius: 20,
-        borderBottomRightRadius: me ? 6 : 20,
-        borderBottomLeftRadius: me ? 20 : 6,
-        background: me ? '#1C1C1E' : '#fff',
-        color: me ? '#fff' : '#1C1C1E',
-        fontSize: 16,
-        lineHeight: 1.35,
-        boxShadow: me ? 'none' : '0 1px 0 rgba(0,0,0,0.04), 0 6px 16px rgba(16,16,20,0.06)',
-      }}
-    >
-      {ai && <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 600, color: C.violet, marginBottom: 3 }}><Sparkles size={11} /> Réponse IA</span>}
-      {text}
-    </motion.div>
-  );
-}
-
-function Typing() {
-  return (
-    <div style={{ alignSelf: 'flex-start', display: 'flex', gap: 5, padding: '14px 16px', borderRadius: 20, background: '#fff', boxShadow: '0 6px 16px rgba(16,16,20,0.06)' }}>
-      {[0, 1, 2].map(i => (
-        <motion.span key={i} animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.15 }} style={{ width: 8, height: 8, borderRadius: 99, background: '#8E8E93' }} />
-      ))}
-    </div>
-  );
-}
+/* ═══ iPhone : ce que vit le client — UI de la plateforme choisie, voir ChannelPhone.tsx ═══ */
 
 /* ═══ Fenêtre macOS : Ozirus OS côté commerçant (noir et blanc) ═══ */
 
@@ -408,7 +288,7 @@ function MacScreen({ sector, channel, step, onOpen }: { sector: Sector; channel:
   if (step === 2) return <Launcher sector={sector} onOpen={onOpen} />;
   const view = step === 4 ? 'ai' : 'dashboard';
   return (
-    <div style={{ width: APP_W, height: APP_H, display: 'flex', fontFamily: SANS, fontSize: 13, color: D.ink, background: '#FBFBFB' }}>
+    <div style={{ position: 'relative', width: APP_W, height: APP_H, display: 'flex', fontFamily: SANS, fontSize: 13, color: D.ink, background: '#FBFBFB' }}>
       <Sidebar sector={sector} active={view} />
       <main style={{ flex: 1, minWidth: 0, padding: '30px 28px 0', display: 'flex', flexDirection: 'column', gap: 16, overflow: 'hidden' }}>
         <motion.div key={view} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -625,79 +505,246 @@ function Forecast() {
   );
 }
 
-/** Assistant IA : il surveille l'activité, notifie et rédige les rapports. */
+/** Assistant IA (étape 5) : il rédige le rapport de la semaine sous les yeux du visiteur, prépare
+    les décisions à valider en un clic et pousse les alertes en direct (fil + notification macOS).
+    Chronologie : rapport tapé (~2,6 s) ; alertes à 0,6 / 1,6 / 2,6 s ; la 1re décision est validée
+    à 4 s. Données simulées, adaptées au secteur. */
+const AI_T = { feed: [600, 1600, 2600], toast: 2600, toastOut: 6200, approve: 4000 };
+
+function useTicker(total: number, ms: number, key: unknown) {
+  const [n, setN] = useState(0);
+  useEffect(() => {
+    setN(0);
+    const start = performance.now();
+    let raf = 0;
+    const tick = (t: number) => {
+      const v = Math.min(total, Math.round(((t - start) / ms) * total));
+      setN(v);
+      if (v < total) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [total, ms, key]);
+  return n;
+}
+
 function AiPage({ sector }: { sector: Sector }) {
-  const stock = STORY[sector.id].stock;
+  const story = STORY[sector.id];
+  const item = story.stock.items[0];
   const seg = sector.loyalty.segments[0];
   const amount = sector.events.find(e => e.amount)?.amount ?? 25;
-  const fresh = useAfter(900, sector.id); // la notification la plus récente arrive
-  const notes = [
-    { icon: <Package size={15} color="#D97706" />, tint: '#FEF3C7', title: 'Stock bas', body: stock.alert, when: 'à l’instant' },
-    { icon: <HeartHandshake size={15} color="#E11D48" />, tint: '#FFE4E6', title: 'Relance prête', body: `${seg.count} ${sector.people} : ${seg.action}`, when: 'il y a 12 min' },
-    { icon: <Wallet size={15} color="#16A34A" />, tint: '#DCFCE7', title: 'Paiement reçu', body: `${formatMoney(amount, 'XAF')} · Mobile Money`, when: 'il y a 2 h' },
+  const owner = sector.business.replace(/^(Chez |Studio |Boutique |Clinique |Académie )/, '');
+  const week = Math.round((sector.baseRevenue * 1.3) / 4);
+
+  // rapport rédigé : segments (gras = chiffres clés), révélés caractère par caractère
+  const report: [string, boolean?][] = [
+    [`Bonjour ${owner}, très bonne semaine : `],
+    [`${formatMoney(week, 'XAF')} de ventes`, true],
+    [' (+12,4 %). WhatsApp reste votre meilleur canal avec '],
+    ['48 % des ventes', true],
+    ['. Point de vigilance : '],
+    [`${item.name.toLowerCase()} en rupture dans 2 jours`, true],
+    ['. J’ai préparé 3 actions pour vous.'],
   ];
-  const insights: [string, string][] = [
-    ['#16A34A', 'Meilleur canal : WhatsApp, 48 % des ventes'],
-    ['#F97316', `${stock.items[0].name} : rupture prévue dans 2 jours`],
+  const total = report.reduce((n, [t]) => n + t.length, 0);
+  const typed = useTicker(total, 2600, sector.id);
+  const feedN = [useAfter(AI_T.feed[0], sector.id), useAfter(AI_T.feed[1], sector.id), useAfter(AI_T.feed[2], sector.id)].filter(Boolean).length;
+  const toastIn = useAfter(AI_T.toast, sector.id);
+  const toastOut = useAfter(AI_T.toastOut, sector.id);
+  const approved = useAfter(AI_T.approve, sector.id);
+
+  let left = typed;
+  const shown = report.map(([t, bold], i) => {
+    const part = t.slice(0, Math.max(0, left));
+    left -= t.length;
+    return part ? <span key={i} style={bold ? { fontWeight: 700, color: D.ink, background: '#F1EFFF', borderRadius: 4, padding: '0 3px' } : undefined}>{part}</span> : null;
+  });
+
+  const kpis: { label: string; value: string; delta: string; color: string; bars: number[] }[] = [
+    { label: 'Ventes', value: formatMoney(week, 'XAF'), delta: '+12,4 %', color: P, bars: [4, 5, 4, 6, 5, 7, 8] },
+    { label: `Nouveaux ${sector.people}`, value: '38', delta: '+9', color: MOD_COLOR.crm, bars: [3, 4, 6, 4, 5, 6, 7] },
+    { label: 'Réponses IA', value: '412', delta: '< 5 s', color: MOD_COLOR.ai, bars: [5, 6, 5, 7, 6, 8, 8] },
   ];
+
+  const decisions = [
+    { mod: 'stock', title: `Commander 20 × ${item.name}`, sub: 'Bon de commande prêt · fournisseur habituel', cta: 'Valider', done: 'Envoyé au fournisseur' },
+    { mod: 'loyalty', title: `Relancer ${seg.count} ${sector.people}`, sub: `${seg.label} · ${seg.action}`, cta: 'Envoyer', done: '' },
+    { mod: 'social', title: sector.posts[0].title, sub: 'Rédigé par l’IA · meilleur créneau : jeudi 19 h', cta: 'Programmer', done: '' },
+  ];
+
+  const feed = [
+    { mod: 'payments', title: 'Paiement reçu', body: `${formatMoney(amount, 'XAF')} · Mobile Money`, tag: 'WhatsApp' },
+    { mod: 'loyalty', title: `${seg.count} ${sector.people} à relancer`, body: seg.action, tag: 'Fidélité' },
+    { mod: 'stock', title: 'Rupture dans 2 jours', body: story.stock.alert, tag: 'Stock', hot: true },
+  ];
+
   return (
     <>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <span style={{ width: 40, height: 40, borderRadius: 12, background: '#F1EFFF', display: 'grid', placeItems: 'center' }}><Sparkles size={18} color={P} /></span>
+      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 12 }}>
         <div>
-          <div style={{ fontFamily: DISPLAY, fontSize: 28, fontWeight: 600, letterSpacing: '-0.01em', lineHeight: 1.05 }}>Assistant IA</div>
-          <div style={{ fontSize: 12.5, color: D.muted, marginTop: 4 }}>Il surveille votre activité 24 h/24 et vous prévient</div>
+          <div style={{ fontSize: 12.5, color: D.muted, fontWeight: 500 }}>Lundi 3 novembre</div>
+          <div style={{ fontFamily: DISPLAY, fontSize: 28, fontWeight: 600, letterSpacing: '-0.01em', lineHeight: 1.1, marginTop: 2 }}>Votre IA a travaillé cette nuit</div>
+        </div>
+        <span style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 7, fontSize: 12, fontWeight: 600, padding: '7px 12px', borderRadius: 99, background: '#fff', border: `1px solid ${D.line}` }}>
+          <motion.span animate={{ opacity: [1, 0.35, 1] }} transition={{ duration: 1.6, repeat: Infinity }} style={{ width: 7, height: 7, borderRadius: 9, background: V.up }} />
+          Surveillance active · 24 h/24
+        </span>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1.45fr 1fr', gap: 14 }}>
+        {/* ── rapport rédigé en direct ── */}
+        <Card style={{ padding: 0, overflow: 'hidden' }}>
+          <div style={{ padding: '16px 18px 0', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <ModuleGlyph id="ai" size={26} />
+            <span style={{ fontSize: 14.5, fontWeight: 600 }}>Rapport de la semaine</span>
+            <span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 600, padding: '3px 9px', borderRadius: 99, background: '#F1EFFF', color: P }}>
+              {typed < total ? 'L’IA rédige…' : 'Envoyé sur WhatsApp · 8:00'}
+            </span>
+          </div>
+          <p style={{ margin: 0, padding: '12px 18px 0', minHeight: 92, fontSize: 15, lineHeight: 1.6, color: '#3F3F46' }}>
+            {shown}
+            {typed < total && <motion.span animate={{ opacity: [1, 0, 1] }} transition={{ duration: 0.8, repeat: Infinity }} style={{ display: 'inline-block', width: 2, height: 17, marginLeft: 2, verticalAlign: -3, background: P }} />}
+          </p>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', margin: '14px 18px 0', border: `1px solid ${D.line}`, borderRadius: 12 }}>
+            {kpis.map((k, i) => (
+              <div key={k.label} style={{ padding: '10px 12px', borderLeft: i ? `1px solid ${D.line}` : 'none', display: 'flex', alignItems: 'flex-end', gap: 8 }}>
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div style={{ fontSize: 11.5, color: D.muted, whiteSpace: 'nowrap' }}>{k.label}</div>
+                  <div style={{ fontFamily: DISPLAY, fontSize: 18, fontWeight: 600, marginTop: 2, whiteSpace: 'nowrap' }}>{k.value}</div>
+                  <div style={{ fontSize: 11, fontWeight: 600, color: V.up }}>{k.delta}</div>
+                </div>
+                <DotBars values={k.bars} rows={8} color={k.color} size={4} gap={2} />
+              </div>
+            ))}
+          </div>
+
+          {/* décisions préparées par l'IA */}
+          <div style={{ padding: '16px 18px 6px', fontSize: 12, fontWeight: 600, color: D.faint, textTransform: 'uppercase', letterSpacing: '0.04em' }}>Prêt à valider</div>
+          {decisions.map((d, i) => {
+            const isDone = i === 0 && approved;
+            return (
+              <motion.div
+                key={d.title}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: typed >= total || i === 0 ? 1 : 0.35, y: 0 }}
+                transition={{ duration: 0.35, delay: 0.1 * i }}
+                style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 18px', borderTop: `1px solid ${D.line}`, background: isDone ? '#F0FDF4' : '#fff', transition: 'background .4s' }}
+              >
+                <span style={{ width: 34, height: 34, borderRadius: 10, background: MOD_COLOR[d.mod] + '1A', display: 'grid', placeItems: 'center', flexShrink: 0 }}><ModuleGlyph id={d.mod} size={20} /></span>
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div style={{ fontWeight: 600, fontSize: 13.5, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{d.title}</div>
+                  <div style={{ fontSize: 12, color: D.muted, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{d.sub}</div>
+                </div>
+                <AnimatePresence mode="wait" initial={false}>
+                  {isDone ? (
+                    <motion.span key="done" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, fontWeight: 600, color: V.up, whiteSpace: 'nowrap' }}>
+                      <Check size={14} strokeWidth={3} /> {d.done}
+                    </motion.span>
+                  ) : (
+                    <motion.span key="cta" exit={{ opacity: 0, scale: 0.9 }} style={{ display: 'flex', gap: 6 }}>
+                      <span style={{ fontSize: 12, fontWeight: 600, padding: '7px 10px', borderRadius: 9, color: D.muted }}>Plus tard</span>
+                      <motion.span
+                        animate={i === 0 && typed >= total && !approved ? { scale: [1, 0.94, 1] } : {}}
+                        transition={{ duration: 0.3, delay: 0.9 }}
+                        style={{ fontSize: 12, fontWeight: 600, padding: '7px 12px', borderRadius: 9, background: i === 0 ? P : '#fff', color: i === 0 ? '#fff' : D.ink, border: i === 0 ? `1px solid ${P}` : `1px solid ${D.line}` }}
+                      >
+                        {d.cta}
+                      </motion.span>
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
+        </Card>
+
+        {/* ── fil d'alertes en direct ── */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14, minWidth: 0 }}>
+          <Card style={{ padding: '16px 0 4px' }}>
+            <div style={{ padding: '0 18px 10px', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: 14.5, fontWeight: 600 }}>En direct</span>
+              <span style={{ marginLeft: 'auto', minWidth: 20, height: 20, padding: '0 6px', borderRadius: 99, background: P, color: '#fff', fontSize: 11, fontWeight: 700, display: 'grid', placeItems: 'center' }}>{feedN}</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column-reverse' }}>
+              <AnimatePresence initial={false}>
+                {feed.slice(0, feedN).map(n => (
+                  <motion.div
+                    key={n.title}
+                    layout
+                    initial={{ opacity: 0, y: -14, height: 0 }}
+                    animate={{ opacity: 1, y: 0, height: 'auto' }}
+                    transition={{ type: 'spring', stiffness: 320, damping: 30 }}
+                    style={{ overflow: 'hidden', borderTop: `1px solid ${D.line}`, background: n.hot ? '#FFFBEB' : '#fff' }}
+                  >
+                    <div style={{ display: 'flex', gap: 11, padding: '11px 18px' }}>
+                      <span style={{ width: 32, height: 32, borderRadius: 9, background: MOD_COLOR[n.mod] + '1A', display: 'grid', placeItems: 'center', flexShrink: 0 }}><ModuleGlyph id={n.mod} size={18} /></span>
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <span style={{ fontWeight: 600, fontSize: 13, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{n.title}</span>
+                          <span style={{ marginLeft: 'auto', fontSize: 11, color: D.faint, whiteSpace: 'nowrap' }}>maintenant</span>
+                        </div>
+                        <div style={{ fontSize: 12, color: '#52525B', marginTop: 2, lineHeight: 1.4 }}>{n.body}</div>
+                        <span style={{ display: 'inline-block', marginTop: 6, fontSize: 10.5, fontWeight: 600, padding: '2px 7px', borderRadius: 99, color: MOD_COLOR[n.mod], background: MOD_COLOR[n.mod] + '14' }}>{n.tag}</span>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+            {feedN === 0 && <div style={{ padding: '18px', borderTop: `1px solid ${D.line}`, fontSize: 12.5, color: D.faint }}>L’IA analyse votre activité…</div>}
+          </Card>
+
+          {/* où l'IA prévient */}
+          <Card style={{ padding: '14px 18px' }}>
+            <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 10 }}>L’IA vous prévient sur</div>
+            {[['WhatsApp', 'Alertes urgentes', '#25D366'], ['E-mail', 'Rapport chaque lundi', '#2563EB'], ['Ozirus OS', 'Tout, en temps réel', P]].map(([l, d, c]) => (
+              <div key={l} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0' }}>
+                <span style={{ width: 8, height: 8, borderRadius: 9, background: c }} />
+                <span style={{ fontSize: 12.5, fontWeight: 600 }}>{l}</span>
+                <span style={{ fontSize: 12, color: D.muted }}>{d}</span>
+                <span style={{ marginLeft: 'auto' }}><Toggle on /></span>
+              </div>
+            ))}
+          </Card>
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.25fr 1fr', gap: 14 }}>
-        {/* rapport hebdomadaire rédigé par l'IA */}
-        <Card>
-          <CardTitle icon={<ArrowUpRight size={14} color={P} />} tint="#F1EFFF" right={<span style={{ fontSize: 11, fontWeight: 600, padding: '3px 9px', borderRadius: 99, background: '#F1EFFF', color: P }}>Généré par l’IA · lundi 8:00</span>}>
-            Rapport de la semaine
-          </CardTitle>
-          <div style={{ fontFamily: DISPLAY, fontSize: 26, fontWeight: 600, margin: '18px 0 4px', lineHeight: 1.2 }}>Semaine record</div>
-          <div style={{ fontSize: 13, color: D.muted }}>+12,4 % de ventes par rapport à la semaine dernière</div>
-          <div style={{ margin: '22px 0 22px' }}><DotBars values={[4, 5, 3, 6, 5, 7, 6, 8, 7, 9, 8, 10, 9, 8, 10, 9, 10, 8, 9, 10, 9, 10, 8, 10, 9, 10, 10, 9]} rows={10} color={P} size={6} gap={5} /></div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {insights.map(([c, t]) => (
-              <div key={t} style={{ display: 'flex', alignItems: 'center', gap: 9, fontSize: 13.5 }}><span style={{ width: 8, height: 8, borderRadius: 9, background: c, flexShrink: 0 }} />{t}</div>
-            ))}
-          </div>
-        </Card>
+      {/* demander à l'IA : question posée, réponse chiffrée */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 10px 10px 14px', borderRadius: 14, background: '#fff', border: `1px solid ${D.line}` }}>
+        <ModuleGlyph id="ai" size={20} />
+        <span style={{ fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap' }}>« Que dois-je commander cette semaine ? »</span>
+        <span style={{ fontSize: 12.5, color: D.muted, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', minWidth: 0, flex: 1 }}>
+          → 20 × {item.name.toLowerCase()} et {story.stock.items[1].name.toLowerCase()} : basé sur vos 8 dernières semaines.
+        </span>
+        <span style={{ width: 32, height: 32, borderRadius: 10, background: P, color: '#fff', display: 'grid', placeItems: 'center', flexShrink: 0 }}><ArrowUpRight size={16} /></span>
+      </div>
 
-        {/* notifications */}
-        <Card style={{ padding: '18px 0 6px' }}>
-          <div style={{ padding: '0 18px 12px' }}>
-            <CardTitle right={<span style={{ minWidth: 20, height: 20, padding: '0 6px', borderRadius: 99, background: P, color: '#fff', fontSize: 11, fontWeight: 700, display: 'grid', placeItems: 'center' }}>{fresh ? 3 : 2}</span>}>Notifications</CardTitle>
-          </div>
-          {notes.map((n, i) => (
-            <motion.div
-              key={n.title}
-              initial={i === 0 ? { opacity: 0 } : false}
-              animate={{ opacity: i === 0 && !fresh ? 0 : 1 }}
-              transition={{ duration: 0.4 }}
-              style={{ display: 'flex', gap: 12, padding: '12px 18px', borderTop: `1px solid ${D.line}`, background: i === 0 ? '#FFFBEB' : '#fff' }}
-            >
-              <span style={{ width: 32, height: 32, borderRadius: 9, background: n.tint, display: 'grid', placeItems: 'center', flexShrink: 0 }}>{n.icon}</span>
-              <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span style={{ fontWeight: 600 }}>{n.title}</span>
-                  <span style={{ marginLeft: 'auto', fontSize: 11, color: D.faint, whiteSpace: 'nowrap' }}>{n.when}</span>
-                </div>
-                <div style={{ fontSize: 12.5, color: '#52525B', marginTop: 2, lineHeight: 1.4 }}>{n.body}</div>
+      {/* notification macOS : l'alerte urgente sort de l'appli */}
+      <AnimatePresence>
+        {toastIn && !toastOut && (
+          <motion.div
+            initial={{ x: 380, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: 380, opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 28 }}
+            style={{ position: 'absolute', top: 14, right: 14, width: 340, padding: '12px 14px', borderRadius: 18, display: 'flex', gap: 11, zIndex: 10, background: 'rgba(255,255,255,0.78)', backdropFilter: 'blur(24px) saturate(180%)', WebkitBackdropFilter: 'blur(24px) saturate(180%)', boxShadow: '0 0 0 1px rgba(0,0,0,0.06), 0 18px 40px -10px rgba(16,16,20,0.3)' }}
+          >
+            <Mark size={36} />
+            <div style={{ minWidth: 0, flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', fontSize: 12.5, fontWeight: 700 }}>
+                Ozirus OS<span style={{ marginLeft: 'auto', fontSize: 11, fontWeight: 500, color: D.muted }}>maintenant</span>
               </div>
-            </motion.div>
-          ))}
-        </Card>
-      </div>
-
-      {/* demander à l'IA */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 10px 10px 16px', borderRadius: 14, background: '#fff', border: `1px solid ${D.line}`, boxShadow: '0 8px 24px -14px rgba(121,103,255,0.45)' }}>
-        <Sparkles size={16} color={P} />
-        <span style={{ color: D.muted }}>Demandez à Ozirus : « Quel produit commander cette semaine ? »</span>
-        <span style={{ marginLeft: 'auto', width: 34, height: 34, borderRadius: 10, background: P, color: '#fff', display: 'grid', placeItems: 'center' }}><ArrowUpRight size={16} /></span>
-      </div>
+              <div style={{ fontSize: 12.5, fontWeight: 600, marginTop: 1 }}>⚠️ {item.name} : rupture dans 2 jours</div>
+              <div style={{ fontSize: 12, color: '#52525B', marginTop: 1 }}>Bon de commande prêt. Valider ?</div>
+              <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+                <span style={{ flex: 1, textAlign: 'center', fontSize: 12, fontWeight: 600, padding: '6px 0', borderRadius: 8, background: 'rgba(0,0,0,0.06)' }}>Plus tard</span>
+                <span style={{ flex: 1, textAlign: 'center', fontSize: 12, fontWeight: 600, padding: '6px 0', borderRadius: 8, background: P, color: '#fff' }}>Valider</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
