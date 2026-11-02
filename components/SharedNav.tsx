@@ -7,6 +7,9 @@ import { useMainSiteHref } from '@/lib/useMainSiteHref';
 
 interface NavAnchor { label: string; href: string }
 
+/** Thème imposé par la page affichée (événement `ozirus:nav-theme`). */
+export interface NavTheme { dark: boolean; bg: string; ctaBg?: string; ctaColor?: string; accent?: string }
+
 interface Props {
   anchors?: NavAnchor[];
   ctaLabel?: string;
@@ -16,7 +19,7 @@ interface Props {
 }
 
 const PAGES = [
-  { href: '/',             label: 'Accueil PME' },
+  { href: '/',             label: 'Accueil' },
   // { href: '/produits-ia',  label: 'Produits IA' }, // masqué pour l'instant
   { href: '/dev',          label: 'Studio Dev' },
 ];
@@ -46,8 +49,9 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
     if (route === '/') {
       config.anchors = [
         { label: 'Secteurs', href: '#secteurs' },
-        { label: 'Processus', href: '#processus' },
-        { label: 'Tarifs', href: '#tarifs' },
+        { label: 'Services', href: '#services' },
+        { label: 'Produits', href: '#produits' },
+        { label: 'Résultats', href: '#realisations' },
         { label: 'Contact', href: '#contact' },
       ];
     } else if (route === '/produits-ia') {
@@ -67,12 +71,32 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
     }
   }
 
-  const { anchors, ctaLabel, ctaHref, dark } = config;
+  const { anchors, ctaLabel, ctaHref } = config;
+
+  // Une page peut piloter la couleur de la nav (ex. la home : la nav prend la couleur de la page
+  // affichée) via l'événement `ozirus:nav-theme`. Réinitialisé à chaque changement de route.
+  const [pageTheme, setPageTheme] = useState<NavTheme | null>(null);
+  useEffect(() => {
+    setPageTheme(null);
+    const onTheme = (e: Event) => setPageTheme((e as CustomEvent<NavTheme | null>).detail);
+    window.addEventListener('ozirus:nav-theme', onTheme);
+    return () => window.removeEventListener('ozirus:nav-theme', onTheme);
+  }, [route]);
+  const dark = pageTheme ? pageTheme.dark : config.dark;
 
   const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     if (href === '#contact' && onContactClick) {
       e.preventDefault();
       onContactClick();
+      setDropdownOpen(false);
+      setMenuOpen(false);
+      return;
+    }
+    // Ancre de la page : si la page gère elle-même la navigation (home paginée), elle annule
+    // l'événement `ozirus:goto-anchor` et on n'effectue pas le saut natif.
+    if (href.startsWith('#')) {
+      const evt = new CustomEvent('ozirus:goto-anchor', { detail: href.slice(1), cancelable: true });
+      if (!window.dispatchEvent(evt)) e.preventDefault();
       setDropdownOpen(false);
       setMenuOpen(false);
     }
@@ -115,12 +139,15 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
 
   // `segment` suit la route rendue (et non l'URL) : sur mvp.ozirus.agency, l'URL est `/`
   // mais la page rendue est `/mvp`. Les landings sur sous-domaine ont leur propre header.
-  if (pathname.startsWith('/admin') || segment === 'mvp' || segment === 'formation-ia' || segment === 'resto' || segment === 'book') return null;
+  if (pathname.startsWith('/admin') || segment === 'mvp' || segment === 'formation-ia' || segment === 'resto' || segment === 'cdc' || segment === 'book') return null;
 
   /* ── theme tokens ── */
   const textColor     = dark ? 'rgba(255,255,255,0.6)' : '#555';
   const borderColor   = dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
-  const bgColor       = dark ? 'rgba(10,10,15,0.92)' : 'rgba(255,255,255,0.92)';
+  const bgColor       = pageTheme ? pageTheme.bg : dark ? 'rgba(10,10,15,0.92)' : 'rgba(255,255,255,0.92)';
+  const ctaBg         = pageTheme?.ctaBg ?? '#7967FF';
+  const accent        = pageTheme?.accent ?? '#7967FF'; // lien actif / survol de la barre
+  const ctaColor      = pageTheme?.ctaColor ?? '#fff';
   const dropdownBg    = dark ? '#1A1A2E' : '#fff';
   const dropdownBorder = dark ? 'rgba(121,103,255,0.25)' : '#EDEAFF';
   const dropdownItemColor = dark ? 'rgba(255,255,255,0.7)' : '#444';
@@ -149,6 +176,7 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
         position: 'sticky', top: 0, zIndex: 50,
         borderBottom: `1px solid ${borderColor}`,
         background: bgColor, backdropFilter: 'blur(12px)',
+        transition: 'background-color .9s cubic-bezier(.22,1,.36,1), border-color .9s',
       }}>
         <div style={{
           maxWidth: 1080, margin: '0 auto', height: 64,
@@ -174,8 +202,8 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
                       fontSize: 14, fontWeight: 500, color: textColor,
                       transition: 'color 0.15s', padding: 0,
                     }}
-                    onMouseEnter={e => (e.currentTarget.style.color = '#7967FF')}
-                    onMouseLeave={e => (e.currentTarget.style.color = dropdownOpen ? '#7967FF' : textColor)}
+                    onMouseEnter={e => (e.currentTarget.style.color = accent)}
+                    onMouseLeave={e => (e.currentTarget.style.color = dropdownOpen ? accent : textColor)}
                   >
                     Sur cette page
                     <ChevronDown size={14} style={{ transition: 'transform 0.2s', transform: dropdownOpen ? 'rotate(180deg)' : 'rotate(0)' }} />
@@ -221,20 +249,20 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
                     key={href}
                     href={siteHref(href)}
                     style={{
-                      color: isActive ? '#7967FF' : textColor,
+                      color: isActive ? accent : textColor,
                       textDecoration: 'none', fontSize: 14,
                       fontWeight: isActive ? 600 : 500,
                       transition: 'color 0.15s', whiteSpace: 'nowrap',
                       position: 'relative',
                     }}
-                    onMouseEnter={e => (e.currentTarget.style.color = '#7967FF')}
-                    onMouseLeave={e => (e.currentTarget.style.color = isActive ? '#7967FF' : textColor)}
+                    onMouseEnter={e => (e.currentTarget.style.color = accent)}
+                    onMouseLeave={e => (e.currentTarget.style.color = isActive ? accent : textColor)}
                   >
                     {label}
                     {isActive && (
                       <span style={{
                         position: 'absolute', bottom: -4, left: 0, right: 0,
-                        height: 2, borderRadius: 99, background: '#7967FF',
+                        height: 2, borderRadius: 99, background: accent,
                       }} />
                     )}
                   </a>
@@ -251,12 +279,12 @@ export default function SharedNav({ anchors: propAnchors, ctaLabel: propCtaLabel
                 href={ctaHref}
                 onClick={(e) => handleAnchorClick(e, ctaHref)}
                 style={{
-                  background: '#7967FF', color: '#fff', padding: '10px 20px',
+                  background: ctaBg, color: ctaColor, padding: '10px 20px',
                   borderRadius: 8, fontSize: 14, fontWeight: 600,
-                  textDecoration: 'none', transition: 'background 0.15s', whiteSpace: 'nowrap',
+                  textDecoration: 'none', transition: 'background 0.4s, color 0.4s, opacity 0.15s', whiteSpace: 'nowrap',
                 }}
-                onMouseEnter={e => (e.currentTarget.style.background = '#6654F0')}
-                onMouseLeave={e => (e.currentTarget.style.background = '#7967FF')}
+                onMouseEnter={e => (e.currentTarget.style.opacity = '0.88')}
+                onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
               >
                 {ctaLabel}
               </a>

@@ -252,6 +252,258 @@ hr { border: none; border-top: 1px solid #E8E6FF; }
   50% { transform: translate3d(12px, -10px, 0) scale(1.04); }
 }
 
+/* ─── Home (app/page.tsx + components/home) ─────────────────────────────── */
+/* Largeur et marges alignées sur le header (SharedNav : 1080px, 24px). */
+.ozh { position: relative; isolation: isolate; }
+.ozh-container { width: 100%; max-width: 1080px; margin: 0 auto; padding: 0 24px; box-sizing: border-box; }
+.ozh-backdrop { position: fixed; inset: 0; z-index: -1; transition: background-color .9s cubic-bezier(.22,1,.36,1); }
+.ozh-page { position: relative; padding: clamp(72px, 10vw, 120px) 0; background: var(--page-bg); overflow-x: clip; }
+#accueil.ozh-page { padding-top: clamp(64px, 12vh, 120px); }
+
+/* Mode paginé (grand écran, cf. usePagedScroll) : une page = un écran, le fond est porté par .ozh-backdrop. */
+html.ozh-paged { scroll-behavior: auto !important; }
+/* Ancres natives (mobile, URL avec #) : la section arrive sous le header sticky, pas dessous. */
+.ozh-page { scroll-margin-top: 64px; }
+html.ozh-paged .ozh-page {
+  background: transparent; min-height: calc(100vh - 64px); box-sizing: border-box;
+  display: flex; flex-direction: column; justify-content: center; padding: 40px 0;
+}
+html.ozh-paged #accueil.ozh-page { padding-top: 40px; }
+html.ozh-paged .ozh-page-last { padding-bottom: 0; }
+
+/* Typo minimaliste */
+.ozh-h1 { font-size: clamp(2.6rem, 6vw, 5rem); font-weight: 500; letter-spacing: -0.03em; line-height: 1.02; margin: 0 0 24px; }
+.ozh-h2 { font-size: clamp(2rem, 4.4vw, 3.6rem); font-weight: 500; letter-spacing: -0.028em; line-height: 1.05; margin: 0 0 16px; }
+.ozh-lead { font-size: clamp(15px, 1.4vw, 17px); line-height: 1.6; color: #525252; margin: 0 0 24px; }
+
+.ozh-pill-btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 99px;
+  font: inherit; font-size: 14px; font-weight: 600; border: none; cursor: pointer; text-decoration: none;
+  transition: transform .2s, box-shadow .2s, background .2s;
+}
+.ozh-pill-btn:hover { transform: translateY(-1px); }
+/* bouton principal = primaire Ozirus (#7967FF) sur toute la page */
+.ozh-pill-dark { background: #7967FF; color: #fff; box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 12px 28px -12px rgba(121,103,255,.75); }
+.ozh-pill-dark:hover { background: #6654F0; }
+.ozh-pill-light { background: #fff; color: #0A0A0A; border: 1px solid #E5E5E5; }
+.ozh-pill-light:hover { border-color: #C4BCFF; color: #7967FF; }
+
+/* Hero : bandeau de compétences */
+.ozh-marquee {
+  margin-top: clamp(48px, 10vh, 96px); overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 15%, #000 85%, transparent);
+}
+.ozh-marquee-track { display: flex; width: max-content; animation: ozh-marquee 40s linear infinite; }
+.ozh-marquee-track span { display: inline-flex; align-items: center; font-size: 15px; font-weight: 500; color: #A3A3A3; white-space: nowrap; }
+.ozh-marquee-track span::after { content: ''; width: 4px; height: 4px; border-radius: 99px; background: #D4D4D4; margin: 0 28px; }
+@keyframes ozh-marquee { to { transform: translateX(-50%); } }
+
+/* Carrousel des secteurs */
+.ozh-car { position: relative; outline: none; --card-w: min(780px, calc(100vw - 160px)); }
+.ozh-car-stage { position: relative; height: 340px; touch-action: pan-y; cursor: grab; }
+.ozh-car-stage:active { cursor: grabbing; }
+.ozh-car-card {
+  position: absolute; top: 0; left: 50%; width: var(--card-w); margin-left: calc(var(--card-w) / -2); height: 100%;
+  display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 28px; padding: 20px; box-sizing: border-box;
+  background: #fff; border-radius: 36px; box-shadow: 0 30px 60px -30px rgba(0,0,0,.18), 0 0 0 1px rgba(0,0,0,.04);
+}
+.ozh-car-visual { position: relative; overflow: hidden; border-radius: 28px; background: #141414; }
+/* Photo du secteur (sans personne) + voile teinté de la couleur du secteur en bas. */
+.ozh-car-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; user-select: none; -webkit-user-drag: none; }
+.ozh-car-visual::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, transparent 55%, color-mix(in srgb, var(--glow) 35%, transparent) 100%);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.05);
+}
+.ozh-car-body { display: flex; flex-direction: column; gap: 12px; padding: 14px 10px 6px 0; text-align: left; min-width: 0; }
+.ozh-car-title { font-size: clamp(20px, 2.2vw, 26px); font-weight: 500; letter-spacing: -0.02em; line-height: 1.15; margin: 4px 0 0; color: #0A0A0A; }
+.ozh-car-stats { margin-top: auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.ozh-link {
+  align-self: flex-start; display: inline-flex; align-items: center; gap: 8px; padding: 0; border: none; background: none;
+  font: inherit; font-size: 13px; font-weight: 600; color: #0A0A0A; cursor: pointer;
+  text-decoration: underline; text-underline-offset: 4px; text-decoration-color: #D4D4D4;
+}
+.ozh-link-dot { width: 18px; height: 18px; border-radius: 99px; background: #E5E5E5; display: grid; place-items: center; transition: background .2s, color .2s; }
+.ozh-link:hover .ozh-link-dot { background: #7967FF; color: #fff; }
+.ozh-car-arrow {
+  position: absolute; top: 170px; transform: translateY(-50%); z-index: 5; width: 40px; height: 40px; border-radius: 99px;
+  border: none; background: #7967FF; color: #fff; display: grid; place-items: center; cursor: pointer;
+  box-shadow: 0 8px 20px -8px rgba(121,103,255,.7); transition: transform .2s;
+}
+.ozh-car-arrow:hover { transform: translateY(-50%) scale(1.08); }
+.ozh-car-prev { left: calc(50% - var(--card-w) / 2 - 20px); }
+.ozh-car-next { right: calc(50% - var(--card-w) / 2 - 20px); }
+.ozh-car-foot { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 24px; }
+.ozh-car-dots { display: flex; justify-content: center; gap: 6px; }
+.ozh-car-search { position: relative; }
+.ozh-car-search-btn { width: 32px; height: 32px; border-radius: 99px; border: 1px solid #E4E4E7; background: #fff; color: #0A0A0A; display: grid; place-items: center; cursor: pointer; }
+.ozh-car-search-btn:hover, .ozh-car-search-btn[aria-expanded='true'] { border-color: #7967FF; color: #7967FF; }
+.ozh-car-search-pop { position: absolute; bottom: calc(100% + 10px); right: -8px; z-index: 20; width: 300px; background: #fff; border: 1px solid #E4E4E7; border-radius: 16px; box-shadow: 0 24px 50px -20px rgba(0,0,0,.3); overflow: hidden; }
+.ozh-car-search-field { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid #E4E4E7; }
+.ozh-car-search-field input { flex: 1; border: none; outline: none; font: inherit; font-size: 14px; background: none; }
+.ozh-car-search-pop ul { list-style: none; margin: 0; padding: 6px; max-height: 260px; overflow-y: auto; }
+.ozh-car-search-pop li button { width: 100%; display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: none; background: none; border-radius: 10px; font: inherit; font-size: 13.5px; text-align: left; cursor: pointer; color: #0A0A0A; }
+.ozh-car-search-pop li button:hover { background: #F4F2FF; color: #5B4BE0; }
+.ozh-car-search-empty { padding: 10px; font-size: 13px; color: #71717A; }
+.ozh-car-dots button { height: 6px; padding: 0; border: none; border-radius: 99px; cursor: pointer; transition: width .35s cubic-bezier(.22,1,.36,1), background .35s; }
+
+/* Services (page sombre) */
+.ozh-split { display: grid; grid-template-columns: 1fr 1.1fr; gap: clamp(40px, 6vw, 96px); align-items: center; }
+.ozh-service-row {
+  display: grid; grid-template-columns: 40px minmax(0, 1fr) 20px; gap: 16px; padding: 22px 0;
+  border-top: 1px solid rgba(255,255,255,.1); transition: padding .3s cubic-bezier(.22,1,.36,1);
+}
+.ozh-service-row:last-child { border-bottom: 1px solid rgba(255,255,255,.1); }
+.ozh-service-row:hover { padding-left: 8px; }
+.ozh-service-n { font-size: 13px; color: #525252; padding-top: 5px; }
+.ozh-service-arrow { color: #525252; transition: color .2s, transform .2s; }
+.ozh-service-row:hover .ozh-service-arrow { color: #fff; transform: translate(2px, -2px); }
+.ozh-method { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 8px; font-size: 13px; color: #A3A3A3; }
+.ozh-method i { font-style: normal; color: #525252; }
+
+/* Produits */
+.ozh-mini-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #737373; margin: 18px 0 8px; }
+.ozh-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.ozh-chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 7px 11px; border-radius: 99px;
+  border: 1px solid rgba(10,10,10,.1); background: rgba(255,255,255,.55); color: #737373;
+  font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .2s;
+}
+.ozh-chip[aria-pressed='true'] { background: #F4F2FF; color: #5B4BE0; border-color: #C4BCFF; box-shadow: none; }
+.ozh-chip-icon { width: 34px; height: 34px; padding: 0; justify-content: center; }
+.ozh-chip-icon[aria-pressed='true'] { background: #7967FF; color: #fff; border-color: #7967FF; }
+
+
+/* Stepper Ozirus OS (components/home/OsStepper.tsx) */
+.ozh-step { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: clamp(28px, 4vw, 56px); align-items: center; }
+.ozh-step-side { display: flex; flex-direction: column; gap: 28px; }
+.ozh-step-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.ozh-step-list li { border-top: 1px solid #E4E4E7; }
+.ozh-step-list li:last-child { border-bottom: 1px solid #E4E4E7; }
+.ozh-step-head {
+  display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 0; border: none; background: none;
+  font: inherit; text-align: left; cursor: pointer; color: #A1A1AA; transition: color .2s;
+}
+.ozh-step-head:hover, li[data-active] .ozh-step-head, li[data-done] .ozh-step-head { color: #18181B; }
+.ozh-step-n {
+  width: 26px; height: 26px; border-radius: 99px; flex-shrink: 0; display: grid; place-items: center;
+  font-size: 12px; font-weight: 600; border: 1px solid #E4E4E7; color: #A1A1AA; background: #fff; transition: all .25s;
+}
+li[data-active] .ozh-step-n { background: #7967FF; border-color: #7967FF; color: #fff; }
+li[data-done] .ozh-step-n { background: #F4F2FF; border-color: #F4F2FF; color: #7967FF; }
+.ozh-step-title { font-size: 15px; font-weight: 600; letter-spacing: -0.01em; }
+.ozh-step-body { padding: 0 0 16px 38px; display: flex; flex-direction: column; gap: 12px; }
+.ozh-step-body p { margin: 0; font-size: 14px; line-height: 1.55; color: #52525B; }
+/* Appareil très grand qui déborde de l'écran à gauche ; le téléphone sort aussi par le bas.
+   clip-path : coupe en haut, en bas et à droite, laisse déborder à gauche (la page coupe au bord). */
+.ozh-step-stage { position: relative; min-width: 0; height: min(760px, calc(100vh - 150px)); clip-path: inset(-60px -240px 0 -100vw); }
+/* fondu vers le fond de page (blanc) : l'appareil s'efface en bas au lieu d'être coupé net */
+.ozh-step-stage::after {
+  content: ''; position: absolute; left: -100vw; right: -240px; bottom: 0; height: 120px; z-index: 2; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(255,255,255,0), #FFFFFF 85%);
+}
+.ozh-step-phone {
+  --phone-scale: 1.7; position: absolute; top: 28px; right: 14%;
+  width: calc(238px * var(--phone-scale)); height: calc(499px * var(--phone-scale));
+}
+/* fenêtre macOS : s'étend jusqu'à 24 px du bord gauche de l'écran (au-delà de la grille), feux
+   tricolores toujours visibles ; centrée en hauteur. */
+.ozh-step-mac {
+  position: absolute; right: 0; top: 0; bottom: 0; display: flex; align-items: center;
+  width: calc(100% + max(0px, (100vw - 1080px) / 2) - 90px); perspective: 1800px;
+}
+/* fenêtre en 3D : pivot sur le bord droit, la barre latérale (à gauche) vient vers le visiteur */
+.ozh-step-3d { width: 100%; transform: rotateY(18deg) rotateX(4deg); transform-origin: 100% 50%; }
+/* lanceur de modules (fenêtre Ozirus OS) */
+.ozh-modcard { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 16px; font: inherit; color: inherit; cursor: default; transition: transform .2s, border-color .2s; }
+.ozh-modcard[data-open] { cursor: pointer; }
+.ozh-modcard[data-open]:hover { transform: translateY(-2px); border-color: #CFC8FF !important; }
+/* écrans peu hauts : téléphone un peu moins grand, toujours coupé par le bas */
+@media (max-height: 780px) { .ozh-step-phone { --phone-scale: 1.45; top: 20px; } }
+.ozh-step-nav { display: flex; align-items: center; gap: 14px; margin-top: 20px; font-size: 13px; font-weight: 500; color: #71717A; }
+.ozh-step-nav button {
+  width: 38px; height: 38px; border-radius: 99px; display: grid; place-items: center; cursor: pointer;
+  border: 1px solid #E4E4E7; background: #fff; color: #18181B; transition: all .2s;
+}
+.ozh-step-nav button[data-primary] { background: #7967FF; border-color: #7967FF; color: #fff; }
+.ozh-step-nav button:disabled { opacity: .35; cursor: default; }
+
+/* Résultats : grille de cartes (bento), primaire Ozirus */
+.ozh-res-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px 40px; flex-wrap: wrap; margin-bottom: clamp(24px, 4vh, 40px); }
+.ozh-res-grid { display: grid; grid-template-columns: 1.15fr 1fr 1fr; grid-auto-rows: minmax(190px, auto); gap: 14px; }
+.ozh-res-card { position: relative; overflow: hidden; background: #fff; border: 1px solid #E4E4E7; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; }
+.ozh-res-hero { grid-row: span 2; background: #7967FF; border-color: #7967FF; color: #fff; justify-content: flex-end; }
+.ozh-res-dots { position: absolute; top: 24px; left: 24px; right: 24px; display: grid; grid-template-columns: repeat(12, 1fr); gap: 10px; }
+.ozh-res-dots span { width: 7px; height: 7px; border-radius: 9px; background: #fff; }
+.ozh-res-big { font-family: var(--font-display-loaded), sans-serif; font-size: clamp(4rem, 9vw, 7.5rem); font-weight: 600; letter-spacing: -0.03em; line-height: .95; }
+.ozh-res-v { font-family: var(--font-display-loaded), sans-serif; font-size: clamp(2.4rem, 4vw, 3.4rem); font-weight: 600; letter-spacing: -0.02em; line-height: 1; color: #0A0A0A; }
+.ozh-res-label { font-size: 15px; color: #71717A; margin-top: 8px; }
+.ozh-res-bars { display: flex; gap: 5px; align-items: flex-end; margin-top: auto; padding-top: 18px; }
+.ozh-res-bars span { display: flex; flex-direction: column-reverse; gap: 4px; }
+.ozh-res-bars i { width: 6px; height: 6px; border-radius: 9px; }
+.ozh-res-ring-card { flex-direction: row; align-items: center; gap: 22px; }
+.ozh-res-ring { width: 108px; height: 108px; flex-shrink: 0; }
+.ozh-res-case { grid-column: span 1; gap: 6px; transition: transform .3s cubic-bezier(.22,1,.36,1), box-shadow .3s; }
+.ozh-res-case:hover { transform: translateY(-3px); box-shadow: 0 24px 50px -30px rgba(121,103,255,.45); }
+.ozh-res-tag { align-self: flex-start; font-size: 12px; font-weight: 600; color: #5B4BE0; background: #F4F2FF; padding: 4px 10px; border-radius: 99px; margin-bottom: auto; }
+.ozh-res-metric { font-family: var(--font-display-loaded), sans-serif; font-size: clamp(2rem, 3.4vw, 2.8rem); font-weight: 600; color: #7967FF; letter-spacing: -0.02em; line-height: 1; margin-top: 18px; }
+.ozh-res-metric span { font-family: var(--font-sans-loaded), sans-serif; font-size: 15px; font-weight: 500; color: #71717A; letter-spacing: 0; }
+.ozh-res-client { font-size: 15px; font-weight: 600; color: #0A0A0A; margin-top: 10px; }
+.ozh-res-desc { font-size: 14px; line-height: 1.5; color: #52525B; margin: 0; }
+
+/* Contact + pied de page */
+.ozh-page-last { padding-bottom: 0; }
+.ozh-footer {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  position: relative; margin-top: 56px; padding-top: 22px; padding-bottom: 22px;
+  font-size: 13px; color: rgba(255,255,255,.75);
+}
+/* Filet limité à la zone de contenu (pas sous les marges de 24px). */
+.ozh-footer::before { content: ''; position: absolute; top: 0; left: 24px; right: 24px; height: 1px; background: rgba(255,255,255,.2); }
+.ozh-footer a { color: inherit; text-decoration: none; transition: color .15s; }
+.ozh-footer a:hover { color: #fff; }
+
+/* Indicateur de page (mode paginé) */
+.ozh-rail { position: fixed; right: 22px; top: 50%; transform: translateY(-50%); z-index: 40; display: flex; flex-direction: column; gap: 8px; }
+.ozh-rail button { display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding: 2px; border: none; background: none; cursor: pointer; }
+.ozh-rail-dot { width: 6px; height: 6px; border-radius: 99px; background: rgba(10,10,10,.22); transition: height .35s cubic-bezier(.22,1,.36,1), background .35s; }
+.ozh-rail button[aria-current] .ozh-rail-dot { height: 22px; background: #7967FF; }
+.ozh-rail-label { font-size: 11px; font-weight: 600; color: #0A0A0A; opacity: 0; transform: translateX(4px); transition: opacity .2s, transform .2s; }
+.ozh-rail button:hover .ozh-rail-label { opacity: 1; transform: none; }
+.ozh-rail[data-dark] .ozh-rail-dot { background: rgba(255,255,255,.3); }
+.ozh-rail[data-dark] button[aria-current] .ozh-rail-dot { background: #fff; }
+.ozh-rail[data-dark] .ozh-rail-label { color: #fff; }
+
+@media (max-width: 1239px) { .ozh-rail { display: none; } }
+@media (max-width: 960px) {
+  .ozh-res-grid { grid-template-columns: 1fr 1fr; }
+  .ozh-res-hero { grid-row: auto; grid-column: 1 / -1; min-height: 240px; }
+  .ozh-step { grid-template-columns: 1fr; }
+  .ozh-step-stage { height: auto; clip-path: none; display: flex; justify-content: center; }
+  .ozh-step-stage::after { display: none; }
+  .ozh-step-phone { --phone-scale: 1.1; position: relative; top: auto; right: auto; }
+  /* le MacBook garde l'effet : plus large que l'écran, il déborde à gauche */
+  .ozh-step-mac { position: relative; top: auto; right: auto; width: 150%; margin-left: -50%; flex-shrink: 0; }
+  .ozh-step-3d { transform: rotateY(14deg) rotateX(3deg); }
+  .ozh-split { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .ozh-res-grid { grid-template-columns: 1fr; }
+  .ozh-car { --card-w: calc(100vw - 48px); }
+  .ozh-car-stage { height: 560px; }
+  .ozh-car-card { grid-template-columns: 1fr; grid-template-rows: 200px minmax(0, 1fr); gap: 16px; padding: 14px; border-radius: 30px; }
+  .ozh-car-body { padding: 4px 6px 6px; }
+  /* flèches sur la ligne des points ; cartes voisines masquées (texte coupé sur petit écran) */
+  .ozh-car-arrow { top: auto; bottom: -15px; transform: none; width: 36px; height: 36px; }
+  .ozh-car-card[aria-hidden='true'] { visibility: hidden; }
+  .ozh-car-arrow:hover { transform: scale(1.08); }
+  .ozh-car-prev { left: 24px; }
+  .ozh-car-next { right: 24px; }
+  .ozh-car-foot { margin-top: 34px; }
+}
+
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

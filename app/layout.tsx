@@ -28,16 +28,16 @@ const clashDisplay = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://ozirus.agency'),
-  title: 'Ozirus Agency — Agence IA & Digitale | Cameroun & Afrique Francophone',
-  description: 'Ozirus Agency déploie des agents IA et solutions digitales sur mesure (SaaS, Mobile) pour les PME au Cameroun et en Afrique Francophone. Automatisation WhatsApp, Chatbots IA et transformation digitale en 90 jours.',
-  keywords: 'agent IA Cameroun, agence digitale Afrique francophone, intelligence artificielle Afrique, développement SaaS Cameroun, application mobile Yaoundé, solution IA PME, automatisation WhatsApp Afrique, chatbot IA Cameroun, transformation digitale Afrique',
+  title: 'Ozirus Agency — Agence IA & Développement Logiciel | Afrique • Europe • Amérique',
+  description: 'Ozirus Agency conçoit et déploie des agents IA, solutions SaaS, applications mobiles et automatisations WhatsApp pour les PME en Afrique (Cameroun, Côte d’Ivoire, Sénégal), en Europe (France, Suisse, Belgique) et en Amérique du Nord (Canada, USA).',
+  keywords: 'agent IA Afrique, agence IA France, agence IA Suisse, solutions IA Belgique, agence digitale Canada, automatisation WhatsApp PME, CRM IA PME, chatbot IA entreprise, transformation digitale PME, développement SaaS sur mesure',
   authors: [{ name: 'Ozirus Agency' }],
   creator: 'Ozirus Agency',
   publisher: 'Ozirus Agency',
   robots: 'index, follow',
   openGraph: {
-    title: 'Ozirus Agency — Leader des Solutions IA en Afrique Francophone',
-    description: 'Déployez des agents IA et des solutions SaaS sur mesure. Nous accompagnons la transformation digitale des PME au Cameroun et dans toute l\'Afrique Francophone.',
+    title: 'Ozirus Agency — Solutions IA & Logiciels pour PME | Afrique • Europe • Amérique',
+    description: 'Déployez des agents IA et des logiciels sur mesure. Nous accompagnons la transformation digitale des PME en Afrique, Europe (France, Suisse, Belgique) et Amérique du Nord (Canada, USA).',
     url: 'https://ozirus.agency',
     siteName: 'Ozirus Agency',
     images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Ozirus Agency - Solutions IA et Digitales' }],
@@ -46,10 +46,38 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Ozirus Agency — Agents IA & Digital au Cameroun',
-    description: 'Agents IA, SaaS et Applications Mobiles — des solutions concrètes pour la croissance des PME en Afrique Francophone.',
+    title: 'Ozirus Agency — Agents IA & Logiciels sur mesure',
+    description: 'Agents IA, SaaS et Applications Mobiles — des solutions concrètes pour la croissance des PME en Afrique, en Europe et en Amérique du Nord.',
     images: ['/og-image.jpg'],
   },
+};
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  name: 'Ozirus Agency',
+  url: 'https://ozirus.agency',
+  logo: 'https://ozirus.agency/logo.png',
+  description: 'Agence internationale en Intelligence Artificielle, développement de logiciels SaaS, applications mobiles et automatisation WhatsApp pour PME.',
+  areaServed: [
+    { '@type': 'AdministrativeArea', name: 'Afrique' },
+    { '@type': 'AdministrativeArea', name: 'Europe' },
+    { '@type': 'AdministrativeArea', name: 'Amérique du Nord' },
+    { '@type': 'Country', name: 'France' },
+    { '@type': 'Country', name: 'Suisse' },
+    { '@type': 'Country', name: 'Belgique' },
+    { '@type': 'Country', name: 'Canada' },
+    { '@type': 'Country', name: 'Cameroun' },
+    { '@type': 'Country', name: 'Côte d’Ivoire' },
+    { '@type': 'Country', name: 'Sénégal' },
+  ],
+  serviceType: [
+    'Agents IA & Chatbots WhatsApp',
+    'Développement SaaS & Logiciels sur mesure',
+    'Applications Mobiles',
+    'Automatisation des Ventes & CRM',
+    'Intégration Paiements (Stripe, Mobile Money, Apple Pay)',
+  ],
 };
 
 export const viewport = { width: 'device-width', initialScale: 1 };
@@ -61,6 +89,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/site.webmanifest" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         {/*
           Approche 2 (désactivée) : Clash Display via l'URL Fontshare.
           Gardée en référence — plus lente (round-trip vers un domaine tiers) et

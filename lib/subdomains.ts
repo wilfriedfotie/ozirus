@@ -5,4 +5,5 @@ export const SUBDOMAIN_ROUTES = [
   { subdomain: 'mvp', route: '/mvp' },
   { subdomain: 'formation', route: '/formation-ia' },
   { subdomain: 'resto', route: '/resto' },
+  { subdomain: 'cdc', route: '/cdc' },
 ] as const;

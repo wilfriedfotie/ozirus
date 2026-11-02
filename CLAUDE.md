@@ -8,10 +8,13 @@ Site Next.js (App Router) de l'agence Ozirus + backoffice `/admin`.
 - `pnpm build` — build prod (Turbopack)
 - `pnpm start` — serveur prod
 
+Un seul `pnpm dev` à la fois : deux serveurs de dev sur le même dossier se disputent `.next` (CSS figé,
+puis erreurs 500 `ENOENT _buildManifest.js.tmp`). Remède : arrêter les deux, `rm -rf .next`, relancer.
+
 ## Landings sur sous-domaine
 
 `lib/subdomains.ts` (`SUBDOMAIN_ROUTES`) est la source unique : `mvp.ozirus.agency` → `/mvp`,
-`formation.ozirus.agency` → `/formation-ia`, `resto.ozirus.agency` → `/resto`. `next.config.ts` en génère les rewrites (seul `/`
+`formation.ozirus.agency` → `/formation-ia`, `resto.ozirus.agency` → `/resto`, `cdc.ozirus.agency` → `/cdc`. `next.config.ts` en génère les rewrites (seul `/`
 est réécrit). Sur un sous-domaine, un lien relatif vers `/` resservirait la landing : les liens
 vers le site principal passent par `useMainSiteHref()` (`lib/useMainSiteHref.ts`). Chaque
 landing a son propre header autonome (ancres de la page + CTA, aucun lien vers le reste du site) :
@@ -23,6 +26,43 @@ domaine dans Vercel (Settings → Domains). Test local : `http://<sub>.localhost
 inline comme `/mvp`). Le reset `* { margin:0; padding:0 }` de `globals.css` est hors `@layer` et
 écrase les utilitaires Tailwind (`mx-auto`, `px-6`…) : la page est enveloppée dans `.resto-landing`,
 exclue de ce reset. Ses CTA « essai gratuit » ouvrent WhatsApp (l'onboarding vit dans l'autre projet).
+
+`/cdc` (contenu, stratégie, croissance pour PME camerounaises : resto, salon, sport, boutique) : DA orange
+brûlé du flyer (`#FF5A0F` / `#E8400A`, grain SVG, flou de mouvement par copie floue de la photo) sur noir
+`#050407`, photos Unsplash de vraies scènes afro (ids vérifiés). Pagination par section via
+`usePagedScroll({ navOffset: 0 })` (header flottant, chaque page = 100vh). Logo officiel en blanc, titres Clash Display.
+Tarifs validés (`PLANS`) : Présence 75 000, Croissance 150 000, Pilote auto 250 000 FCFA/mois, budget pub à part ;
+clients CDC : **-30 % sur Ozirus OS** (logiciel de suivi commandes/réservations/stock/clients).
+
+## Home (`app/page.tsx`, `components/home/`)
+
+Positionnement : agence IA pour deux cibles, **PME** (intégration IA, automatisations) **et porteurs de projet IA**
+(lancement de produit, lien vers `/mvp`). **Ozirus OS n'est cité que dans la section Produits.** Pas d'étiquettes
+en « bulles » au-dessus des titres (refusé : « ça fait trop IA »).
+Six pages : `#accueil`, `#secteurs` (`SectorCarousel`), `#services`, `#produits` (`OsStepper`, piloté
+par le secteur choisi dans le carrousel), `#realisations`, `#contact` (+ footer).
+Textes par secteur (dont le **stock**, indispensable pour l'Afrique) : `sectorStory.ts`, avec la photo du carrousel
+(`image` : photo **sans personne**, pas d'icône — demande explicite) ; données simulées : `osData.ts`.
+
+`OsStepper` : stepper en 6 étapes pilotées par le visiteur (clic ou flèches), **un seul appareil à la fois** :
+iPhone Liquid Glass (`IPhone` de `app/mvp/devices.tsx`) côté client — commande sur le canal choisi (« on s'adapte »),
+paiement, fidélité — et écran à bordure noire (`Bezel`, encoche, incliné en 3D) côté commerçant : lanceur des
+18 modules, tableau de bord (style dashboard SaaS premium : cartes + graphiques en points, prévision, transactions),
+« L'IA vous prévient » (rapport hebdo généré + notifications). Barre latérale = **tous** les modules, groupés
+(`MENU`). Couleurs : base blanche neutre, primaire `#7967FF` (boutons/actif), une couleur par module (`MOD_COLOR`),
+statuts colorés — retour client : « le noir sur blanc partout fait cheap ». Peu d'infos côté texte, animations
+du logiciel minimales. Logo : `public/ozirus-mark.png` (copie de `app/favicon.ico`).
+Mise en page : appareil très grand à gauche (débord), texte + étapes à droite.
+
+**DA d'Ozirus OS** : DM Sans + Clash Display (titres/chiffres), aucun dégradé décoratif. La page Produits est blanche.
+
+Grand écran (`PIN_QUERY` de `app/mvp/scroll.ts`) : `usePagedScroll` pagine au scroll (molette/clavier, Lenis),
+une page = un écran sous le header ; le fond est un calque fixe `.ozh-backdrop` qui change de couleur
+selon la page active (`PAGES` dans `page.tsx`). Sinon : défilement libre, chaque section porte son fond
+(`--page-bg`). Largeur/marges `.ozh-container` = celles du header (1080px, 24px) : garder l'alignement.
+Les ancres de `SharedNav` (route `/`) doivent suivre ces ids.
+Nav fixe ↔ page : la home émet `ozirus:nav-theme` (`NavTheme` : fond, sombre, CTA, accent) à chaque changement de
+page, et SharedNav émet `ozirus:goto-anchor` (annulable) sur ses liens `#…` pour que la home fasse le saut animé.
 
 ## Styles de formulaire (`lib/adminUi.ts`)
 
